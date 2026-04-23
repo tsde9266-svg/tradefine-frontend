@@ -1,0 +1,28 @@
+export const TRADES = [
+  'Plumber',
+  'Gas Engineer',
+  'Electrician',
+  'Builder / General Contractor',
+  'Carpenter / Joiner',
+  'Painter & Decorator',
+  'Plasterer',
+  'Roofer',
+  'Tiler (Floor & Wall)',
+  'Landscaper / Gardener',
+  'Locksmith',
+  'HVAC / Heating Engineer',
+  'Handyman',
+  'Demolition',
+  'Groundworker',
+  'Scaffolder',
+  'Glazier (Windows & Doors)',
+  'Flooring Specialist',
+  'Kitchen Fitter',
+  'Bathroom Fitter',
+  'Damp Proofing Specialist',
+  'Surveyor',
+  'Architect',
+  'Structural Engineer',
+] as const;
+
+export type Trade = typeof TRADES[number];

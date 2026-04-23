@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign Up - TradeFind</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#f9f9ff",
+                        "surface": "#f9f9ff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "on-secondary-container": "#5d1900",
+                        "on-background": "#141b2b",
+                        "on-primary-fixed-variant": "#783200",
+                        "tertiary-container": "#c49200",
+                        "on-error": "#ffffff",
+                        "background": "#f9f9ff",
+                        "surface-container": "#e9edff",
+                        "on-tertiary-fixed": "#261a00",
+                        "on-surface-variant": "#584237",
+                        "primary-fixed-dim": "#ffb690",
+                        "secondary": "#ac3400",
+                        "secondary-fixed-dim": "#ffb59d",
+                        "surface-container-highest": "#dce2f7",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#422f00",
+                        "surface-tint": "#9d4300",
+                        "on-primary-container": "#582200",
+                        "outline-variant": "#e0c0b1",
+                        "secondary-fixed": "#ffdbd0",
+                        "primary-container": "#f97316",
+                        "surface-container-low": "#f1f3ff",
+                        "primary-fixed": "#ffdbca",
+                        "on-secondary-fixed": "#390c00",
+                        "tertiary-fixed": "#ffdf9f",
+                        "inverse-on-surface": "#edf0ff",
+                        "on-surface": "#141b2b",
+                        "outline": "#8c7164",
+                        "on-secondary-fixed-variant": "#832600",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#dce2f7",
+                        "primary": "#9d4300",
+                        "surface-container-high": "#e1e8fd",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#fd6b36",
+                        "tertiary": "#795900",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#341100",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#ffb690",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#d3daef",
+                        "inverse-surface": "#293040"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "gutter": "12px",
+                        "lg": "24px",
+                        "xs": "8px",
+                        "md": "16px",
+                        "base": "4px",
+                        "xl": "32px",
+                        "margin": "16px"
+                    },
+                    "fontFamily": {
+                        "h2": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "h1": ["Inter"],
+                        "h3": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h2": ["24px", {"lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "h1": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "h3": ["20px", {"lineHeight": "26px", "letterSpacing": "0em", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9ff;
+        }
+        .tap-highlight-transparent {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen flex flex-col items-center">
+<header class="sticky top-0 z-50 flex justify-between items-center w-full px-margin h-16 bg-surface-bright border-b border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="text-primary-container text-2xl font-black font-h1 tracking-tight">TradeFind</span>
+</div>
+<button class="material-symbols-outlined p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors" data-icon="close">close</button>
+</header>
+<main class="w-full max-w-md px-margin py-xl flex-grow">
+<div class="text-center mb-xl">
+<h1 class="font-h1 text-h1 text-on-surface mb-xs">Join our network</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Connect with skilled tradespeople or find new clients today.</p>
+</div>
+<div class="bg-surface-container-low p-base rounded-xl flex mb-lg">
+<button class="flex-1 py-xs text-on-primary font-label-md bg-primary-container rounded-lg shadow-sm">Sign Up</button>
+<button class="flex-1 py-xs text-on-surface-variant font-label-md hover:text-on-surface transition-colors">Log In</button>
+</div>
+<form class="space-y-md">
+<div class="space-y-xs">
+<label class="font-label-md text-on-surface-variant ml-base" for="full_name">Full Name</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]" data-icon="person">person</span>
+<input class="w-full pl-10 pr-md py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-all font-body-md" id="full_name" placeholder="John Doe" type="text"/>
+</div>
+</div>
+<div class="space-y-xs">
+<label class="font-label-md text-on-surface-variant ml-base" for="email">Email</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]" data-icon="mail">mail</span>
+<input class="w-full pl-10 pr-md py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-all font-body-md" id="email" placeholder="name@example.com" type="email"/>
+</div>
+</div>
+<div class="space-y-xs">
+<label class="font-label-md text-on-surface-variant ml-base" for="phone">Phone Number</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]" data-icon="call">call</span>
+<input class="w-full pl-10 pr-md py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-all font-body-md" id="phone" placeholder="+1 (555) 000-0000" type="tel"/>
+</div>
+</div>
+<div class="space-y-xs">
+<label class="font-label-md text-on-surface-variant ml-base" for="password">Password</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]" data-icon="lock">lock</span>
+<input class="w-full pl-10 pr-10 py-3 bg-surface-container-lowest border border-outline-variant rounded-lg focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none transition-all font-body-md" id="password" placeholder="••••••••" type="password"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant cursor-pointer text-[20px]" data-icon="visibility">visibility</span>
+</div>
+</div>
+<div class="flex items-start gap-3 py-xs">
+<div class="relative flex items-center mt-1">
+<input class="w-5 h-5 rounded border-outline-variant text-primary-container focus:ring-primary-container bg-surface-container-lowest" id="terms" type="checkbox"/>
+</div>
+<label class="font-body-md text-on-surface-variant text-[13px] leading-tight" for="terms">
+                    I agree to the <a class="text-primary font-medium hover:underline" href="#">Terms of Service</a> and <a class="text-primary font-medium hover:underline" href="#">Privacy Policy</a>.
+                </label>
+</div>
+<button class="w-full py-md bg-primary-container text-on-primary font-h3 rounded-lg shadow-md hover:bg-primary transition-colors active:scale-[0.98] duration-150 mt-sm" type="submit">
+                Create Account
+            </button>
+</form>
+<div class="relative my-xl">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-outline-variant"></div>
+</div>
+<div class="relative flex justify-center text-label-md uppercase">
+<span class="bg-surface px-md text-on-surface-variant">Or continue with</span>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-3 py-md bg-surface-container-lowest border border-outline-variant rounded-lg font-body-lg text-on-surface hover:bg-surface-container-low transition-colors active:scale-[0.98] duration-150">
+<svg class="w-5 h-5" viewbox="0 0 24 24">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+</svg>
+<span class="font-medium">Continue with Google</span>
+</button>
+<p class="mt-xl text-center font-body-md text-on-surface-variant">
+            Already have an account? <a class="text-primary font-bold hover:underline" href="#">Log In</a>
+</p>
+</main>
+<div class="fixed top-1/4 -right-12 w-64 h-64 bg-primary-container/5 rounded-full blur-3xl -z-10"></div>
+<div class="fixed bottom-1/4 -left-12 w-64 h-64 bg-tertiary-container/10 rounded-full blur-3xl -z-10"></div>
+</body></html>

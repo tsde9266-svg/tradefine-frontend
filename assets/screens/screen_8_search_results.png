@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>TradeFind - Search Results</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#f9f9ff",
+                        "surface": "#f9f9ff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "on-secondary-container": "#5d1900",
+                        "on-background": "#141b2b",
+                        "on-primary-fixed-variant": "#783200",
+                        "tertiary-container": "#c49200",
+                        "on-error": "#ffffff",
+                        "background": "#f9f9ff",
+                        "surface-container": "#e9edff",
+                        "on-tertiary-fixed": "#261a00",
+                        "on-surface-variant": "#584237",
+                        "primary-fixed-dim": "#ffb690",
+                        "secondary": "#ac3400",
+                        "secondary-fixed-dim": "#ffb59d",
+                        "surface-container-highest": "#dce2f7",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#422f00",
+                        "surface-tint": "#9d4300",
+                        "on-primary-container": "#582200",
+                        "outline-variant": "#e0c0b1",
+                        "secondary-fixed": "#ffdbd0",
+                        "primary-container": "#f97316",
+                        "surface-container-low": "#f1f3ff",
+                        "primary-fixed": "#ffdbca",
+                        "on-secondary-fixed": "#390c00",
+                        "tertiary-fixed": "#ffdf9f",
+                        "inverse-on-surface": "#edf0ff",
+                        "on-surface": "#141b2b",
+                        "outline": "#8c7164",
+                        "on-secondary-fixed-variant": "#832600",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#dce2f7",
+                        "primary": "#9d4300",
+                        "surface-container-high": "#e1e8fd",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#fd6b36",
+                        "tertiary": "#795900",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#341100",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#ffb690",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#d3daef",
+                        "inverse-surface": "#293040"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "gutter": "12px",
+                        "lg": "24px",
+                        "xs": "8px",
+                        "md": "16px",
+                        "base": "4px",
+                        "xl": "32px",
+                        "margin": "16px"
+                    },
+                    "fontFamily": {
+                        "h2": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "h1": ["Inter"],
+                        "h3": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h2": ["24px", {"lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "h1": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "h3": ["20px", {"lineHeight": "26px", "letterSpacing": "0em", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tap-highlight-transparent { -webkit-tap-highlight-color: transparent; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-bright font-body-md text-on-surface">
+<!-- TopAppBar Shell -->
+<header class="sticky top-0 z-50 flex justify-between items-center w-full px-4 h-16 bg-[#F9FAFB] border-b border-slate-200 font-['Inter'] antialiased tracking-tight">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface" data-icon="menu">menu</span>
+<h1 class="text-2xl font-black text-orange-600">TradeFind</h1>
+</div>
+<div class="flex items-center gap-md">
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden ring-2 ring-white ring-offset-2">
+<img class="w-full h-full object-cover" data-alt="close-up portrait of a professional male user profile with a friendly expression and neutral lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6-q7eDp5OC6yYbY2zU514qii7O1Qnz4z2cIjXvJEUJW-OPNXi1PnIaIvRy2o2E1ZCWJi6gEKnqsPxAQfFxdJ-EiteZ4OdR3MO5ocThJTuEh65IbLXVRlu458yl3TqAM-BBBZaFdqSg0fJMaADIqIq0LplF3y092KnGEWTboU6RbOjGw7-2YxgmzrKHEStAo4FxKOfUloOH_h7wMHSA3qrchmrl9_9GrAN957Nc0RUG8fNqqUYb7zW0Jg9Sw-s_in7chIUjCfizZU"/>
+</div>
+</div>
+</header>
+<main class="pb-24">
+<!-- Search & Filter Section -->
+<section class="bg-white px-margin pt-md pb-md sticky top-16 z-40 shadow-sm">
+<!-- Search Bar -->
+<div class="relative flex items-center mb-md">
+<span class="material-symbols-outlined absolute left-3 text-slate-400" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-medium" type="text" value="Electrician"/>
+<span class="material-symbols-outlined absolute right-3 text-primary" data-icon="tune">tune</span>
+</div>
+<!-- Horizontal Filter Chips -->
+<div class="flex gap-xs overflow-x-auto no-scrollbar pb-1">
+<button class="flex items-center gap-1 px-4 py-2 bg-primary-container text-white rounded-full font-label-md text-label-md whitespace-nowrap active:scale-95 duration-150">
+                    Distance <span class="material-symbols-outlined text-[16px]" data-icon="expand_more">expand_more</span>
+</button>
+<button class="flex items-center gap-1 px-4 py-2 border border-outline-variant text-on-surface-variant rounded-full font-label-md text-label-md whitespace-nowrap hover:bg-slate-50 transition-colors">
+                    Rating <span class="material-symbols-outlined text-[16px]" data-icon="expand_more">expand_more</span>
+</button>
+<div class="flex items-center gap-2 px-4 py-2 border border-outline-variant text-on-surface-variant rounded-full font-label-md text-label-md whitespace-nowrap">
+<span>Available Now</span>
+<div class="w-8 h-4 bg-primary-container rounded-full relative">
+<div class="w-3 h-3 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Result Header -->
+<div class="px-margin py-md">
+<h2 class="font-h3 text-h3 text-on-background">18 electricians near Birmingham</h2>
+</div>
+<!-- Workers List -->
+<div class="px-margin flex flex-col gap-gutter">
+<!-- Worker Card 1 -->
+<div class="bg-white rounded-xl p-md shadow-[0_2px_8px_rgba(0,0,0,0.08)] flex gap-md">
+<div class="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="professional electrician in work gear standing next to an electrical panel with tools" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwzBLe82a_WO4BRhxJ9gIjgtB-4mJyJpCqvRRk0shmWJpNmxuG1xben0ciaFgpHVp5GZB2D5WH4N7sPW2JwIYE2UQxtoQ0Pfl3OMA8VIpssbw8G43k8bQcUwOgFOgZN6iS0z-jMEKpXUnxQhbtYudUZgFNqr64s2mkcWmdRJtOKLpxhUeg6vvhtD-ENCc9HoyhsE5eu8oRuFSN7L_AvSWFZuWfDiw4fh_amWCCnM3kB45GznHsnEbvlqbyNoTb2qnQYhmM3t1G7pI"/>
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-h3 text-h3 leading-none">James Miller</h3>
+<span class="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                                Available
+                            </span>
+</div>
+<p class="text-on-surface-variant text-body-md mt-1">Master Electrician • 1.2 miles</p>
+<div class="flex items-center gap-1 mt-2">
+<span class="material-symbols-outlined text-[#FBBF24] text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold text-on-surface">4.9</span>
+<span class="text-slate-400 text-label-md">(124 reviews)</span>
+</div>
+</div>
+<div class="mt-md">
+<button class="w-full py-2.5 bg-primary-container text-white rounded-lg font-bold text-body-md flex items-center justify-center gap-2 active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[18px]" data-icon="call">call</span>
+                            Call
+                        </button>
+</div>
+</div>
+</div>
+<!-- Worker Card 2 -->
+<div class="bg-white rounded-xl p-md shadow-[0_2px_8px_rgba(0,0,0,0.08)] flex gap-md">
+<div class="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="skilled female tradesperson holding electrical testing equipment in a modern interior setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOrrJCVIh2igq_iOTxeloFVBf9TXV_EGCfxZ8G7ptJ_CKIsVgTdo-IrZMCySZruBELlqtbzQwMCZ-ZWGojsj_xiIHOsr4oI0IjZq-cgIVVMt85K_xbOWFhzYhXp4EotTh6P2G9rhuwEDWNZQg8vfJxy1hUfpY5PyEpmQquRGySremEcCUpDlgWBDgTC1sMV4GHPpWkyxwTu45q6dB_vEbq-hGKPg0RX_iAPDaeCnIuTb4SzGKNoBinX32indawwgXAOfgvDp9rg-Q"/>
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-h3 text-h3 leading-none">Sarah Chen</h3>
+<span class="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                                Available
+                            </span>
+</div>
+<p class="text-on-surface-variant text-body-md mt-1">Certified Specialist • 0.8 miles</p>
+<div class="flex items-center gap-1 mt-2">
+<span class="material-symbols-outlined text-[#FBBF24] text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold text-on-surface">5.0</span>
+<span class="text-slate-400 text-label-md">(89 reviews)</span>
+</div>
+</div>
+<div class="mt-md">
+<button class="w-full py-2.5 bg-primary-container text-white rounded-lg font-bold text-body-md flex items-center justify-center gap-2 active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[18px]" data-icon="call">call</span>
+                            Call
+                        </button>
+</div>
+</div>
+</div>
+<!-- Worker Card 3 -->
+<div class="bg-white rounded-xl p-md shadow-[0_2px_8px_rgba(0,0,0,0.08)] flex gap-md">
+<div class="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 grayscale">
+<img class="w-full h-full object-cover" data-alt="male technician portrait in casual work clothing looking professional against a clean studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJY6-4jBBMkabaXB2IoiuqC7YQYQzsjOJy6vQH1T1BZ_jnHtyFmdr_-yl3MFgchD6VL7D8Yf2jyZ5hMLMwfFoR-a4er76bokHI74X5MtwZqfVTiPn2AslQinLvvyonp1JgmejyMo9dkmufbyAwPvQZZUl6KPTqzlyv1078YTSpcZa7vbW6nMGMPLzjN2Zuz6NsD-ui3B6zfT7cKz5WPSIbmvJMtuvnQrDLAmmAjMDCCIqlkR6uZjfVkk1GaA-F6ztBtuHHRRx3e8k"/>
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-h3 text-h3 leading-none text-slate-700">Marcus Wright</h3>
+<span class="flex items-center gap-1 bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                                Busy
+                            </span>
+</div>
+<p class="text-on-surface-variant text-body-md mt-1">General Electrician • 2.5 miles</p>
+<div class="flex items-center gap-1 mt-2">
+<span class="material-symbols-outlined text-[#FBBF24] text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold text-on-surface">4.7</span>
+<span class="text-slate-400 text-label-md">(210 reviews)</span>
+</div>
+</div>
+<div class="mt-md">
+<button class="w-full py-2.5 border border-outline-variant text-on-surface-variant rounded-lg font-bold text-body-md flex items-center justify-center gap-2 active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[18px]" data-icon="calendar_today">calendar_today</span>
+                            Book later
+                        </button>
+</div>
+</div>
+</div>
+<!-- Worker Card 4 -->
+<div class="bg-white rounded-xl p-md shadow-[0_2px_8px_rgba(0,0,0,0.08)] flex gap-md">
+<div class="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+<img class="w-full h-full object-cover" data-alt="middle aged professional handyman with a confident smile standing in a workshop environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuACTZpszQH0aUGiFKg8k68uA2JRVjhfl-zL2QBJ06oxRWgabGnV6GysIDKrlbXYjuubCA53H9dqjhjP1fwY9t4ChJnohvoMBM4qeeJc6nobb7QRYFQ3Z0QKPCnmx3L76mpHsZPJPZ-Nfh4rdlyg7GZfh9X3X_1Zs6NCTFV1qIYPKDYzo88A8T6flgUnNds3HGfGSk_BdVbiMKXM1U-fXi_SdJ87APMcxpOjguZQKDgVL5FJkKP78y1c1-l9lhwmj53nrX2UR0c3RX4"/>
+</div>
+<div class="flex-grow flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start">
+<h3 class="font-h3 text-h3 leading-none">David Okafor</h3>
+<span class="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                                Available
+                            </span>
+</div>
+<p class="text-on-surface-variant text-body-md mt-1">Emergency Service • 3.1 miles</p>
+<div class="flex items-center gap-1 mt-2">
+<span class="material-symbols-outlined text-[#FBBF24] text-[18px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-bold text-on-surface">4.8</span>
+<span class="text-slate-400 text-label-md">(56 reviews)</span>
+</div>
+</div>
+<div class="mt-md">
+<button class="w-full py-2.5 bg-primary-container text-white rounded-lg font-bold text-body-md flex items-center justify-center gap-2 active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[18px]" data-icon="call">call</span>
+                            Call
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 bg-white border-t border-slate-100 shadow-[0_-2px_8px_rgba(0,0,0,0.08)] px-2 pb-safe">
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-orange-500 transition-transform active:scale-90 tap-highlight-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Inter'] text-[12px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-orange-600 bg-orange-50/50 rounded-xl px-3 py-1 transition-transform active:scale-90 tap-highlight-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span class="font-['Inter'] text-[12px] font-medium">Map</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-orange-500 transition-transform active:scale-90 tap-highlight-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+<span class="font-['Inter'] text-[12px] font-medium">Bookmarks</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-orange-500 transition-transform active:scale-90 tap-highlight-transparent" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Inter'] text-[12px] font-medium">Profile</span>
+</a>
+</nav>
+</body></html>

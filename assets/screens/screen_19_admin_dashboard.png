@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradeFind Admin Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ffdf9f",
+                        "surface-tint": "#9d4300",
+                        "surface-container-low": "#f1f3ff",
+                        "tertiary-container": "#c49200",
+                        "surface-container-high": "#e1e8fd",
+                        "on-secondary-fixed-variant": "#832600",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#ffdbd0",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#582200",
+                        "secondary": "#ac3400",
+                        "on-secondary-container": "#5d1900",
+                        "on-background": "#141b2b",
+                        "surface-dim": "#d3daef",
+                        "outline": "#8c7164",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#dce2f7",
+                        "error": "#ba1a1a",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#ffdbca",
+                        "primary": "#9d4300",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "tertiary": "#795900",
+                        "surface-container": "#e9edff",
+                        "primary-fixed-dim": "#ffb690",
+                        "on-tertiary-fixed": "#261a00",
+                        "on-error-container": "#93000a",
+                        "background": "#f9f9ff",
+                        "surface": "#f9f9ff",
+                        "secondary-container": "#fd6b36",
+                        "on-surface-variant": "#584237",
+                        "outline-variant": "#e0c0b1",
+                        "on-surface": "#141b2b",
+                        "inverse-on-surface": "#edf0ff",
+                        "on-secondary-fixed": "#390c00",
+                        "error-container": "#ffdad6",
+                        "inverse-surface": "#293040",
+                        "secondary-fixed-dim": "#ffb59d",
+                        "on-primary-fixed-variant": "#783200",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "primary-container": "#f97316",
+                        "on-tertiary-container": "#422f00",
+                        "on-primary-fixed": "#341100",
+                        "inverse-primary": "#ffb690",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#dce2f7",
+                        "surface-bright": "#f9f9ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin": "16px",
+                        "xs": "8px",
+                        "lg": "24px",
+                        "gutter": "12px",
+                        "xl": "32px",
+                        "sm": "12px",
+                        "base": "4px",
+                        "md": "16px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "h2": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "h3": ["Inter"],
+                        "h1": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "h2": ["24px", {"lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "h3": ["20px", {"lineHeight": "26px", "letterSpacing": "0em", "fontWeight": "700"}],
+                        "h1": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased">
+<!-- SideNavBar Component (JSON Injected Styles) -->
+<aside class="flex flex-col py-6 h-screen w-64 fixed left-0 bg-slate-900 shadow-xl border-r border-slate-800 z-50">
+<div class="px-6 mb-8">
+<h1 class="text-2xl font-black text-orange-500">TradeFind</h1>
+<p class="text-xs text-slate-400 font-medium">Enterprise Admin</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 bg-orange-600 text-white rounded-lg mx-2" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-sans text-sm font-semibold">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white mx-2 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="engineering">engineering</span>
+<span class="font-sans text-sm font-semibold">Tradespeople</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white mx-2 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+<span class="font-sans text-sm font-semibold">Requests</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white mx-2 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span class="font-sans text-sm font-semibold">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white mx-2 transition-colors mt-auto" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-sans text-sm font-semibold">Settings</span>
+</a>
+</nav>
+<div class="px-4 py-4 mt-auto border-t border-slate-800">
+<div class="flex items-center gap-3 px-2">
+<img alt="Admin Profile" class="w-10 h-10 rounded-full border-2 border-slate-700" data-alt="Professional headshot of a middle-aged male executive with a confident smile in a corporate studio setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxFS5UvJJnzIH4aYe1oX-5VDUbtE8qNBWKFviZGcQ884g9feI32nOpHwdn9n3OEGF8ZtLrDW0n78esZK4lgdJ0TYqUTonO9Rmiu-i49Pl0E3Pe9RkEw-03Kk1MRM8yiptWQyndn3ONWIoO76RcS5MISPYpucdfyJ0hUjxAYBw5M-ZQPJyYFndls57KFernnxoZeW-N0IhYmYZcHTiGR8gZO4J8NSiG5XTCPoC65nDEi98P0VnCPOvrkAn92ynJjHViC_3ouiecSC4"/>
+<div>
+<p class="text-white text-sm font-bold">Marcus Chen</p>
+<p class="text-slate-500 text-xs">Super Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen flex flex-col">
+<!-- TopNavBar Component -->
+<header class="flex justify-between items-center px-6 w-full sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm h-16">
+<div class="flex items-center bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 w-96">
+<span class="material-symbols-outlined text-slate-400 mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full" placeholder="Search platform..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-orange-600 rounded-full border-2 border-white"></span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="h-8 w-px bg-slate-200 mx-2"></div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-600" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Page Canvas -->
+<div class="p-lg flex-1 overflow-auto">
+<!-- Bento Stat Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-lg">
+<div class="bg-white p-md rounded-xl shadow-sm border border-slate-100 flex flex-col">
+<div class="flex justify-between items-start mb-xs">
+<span class="text-slate-500 font-label-md text-label-md">Total Workers</span>
+<span class="bg-orange-50 text-orange-600 p-1.5 rounded-lg">
+<span class="material-symbols-outlined text-sm" data-icon="engineering">engineering</span>
+</span>
+</div>
+<h2 class="font-h1 text-h1 text-on-surface">1,240</h2>
+<p class="text-xs text-green-600 font-medium mt-1">↑ 12% from last month</p>
+</div>
+<div class="bg-white p-md rounded-xl shadow-sm border border-slate-100 flex flex-col">
+<div class="flex justify-between items-start mb-xs">
+<span class="text-slate-500 font-label-md text-label-md">Active Now</span>
+<span class="bg-emerald-50 text-emerald-600 p-1.5 rounded-lg">
+<span class="material-symbols-outlined text-sm" data-icon="bolt">bolt</span>
+</span>
+</div>
+<h2 class="font-h1 text-h1 text-on-surface">342</h2>
+<div class="flex items-center gap-1.5 mt-2">
+<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+<span class="text-xs text-slate-400">Live monitoring enabled</span>
+</div>
+</div>
+<div class="bg-white p-md rounded-xl shadow-sm border border-slate-100 flex flex-col">
+<div class="flex justify-between items-start mb-xs">
+<span class="text-slate-500 font-label-md text-label-md">Pending Approval</span>
+<span class="bg-amber-50 text-amber-600 p-1.5 rounded-lg">
+<span class="material-symbols-outlined text-sm" data-icon="assignment_late">assignment_late</span>
+</span>
+</div>
+<h2 class="font-h1 text-h1 text-on-surface">12</h2>
+<p class="text-xs text-amber-600 font-medium mt-1">Requires immediate review</p>
+</div>
+<div class="bg-white p-md rounded-xl shadow-sm border border-slate-100 flex flex-col">
+<div class="flex justify-between items-start mb-xs">
+<span class="text-slate-500 font-label-md text-label-md">Reported</span>
+<span class="bg-red-50 text-red-600 p-1.5 rounded-lg">
+<span class="material-symbols-outlined text-sm" data-icon="flag">flag</span>
+</span>
+</div>
+<h2 class="font-h1 text-h1 text-on-surface">5</h2>
+<p class="text-xs text-red-500 font-medium mt-1">Flagged for policy violation</p>
+</div>
+</div>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg items-start">
+<!-- Center Column: Chart & Table -->
+<div class="lg:col-span-8 space-y-lg">
+<!-- Chart Section -->
+<div class="bg-white p-lg rounded-xl shadow-sm border border-slate-100">
+<div class="flex justify-between items-center mb-lg">
+<div>
+<h3 class="font-h2 text-h2 text-on-surface">Worker Registrations</h3>
+<p class="text-slate-500 text-sm">Growth metrics for Q3 2023</p>
+</div>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600">Weekly</button>
+<button class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-orange-600 text-white">Monthly</button>
+</div>
+</div>
+<div class="h-64 w-full relative">
+<!-- Visual placeholder for a line chart using SVG for high-end look -->
+<svg class="w-full h-full" viewbox="0 0 800 200">
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#F97316" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#F97316" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,150 Q100,140 200,80 T400,100 T600,40 T800,20" fill="none" stroke="#F97316" stroke-width="3"></path>
+<path d="M0,150 Q100,140 200,80 T400,100 T600,40 T800,20 L800,200 L0,200 Z" fill="url(#chartGradient)"></path>
+<circle cx="200" cy="80" fill="white" r="4" stroke="#F97316" stroke-width="2"></circle>
+<circle cx="400" cy="100" fill="white" r="4" stroke="#F97316" stroke-width="2"></circle>
+<circle cx="600" cy="40" fill="white" r="4" stroke="#F97316" stroke-width="2"></circle>
+</svg>
+<div class="absolute bottom-0 left-0 right-0 flex justify-between px-2 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+<span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+</div>
+</div>
+</div>
+<!-- Table Section -->
+<div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+<div class="px-lg py-md border-b border-slate-50 flex justify-between items-center">
+<h3 class="font-h3 text-h3 text-on-surface">Recent Registrations</h3>
+<button class="text-orange-600 text-sm font-semibold hover:underline">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-slate-50/50">
+<tr>
+<th class="px-lg py-3 text-xs font-bold text-slate-500 uppercase">Name</th>
+<th class="px-lg py-3 text-xs font-bold text-slate-500 uppercase">Trade</th>
+<th class="px-lg py-3 text-xs font-bold text-slate-500 uppercase">Status</th>
+<th class="px-lg py-3 text-xs font-bold text-slate-500 uppercase text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50">
+<tr class="hover:bg-slate-50/50 transition-colors">
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<img alt="Worker profile" class="w-8 h-8 rounded-full" data-alt="Close up portrait of a young tradesman with a beard wearing a grey beanie and workwear" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhYMi8Jvde_hoGQVhDe99oEeC2Q8klW46dByHpzcas49iHESjFv-Luy1fqzuRLl7E_N3PRxV1AlQTxLiVv9_xXbPQkOm-znaYfidnJJ7C2dOHsoo8b9s2M9nxWWq14YijmcW-p7tKahvHubLdMi9EjpQkFtLYQh_7M2U-Nt_CKyhnFdvJb2N85t43g3Ycf5Z0Hj-NUK2-5GhHzLHDNBoY6jn1Wvkrx5HcZpF4pXyYCHXhfFEs6tUmP4PzdXzpQBbuVbUoDJu55XKM"/>
+<span class="font-semibold text-sm">David Miller</span>
+</div>
+</td>
+<td class="px-lg py-4 text-sm text-slate-600">Electrician</td>
+<td class="px-lg py-4">
+<span class="px-2 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-bold rounded-full uppercase">Approved</span>
+</td>
+<td class="px-lg py-4 text-right">
+<button class="text-slate-400 hover:text-orange-600">
+<span class="material-symbols-outlined text-xl" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 transition-colors">
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<img alt="Worker profile" class="w-8 h-8 rounded-full" data-alt="Headshot of a smiling female engineer in her 30s with her hair tied back wearing a professional blue polo shirt" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcQIx8JqdMHQbIP91d66ftJA7Lw4J67m5Ch469Ns9B6O-dQC3ccl49ZQYo2AS9qY_CIha490LnsBbDFruLamZ-G5LvK8g4LfjpDd5LSa22spv9mO6mdXn9ytBf9m1j5Hj-5Cc8FEr8nYBq9VbQuRI2IlMm_sa6c9zRdnCrYr89r2nKDW93MnBREDhb7TvgFfOe9RubrD4NfuCSnhu6EF49MdrIu52aLUmGX7Pgupd72KpWWO17d5-VFeIb73njxD2hPT9wbv8SAik"/>
+<span class="font-semibold text-sm">Sarah Jenkins</span>
+</div>
+</td>
+<td class="px-lg py-4 text-sm text-slate-600">Plumber</td>
+<td class="px-lg py-4">
+<span class="px-2 py-1 bg-amber-50 text-amber-700 text-[10px] font-bold rounded-full uppercase">Pending</span>
+</td>
+<td class="px-lg py-4 text-right">
+<button class="text-slate-400 hover:text-orange-600">
+<span class="material-symbols-outlined text-xl" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 transition-colors">
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<img alt="Worker profile" class="w-8 h-8 rounded-full" data-alt="Professional profile picture of a young man with short dark hair and a friendly expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAj19oqj5SrDz3yu5ReBDeicjHS3sEg8kC_c_9T-KN9o8sScBgbtBVmU37jLDew4HWNyE84LEYJVIYe-AwuWK2Q6LsfV1te9DPJ174XrQyc5gkvTJPuEFBpmLHNtq33ekIiaYTsquympIhDs8Tf6KmF5ZAf-bRfPlgdKn0QEvpVmk_DIehpoQTyV5NexovexuBRQdJHfVFHvr7KaapCasCka1MhBTHH6QnD1ui7tvJx-Gbd86GhH3Y5Z0u5AAyw99aUyRbxpfSoRhM"/>
+<span class="font-semibold text-sm">Alex Rivera</span>
+</div>
+</td>
+<td class="px-lg py-4 text-sm text-slate-600">Carpenter</td>
+<td class="px-lg py-4">
+<span class="px-2 py-1 bg-amber-50 text-amber-700 text-[10px] font-bold rounded-full uppercase">Pending</span>
+</td>
+<td class="px-lg py-4 text-right">
+<button class="text-slate-400 hover:text-orange-600">
+<span class="material-symbols-outlined text-xl" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Right Sidebar: Recent Activity -->
+<div class="lg:col-span-4 bg-white p-lg rounded-xl shadow-sm border border-slate-100 min-h-[600px]">
+<div class="flex items-center justify-between mb-lg">
+<h3 class="font-h3 text-h3 text-on-surface">Recent Activity</h3>
+<span class="material-symbols-outlined text-slate-400" data-icon="history">history</span>
+</div>
+<div class="space-y-lg relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center border-2 border-white z-10">
+<span class="material-symbols-outlined text-[12px] text-orange-600" data-icon="verified_user">verified_user</span>
+</div>
+<div>
+<p class="text-sm font-semibold">David Miller was approved</p>
+<p class="text-xs text-slate-500 mt-0.5">Admin Marcus approved registration doc #4492</p>
+<p class="text-[10px] text-slate-400 font-bold uppercase mt-2">2 mins ago</p>
+</div>
+</div>
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-6 h-6 bg-red-100 rounded-full flex items-center justify-center border-2 border-white z-10">
+<span class="material-symbols-outlined text-[12px] text-red-600" data-icon="report">report</span>
+</div>
+<div>
+<p class="text-sm font-semibold">Worker reported</p>
+<p class="text-xs text-slate-500 mt-0.5">John Doe flagged for "No Show" by customer Sarah L.</p>
+<p class="text-[10px] text-slate-400 font-bold uppercase mt-2">45 mins ago</p>
+</div>
+</div>
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center border-2 border-white z-10">
+<span class="material-symbols-outlined text-[12px] text-blue-600" data-icon="person_add">person_add</span>
+</div>
+<div>
+<p class="text-sm font-semibold">New registration: Sarah Jenkins</p>
+<p class="text-xs text-slate-500 mt-0.5">Awaiting certificate verification for "Plumbing"</p>
+<p class="text-[10px] text-slate-400 font-bold uppercase mt-2">2 hours ago</p>
+</div>
+</div>
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center border-2 border-white z-10">
+<span class="material-symbols-outlined text-[12px] text-amber-600" data-icon="star">star</span>
+</div>
+<div>
+<p class="text-sm font-semibold">New high-rating review</p>
+<p class="text-xs text-slate-500 mt-0.5">"Exceptional work!" - 5 stars for Mike's Masonry</p>
+<p class="text-[10px] text-slate-400 font-bold uppercase mt-2">5 hours ago</p>
+</div>
+</div>
+<div class="relative pl-8">
+<div class="absolute left-0 top-1 w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center border-2 border-white z-10">
+<span class="material-symbols-outlined text-[12px] text-slate-600" data-icon="update">update</span>
+</div>
+<div>
+<p class="text-sm font-semibold">System Update completed</p>
+<p class="text-xs text-slate-500 mt-0.5">Analytics engine upgraded to v2.4.1</p>
+<p class="text-[10px] text-slate-400 font-bold uppercase mt-2">Yesterday</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-lg py-2 text-sm font-bold text-slate-500 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                        View Audit Log
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB for quick actions (Contextual to Home/Dashboard) -->
+<button class="fixed bottom-lg right-lg w-14 h-14 bg-orange-600 text-white rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined text-2xl" data-icon="add">add</span>
+</button>
+</body></html>

@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-expo-app@latest . --template expo-template-blank-typescript)",
+      "Read(//d//**)",
+      "Bash(npx create-expo-app@latest tradefind-init --template expo-template-blank-typescript)",
+      "Bash(cp D:/tradefind-init/app.json D:/tradefind/app.json)",
+      "Bash(cp D:/tradefind-init/App.tsx D:/tradefind/App.tsx)",
+      "Bash(cp D:/tradefind-init/index.ts D:/tradefind/index.ts)",
+      "Bash(cp D:/tradefind-init/package.json D:/tradefind/package.json)",
+      "Bash(cp D:/tradefind-init/package-lock.json D:/tradefind/package-lock.json)",
+      "Bash(npx expo *)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(grep -E '\\\\.\\(ts|tsx\\)$')"
+    ]
+  }
+}

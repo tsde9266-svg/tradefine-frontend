@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradeFind Icon Set Reference</title>
+<!-- Tailwind CSS v3 with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style data-purpose="typography">
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+<style data-purpose="layout">
+    .icon-grid-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    /* Fixed sizing for icon display to ensure consistency */
+    .icon-preview-box {
+      width: 48px;
+      height: 48px;
+    }
+  </style>
+</head>
+<body class="bg-white text-slate-800 p-8">
+<!-- BEGIN: MainHeader -->
+<header class="text-center mb-12" data-purpose="page-header">
+<h1 class="text-4xl font-bold text-slate-900 mb-2">TradeFind Icon Set</h1>
+<p class="text-lg text-slate-500">Official UI Reference Sheet • 24x24px Grid System</p>
+<div class="mt-4 flex justify-center gap-6">
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 bg-[#F97316] rounded"></div>
+<span class="text-sm font-medium">Primary: #F97316</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-4 h-4 bg-[#6B7280] rounded"></div>
+<span class="text-sm font-medium">Secondary: #6B7280</span>
+</div>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: IconReferenceGrid -->
+<main class="icon-grid-container" data-purpose="main-content">
+<!-- Primary Visual Reference Block -->
+<section class="mb-16 border border-slate-100 rounded-2xl p-8 bg-slate-50 shadow-sm" data-purpose="master-asset-view">
+<div class="flex flex-col items-center">
+<span class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Master Sprite Sheet Reference</span>
+<div class="bg-white p-4 rounded-xl shadow-inner border border-slate-200">
+<img alt="TradeFind Icon Set Grid" class="max-w-full h-auto rounded-lg" src="https://lh3.googleusercontent.com/aida/ADBb0uhoUgKOtCLODDfNfsooY41ySurKHGDagiiU_jcR87OKYOFQIvcLb0sUa6g36cyekCz1phqn3BWdout38HPAtrZbnER_lQPvwrVPpkhpmU_ZVnF64onuchmicwDlZDD4MUg1K94-VW077hH4Bn5OwvKVWIWDdgWvpbc-GsCEmVY_8cACjOsnmX-Pmh2nNPPbPNMywoTbBqhKFwCBcdOlEiGK8EySugti4N0-FwOwccoCKBvgJU0xm0t9nqw" style="max-width: 600px;"/>
+</div>
+</div>
+</section>
+<!-- BEGIN: DetailedIconBreakdown -->
+<section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" data-purpose="icon-documentation-grid">
+<!-- Icon Item: Hard Hat -->
+<div class="flex flex-col items-center p-6 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-shadow">
+<div class="mb-4 text-[#F97316]" data-purpose="icon-preview">
+<!-- Representational slice of the provided sprite for this icon -->
+<div class="w-12 h-12 overflow-hidden relative">
+<img alt="Hard Hat" class="absolute" src="https://lh3.googleusercontent.com/aida/ADBb0uhoUgKOtCLODDfNfsooY41ySurKHGDagiiU_jcR87OKYOFQIvcLb0sUa6g36cyekCz1phqn3BWdout38HPAtrZbnER_lQPvwrVPpkhpmU_ZVnF64onuchmicwDlZDD4MUg1K94-VW077hH4Bn5OwvKVWIWDdgWvpbc-GsCEmVY_8cACjOsnmX-Pmh2nNPPbPNMywoTbBqhKFwCBcdOlEiGK8EySugti4N0-FwOwccoCKBvgJU0xm0t9nqw" style="width: 400px; left: -10px; top: -10px;"/>
+</div>
+</div>
+<span class="font-semibold text-slate-700">Hard Hat</span>
+<code class="text-xs text-slate-400 mt-1">tf-hard-hat</code>
+</div>
+<!-- Icon Item: Map Pin -->
+<div class="flex flex-col items-center p-6 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-shadow">
+<div class="mb-4 text-[#F97316]" data-purpose="icon-preview">
+<div class="w-12 h-12 overflow-hidden relative">
+<img alt="Map Pin" class="absolute" src="https://lh3.googleusercontent.com/aida/ADBb0uhoUgKOtCLODDfNfsooY41ySurKHGDagiiU_jcR87OKYOFQIvcLb0sUa6g36cyekCz1phqn3BWdout38HPAtrZbnER_lQPvwrVPpkhpmU_ZVnF64onuchmicwDlZDD4MUg1K94-VW077hH4Bn5OwvKVWIWDdgWvpbc-GsCEmVY_8cACjOsnmX-Pmh2nNPPbPNMywoTbBqhKFwCBcdOlEiGK8EySugti4N0-FwOwccoCKBvgJU0xm0t9nqw" style="width: 400px; left: -110px; top: -10px;"/>
+</div>
+</div>
+<span class="font-semibold text-slate-700">Map Pin</span>
+<code class="text-xs text-slate-400 mt-1">tf-map-pin</code>
+</div>
+<!-- Icon Item: Star -->
+<div class="flex flex-col items-center p-6 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-shadow">
+<div class="mb-4 text-[#F97316]" data-purpose="icon-preview">
+<div class="w-12 h-12 overflow-hidden relative">
+<img alt="Star" class="absolute" src="https://lh3.googleusercontent.com/aida/ADBb0uhoUgKOtCLODDfNfsooY41ySurKHGDagiiU_jcR87OKYOFQIvcLb0sUa6g36cyekCz1phqn3BWdout38HPAtrZbnER_lQPvwrVPpkhpmU_ZVnF64onuchmicwDlZDD4MUg1K94-VW077hH4Bn5OwvKVWIWDdgWvpbc-GsCEmVY_8cACjOsnmX-Pmh2nNPPbPNMywoTbBqhKFwCBcdOlEiGK8EySugti4N0-FwOwccoCKBvgJU0xm0t9nqw" style="width: 400px; left: -210px; top: -10px;"/>
+</div>
+</div>
+<span class="font-semibold text-slate-700">Star</span>
+<code class="text-xs text-slate-400 mt-1">tf-star</code>
+</div>
+<!-- Icon Item: Phone -->
+<div class="flex flex-col items-center p-6 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-shadow">
+<div class="mb-4 text-[#F97316]" data-purpose="icon-preview">
+<div class="w-12 h-12 overflow-hidden relative">
+<img alt="Phone" class="absolute" src="https://lh3.googleusercontent.com/aida/ADBb0uhoUgKOtCLODDfNfsooY41ySurKHGDagiiU_jcR87OKYOFQIvcLb0sUa6g36cyekCz1phqn3BWdout38HPAtrZbnER_lQPvwrVPpkhpmU_ZVnF64onuchmicwDlZDD4MUg1K94-VW077hH4Bn5OwvKVWIWDdgWvpbc-GsCEmVY_8cACjOsnmX-Pmh2nNPPbPNMywoTbBqhKFwCBcdOlEiGK8EySugti4N0-FwOwccoCKBvgJU0xm0t9nqw" style="width: 400px; left: -310px; top: -10px;"/>
+</div>
+</div>
+<span class="font-semibold text-slate-700">Phone</span>
+<code class="text-xs text-slate-400 mt-1">tf-phone</code>
+</div>
+<!-- Icon Item: Availability Toggle -->
+<div class="flex flex-col items-center p-6 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-shadow">
+<div class="mb-4 text-[#F97316]" data-purpose="icon-preview">
+<div class="w-12 h-12 overflow-hidden relative">
+<img alt="Toggle" class="absolute" src="https://lh3.googleusercontent.com/aida/ADBb0uhoUgKOtCLODDfNfsooY41ySurKHGDagiiU_jcR87OKYOFQIvcLb0sUa6g36cyekCz1phqn3BWdout38HPAtrZbnER_lQPvwrVPpkhpmU_ZVnF64onuchmicwDlZDD4MUg1K94-VW077hH4Bn5OwvKVWIWDdgWvpbc-GsCEmVY_8cACjOsnmX-Pmh2nNPPbPNMywoTbBqhKFwCBcdOlEiGK8EySugti4N0-FwOwccoCKBvgJU0xm0t9nqw" style="width: 400px; left: -10px; top: -110px;"/>
+</div>
+</div>
+<span class="font-semibold text-slate-700">Availability</span>
+<code class="text-xs text-slate-400 mt-1">tf-toggle</code>
+</div>
+<!-- Icon Item: Bookmark -->
+<div class="flex flex-col items-center p-6 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-shadow">
+<div class="mb-4 text-[#F97316]" data-purpose="icon-preview">
+<div class="w-12 h-12 overflow-hidden relative">
+<img alt="Bookmark" class="absolute" src="https://lh3.googleusercontent.com/aida/ADBb0uhoUgKOtCLODDfNfsooY41ySurKHGDagiiU_jcR87OKYOFQIvcLb0sUa6g36cyekCz1phqn3BWdout38HPAtrZbnER_lQPvwrVPpkhpmU_ZVnF64onuchmicwDlZDD4MUg1K94-VW077hH4Bn5OwvKVWIWDdgWvpbc-GsCEmVY_8cACjOsnmX-Pmh2nNPPbPNMywoTbBqhKFwCBcdOlEiGK8EySugti4N0-FwOwccoCKBvgJU0xm0t9nqw" style="width: 400px; left: -110px; top: -110px;"/>
+</div>
+</div>
+<span class="font-semibold text-slate-700">Bookmark</span>
+<code class="text-xs text-slate-400 mt-1">tf-bookmark</code>
+</div>
+<!-- Icon Item: Camera -->
+<div class="flex flex-col items-center p-6 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-shadow">
+<div class="mb-4 text-[#F97316]" data-purpose="icon-preview">
+<div class="w-12 h-12 overflow-hidden relative">
+<img alt="Camera" class="absolute" src="https://lh3.googleusercontent.com/aida/ADBb0uhoUgKOtCLODDfNfsooY41ySurKHGDagiiU_jcR87OKYOFQIvcLb0sUa6g36cyekCz1phqn3BWdout38HPAtrZbnER_lQPvwrVPpkhpmU_ZVnF64onuchmicwDlZDD4MUg1K94-VW077hH4Bn5OwvKVWIWDdgWvpbc-GsCEmVY_8cACjOsnmX-Pmh2nNPPbPNMywoTbBqhKFwCBcdOlEiGK8EySugti4N0-FwOwccoCKBvgJU0xm0t9nqw" style="width: 400px; left: -210px; top: -110px;"/>
+</div>
+</div>
+<span class="font-semibold text-slate-700">Camera</span>
+<code class="text-xs text-slate-400 mt-1">tf-camera</code>
+</div>
+<!-- Icon Item: Shield -->
+<div class="flex flex-col items-center p-6 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-shadow">
+<div class="mb-4 text-[#F97316]" data-purpose="icon-preview">
+<div class="w-12 h-12 overflow-hidden relative">
+<img alt="Shield" class="absolute" src="https://lh3.googleusercontent.com/aida/ADBb0uhoUgKOtCLODDfNfsooY41ySurKHGDagiiU_jcR87OKYOFQIvcLb0sUa6g36cyekCz1phqn3BWdout38HPAtrZbnER_lQPvwrVPpkhpmU_ZVnF64onuchmicwDlZDD4MUg1K94-VW077hH4Bn5OwvKVWIWDdgWvpbc-GsCEmVY_8cACjOsnmX-Pmh2nNPPbPNMywoTbBqhKFwCBcdOlEiGK8EySugti4N0-FwOwccoCKBvgJU0xm0t9nqw" style="width: 400px; left: -310px; top: -110px;"/>
+</div>
+</div>
+<span class="font-semibold text-slate-700">Shield</span>
+<code class="text-xs text-slate-400 mt-1">tf-shield</code>
+</div>
+<!-- Icon Item: Spanner -->
+<div class="flex flex-col items-center p-6 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-shadow">
+<div class="mb-4 text-[#F97316]" data-purpose="icon-preview">
+<div class="w-12 h-12 overflow-hidden relative">
+<img alt="Spanner" class="absolute" src="https://lh3.googleusercontent.com/aida/ADBb0uhoUgKOtCLODDfNfsooY41ySurKHGDagiiU_jcR87OKYOFQIvcLb0sUa6g36cyekCz1phqn3BWdout38HPAtrZbnER_lQPvwrVPpkhpmU_ZVnF64onuchmicwDlZDD4MUg1K94-VW077hH4Bn5OwvKVWIWDdgWvpbc-GsCEmVY_8cACjOsnmX-Pmh2nNPPbPNMywoTbBqhKFwCBcdOlEiGK8EySugti4N0-FwOwccoCKBvgJU0xm0t9nqw" style="width: 400px; left: -10px; top: -210px;"/>
+</div>
+</div>
+<span class="font-semibold text-slate-700">Spanner</span>
+<code class="text-xs text-slate-400 mt-1">tf-spanner</code>
+</div>
+<!-- Icon Item: Lightning Bolt -->
+<div class="flex flex-col items-center p-6 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-shadow">
+<div class="mb-4 text-[#F97316]" data-purpose="icon-preview">
+<div class="w-12 h-12 overflow-hidden relative">
+<img alt="Lightning" class="absolute" src="https://lh3.googleusercontent.com/aida/ADBb0uhoUgKOtCLODDfNfsooY41ySurKHGDagiiU_jcR87OKYOFQIvcLb0sUa6g36cyekCz1phqn3BWdout38HPAtrZbnER_lQPvwrVPpkhpmU_ZVnF64onuchmicwDlZDD4MUg1K94-VW077hH4Bn5OwvKVWIWDdgWvpbc-GsCEmVY_8cACjOsnmX-Pmh2nNPPbPNMywoTbBqhKFwCBcdOlEiGK8EySugti4N0-FwOwccoCKBvgJU0xm0t9nqw" style="width: 400px; left: -110px; top: -210px;"/>
+</div>
+</div>
+<span class="font-semibold text-slate-700">Lightning Bolt</span>
+<code class="text-xs text-slate-400 mt-1">tf-bolt</code>
+</div>
+<!-- Icon Item: Paintbrush -->
+<div class="flex flex-col items-center p-6 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-shadow">
+<div class="mb-4 text-[#F97316]" data-purpose="icon-preview">
+<div class="w-12 h-12 overflow-hidden relative">
+<img alt="Paintbrush" class="absolute" src="https://lh3.googleusercontent.com/aida/ADBb0uhoUgKOtCLODDfNfsooY41ySurKHGDagiiU_jcR87OKYOFQIvcLb0sUa6g36cyekCz1phqn3BWdout38HPAtrZbnER_lQPvwrVPpkhpmU_ZVnF64onuchmicwDlZDD4MUg1K94-VW077hH4Bn5OwvKVWIWDdgWvpbc-GsCEmVY_8cACjOsnmX-Pmh2nNPPbPNMywoTbBqhKFwCBcdOlEiGK8EySugti4N0-FwOwccoCKBvgJU0xm0t9nqw" style="width: 400px; left: -210px; top: -210px;"/>
+</div>
+</div>
+<span class="font-semibold text-slate-700">Paintbrush</span>
+<code class="text-xs text-slate-400 mt-1">tf-paintbrush</code>
+</div>
+<!-- Icon Item: Brick -->
+<div class="flex flex-col items-center p-6 bg-white border border-slate-100 rounded-xl hover:shadow-md transition-shadow">
+<div class="mb-4 text-[#F97316]" data-purpose="icon-preview">
+<div class="w-12 h-12 overflow-hidden relative">
+<img alt="Brick" class="absolute" src="https://lh3.googleusercontent.com/aida/ADBb0uhoUgKOtCLODDfNfsooY41ySurKHGDagiiU_jcR87OKYOFQIvcLb0sUa6g36cyekCz1phqn3BWdout38HPAtrZbnER_lQPvwrVPpkhpmU_ZVnF64onuchmicwDlZDD4MUg1K94-VW077hH4Bn5OwvKVWIWDdgWvpbc-GsCEmVY_8cACjOsnmX-Pmh2nNPPbPNMywoTbBqhKFwCBcdOlEiGK8EySugti4N0-FwOwccoCKBvgJU0xm0t9nqw" style="width: 400px; left: -310px; top: -210px;"/>
+</div>
+</div>
+<span class="font-semibold text-slate-700">Brick</span>
+<code class="text-xs text-slate-400 mt-1">tf-brick</code>
+</div>
+</section>
+<!-- END: DetailedIconBreakdown -->
+</main>
+<!-- END: IconReferenceGrid -->
+<!-- BEGIN: Footer -->
+<footer class="mt-20 border-t border-slate-100 pt-8 pb-12 text-center text-slate-400 text-sm">
+<p>© 2023 TradeFind Application System. All rights reserved.</p>
+<p class="mt-1">UI/UX Design Asset v1.0.4</p>
+</footer>
+<!-- END: Footer -->
+</body></html>

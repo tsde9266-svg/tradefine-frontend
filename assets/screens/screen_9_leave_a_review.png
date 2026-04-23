@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradeFind - Leave a Review</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#f9f9ff",
+                        "surface": "#f9f9ff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "on-secondary-container": "#5d1900",
+                        "on-background": "#141b2b",
+                        "on-primary-fixed-variant": "#783200",
+                        "tertiary-container": "#c49200",
+                        "on-error": "#ffffff",
+                        "background": "#f9f9ff",
+                        "surface-container": "#e9edff",
+                        "on-tertiary-fixed": "#261a00",
+                        "on-surface-variant": "#584237",
+                        "primary-fixed-dim": "#ffb690",
+                        "secondary": "#ac3400",
+                        "secondary-fixed-dim": "#ffb59d",
+                        "surface-container-highest": "#dce2f7",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-container": "#422f00",
+                        "surface-tint": "#9d4300",
+                        "on-primary-container": "#582200",
+                        "outline-variant": "#e0c0b1",
+                        "secondary-fixed": "#ffdbd0",
+                        "primary-container": "#f97316",
+                        "surface-container-low": "#f1f3ff",
+                        "primary-fixed": "#ffdbca",
+                        "on-secondary-fixed": "#390c00",
+                        "tertiary-fixed": "#ffdf9f",
+                        "inverse-on-surface": "#edf0ff",
+                        "on-surface": "#141b2b",
+                        "outline": "#8c7164",
+                        "on-secondary-fixed-variant": "#832600",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#dce2f7",
+                        "primary": "#9d4300",
+                        "surface-container-high": "#e1e8fd",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#fd6b36",
+                        "tertiary": "#795900",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#341100",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#ffb690",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#d3daef",
+                        "inverse-surface": "#293040"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "gutter": "12px",
+                        "lg": "24px",
+                        "xs": "8px",
+                        "md": "16px",
+                        "base": "4px",
+                        "xl": "32px",
+                        "margin": "16px"
+                    },
+                    "fontFamily": {
+                        "h2": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "h1": ["Inter"],
+                        "h3": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h2": ["24px", {"lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "h1": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "h3": ["20px", {"lineHeight": "26px", "letterSpacing": "0em", "fontWeight": "700"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-star {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-bright text-on-surface font-body-md min-h-screen">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 flex justify-between items-center w-full px-4 h-16 bg-[#F9FAFB] border-b border-slate-200">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-500 cursor-pointer">arrow_back</span>
+<h1 class="text-xl font-black text-orange-600 font-h3 tracking-tight">TradeFind</h1>
+</div>
+<div class="flex items-center gap-3">
+<img alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm" data-alt="Close-up portrait of a professional man in a clean office setting, soft natural lighting, high-end photography style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZt-Cb7MK2EhUfQBQ-FyJbCqKCt_M7z0dZiY5mQbGZyVI-KcOEIPUyaXMeVUan0B59-rVf8IW57hzvU_KKBW1vFnUv25us70DJcX0s8jjmE-sjn8b1kzPH3wBDt3PrW6vvw07fresCQbGfRNVZPO0ut1fCrmDLr54T_1b2tV5UXS8_vXTGMD1U91O3wKJSxvXI2KsuQJMSTaO-ZOWOWiexbiiD-hckXRCqN9pWs716oeWSICyo1ns7jRn5ncY7iLbYlby0XzJd7XQ"/>
+</div>
+</header>
+<main class="max-w-xl mx-auto px-margin py-lg space-y-lg pb-32">
+<!-- Profile Anchor -->
+<section class="flex items-center gap-md">
+<div class="relative">
+<img alt="James O'Brien" class="w-20 h-20 rounded-xl object-cover shadow-sm" data-alt="Professional electrician wearing a branded polo shirt, smiling at the camera in a modern residential interior" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQzPiAjgw-48PNSMur0Hb75gopb7NB-O_gxMnsBx1VG19W3ecuKaee7hRdDEd5HfjDqrhFPwEN_2OD9A23JfSqxn3oroVp_OSEblO5yvtfWIUTEi09ZSXN0yjHXdm_2IVQEmP26RtbDxsYU8Wzat0CfF3dnA-SNtvdGbo0Qmhxek_0DHaaavcw4Xh2yrHmmZZ4z82eDE0ukmfhIAGrxGDgFp53StAVjN0qfc4Eag3eeZ0FYTpww1udFZUQYlcfVVDqvN0y0ir0E_I"/>
+<div class="absolute -bottom-2 -right-2 bg-green-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold border-2 border-white">
+                    VERIFIED
+                </div>
+</div>
+<div>
+<h2 class="font-h2 text-on-surface">How was your experience with James O'Brien?</h2>
+<p class="font-label-md text-on-surface-variant mt-1">Licensed Electrician • Job completed May 12</p>
+</div>
+</section>
+<!-- Review Form Container -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] p-md border border-slate-100">
+<form class="space-y-lg">
+<!-- Star Rating -->
+<div class="text-center space-y-xs">
+<p class="font-label-md text-on-surface-variant uppercase tracking-wider">Tap to rate</p>
+<div class="flex justify-center gap-xs">
+<span class="material-symbols-outlined text-4xl text-[#FBBF24] cursor-pointer filled-star" data-icon="star">star</span>
+<span class="material-symbols-outlined text-4xl text-[#FBBF24] cursor-pointer filled-star" data-icon="star">star</span>
+<span class="material-symbols-outlined text-4xl text-[#FBBF24] cursor-pointer filled-star" data-icon="star">star</span>
+<span class="material-symbols-outlined text-4xl text-[#FBBF24] cursor-pointer filled-star" data-icon="star">star</span>
+<span class="material-symbols-outlined text-4xl text-slate-200 cursor-pointer" data-icon="star">star</span>
+</div>
+</div>
+<!-- Review Text Area -->
+<div class="space-y-xs">
+<label class="font-h3 text-on-surface text-body-lg">Share your feedback</label>
+<textarea class="w-full min-h-[160px] p-md bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all text-body-md placeholder:text-slate-400 outline-none" placeholder="James was incredibly professional. He arrived on time, diagnosed the wiring fault quickly, and left the workspace spotless..."></textarea>
+</div>
+<!-- Photo Upload -->
+<div class="space-y-xs">
+<label class="font-label-md text-on-surface-variant">Visual Proof (Optional)</label>
+<div class="grid grid-cols-3 gap-sm">
+<button class="aspect-square flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-xl hover:bg-slate-50 transition-colors group" type="button">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">add_a_photo</span>
+<span class="text-[10px] font-bold text-slate-400 group-hover:text-primary mt-1 text-center px-1">Add photos from the job</span>
+</button>
+<div class="relative group aspect-square">
+<img alt="Job photo 1" class="w-full h-full object-cover rounded-xl border border-slate-100" data-alt="Cleanly installed electrical panel with organized colored wiring inside a modern utility room" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmG19H92ujmihZgwA56GRvy6NkqXGVlgj1Zy9gvd7g4Zu22wKg9P_MIffwIWRDURcxwBe31gmwStWh9MhbSLBtO0RyNn3GrWlFz9E3CpMbsCa34eGOqzaHj63-XiJY7jZHwBs0d4i5u6hk8fsE_TL_wN6CON6KkEa2bLvUmrhU8up9sTS_SKK0Py1r1WrzeF6vCV3s3GwZ9HSSh6gbJNNlTLva1L0HZlYYTRO6YlUeO9mcK2PyJOVIUlRHN5PvKwyj6rWCtk1B0TQ"/>
+<div class="absolute top-1 right-1 bg-white/90 rounded-full p-0.5 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-xs text-error">close</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Submit Button -->
+<button class="w-full h-12 bg-primary-container text-white font-h3 rounded-xl shadow-lg shadow-orange-200 active:scale-95 transition-transform" type="submit">
+                    Post Review
+                </button>
+</form>
+</section>
+<!-- Previous Reviews Section -->
+<section class="space-y-md">
+<div class="flex items-center justify-between">
+<h3 class="font-h3 text-on-surface">Recent reviews for James</h3>
+<span class="text-primary font-label-md">View all 128</span>
+</div>
+<div class="space-y-gutter">
+<!-- Review Card 1 -->
+<div class="bg-white p-md rounded-xl border border-slate-100 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 text-xs">SK</div>
+<div>
+<p class="font-h3 text-body-md">Sarah K.</p>
+<div class="flex text-[#FBBF24] text-[12px]">
+<span class="material-symbols-outlined text-sm filled-star">star</span>
+<span class="material-symbols-outlined text-sm filled-star">star</span>
+<span class="material-symbols-outlined text-sm filled-star">star</span>
+<span class="material-symbols-outlined text-sm filled-star">star</span>
+<span class="material-symbols-outlined text-sm filled-star">star</span>
+</div>
+</div>
+</div>
+<span class="font-label-md text-slate-400">2 days ago</span>
+</div>
+<p class="text-body-md text-on-surface-variant leading-relaxed">
+                        "James was very helpful and sorted out our outdoor lighting problem in no time. Competitive pricing and very polite."
+                    </p>
+</div>
+<!-- Review Card 2 -->
+<div class="bg-white p-md rounded-xl border border-slate-100 shadow-sm">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-xs">
+<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 text-xs">MT</div>
+<div>
+<p class="font-h3 text-body-md">Michael T.</p>
+<div class="flex text-[#FBBF24] text-[12px]">
+<span class="material-symbols-outlined text-sm filled-star">star</span>
+<span class="material-symbols-outlined text-sm filled-star">star</span>
+<span class="material-symbols-outlined text-sm filled-star">star</span>
+<span class="material-symbols-outlined text-sm filled-star">star</span>
+<span class="material-symbols-outlined text-sm filled-star">star</span>
+</div>
+</div>
+</div>
+<span class="font-label-md text-slate-400">1 week ago</span>
+</div>
+<p class="text-body-md text-on-surface-variant leading-relaxed">
+                        "Reliable service. I highly recommend him for any electrical work."
+                    </p>
+</div>
+</div>
+</section>
+</main>
+<!-- Navigation Shell (BottomNavBar) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 bg-white border-t border-slate-100 px-2 pb-safe shadow-[0_-2px_8px_rgba(0,0,0,0.08)]">
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-orange-500 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Inter'] text-[12px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-orange-500 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span class="font-['Inter'] text-[12px] font-medium">Map</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-orange-500 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+<span class="font-['Inter'] text-[12px] font-medium">Bookmarks</span>
+</a>
+<a class="flex flex-col items-center justify-center text-orange-600 bg-orange-50/50 rounded-xl px-3 py-1 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Inter'] text-[12px] font-bold">Profile</span>
+</a>
+</nav>
+</body></html>
