@@ -1,11 +1,13 @@
 import { z } from 'zod';
 
-const ukPhoneRegex = /^(\+44\s?7\d{3}|\(?07\d{3}\)?)\s?\d{3}\s?\d{3}$/;
+// Accepts any phone with 7–15 digits (E.164 or local).
+// Strict UK validation is enforced server-side after launch.
+const phoneRegex = /^\+?[\d\s\-().]{7,15}$/;
 
 export const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Enter a valid email address'),
-  phone: z.string().regex(ukPhoneRegex, 'Enter a valid UK mobile number'),
+  phone: z.string().regex(phoneRegex, 'Enter a valid phone number'),
   password: z
     .string()
     .min(8, 'Password must be at least 8 characters')

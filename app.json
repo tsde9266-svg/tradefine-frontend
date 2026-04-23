@@ -30,7 +30,7 @@
       "package": "com.tradefind.app",
       "config": {
         "googleMaps": {
-          "apiKey": "YOUR_GOOGLE_MAPS_API_KEY"
+          "apiKey": "AIzaSyCwN9QR6XSw98Ko0uYmds0WVA0TrA5UW00"
         }
       },
       "permissions": [
