@@ -41,12 +41,16 @@ export default function RegisterScreen() {
   const signupForm = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
     defaultValues: { name: '', email: '', phone: '', password: '' },
+    mode: 'onBlur',
+    reValidateMode: 'onBlur',
   });
 
   // --- Log In form ---
   const loginForm = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: '', password: '' },
+    mode: 'onBlur',
+    reValidateMode: 'onBlur',
   });
 
   const onSignUp = signupForm.handleSubmit(async ({ agreedToTerms: _, ...values }) => {
