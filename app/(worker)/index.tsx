@@ -69,13 +69,15 @@ export default function WorkerDashboard() {
     if (!user?.id) return;
     (async () => {
       try {
-        const [w, jobs] = await Promise.all([
-          getWorkerById(user.id),
-          getActiveJobs(),
-        ]);
+        const w = await getWorkerById(user.id);
         setProfile(w);
-        setActiveJobs(jobs);
         if (accessToken) connectSocket(accessToken, w.id);
+        try {
+          const jobs = await getActiveJobs();
+          setActiveJobs(jobs);
+        } catch {
+          // jobs endpoint not yet on server — ignore until deployed
+        }
       } catch {
         if (accessToken) connectSocket(accessToken);
       }

@@ -53,16 +53,19 @@ export default function WorkerProfileScreen() {
     if (!id) return;
     (async () => {
       try {
-        const [w, r, jobs] = await Promise.all([
+        const [w, r] = await Promise.all([
           getWorkerById(id),
           getWorkerReviews(id),
-          getActiveJobs(),
         ]);
         setWorker(w);
         setReviews(r);
-        // Find active job for this specific worker
-        const jobForThisWorker = jobs.find((j) => j.workerId === w.id) ?? null;
-        setActiveJob(jobForThisWorker);
+        // Jobs API — graceful: if not yet deployed on server, ignore
+        try {
+          const jobs = await getActiveJobs();
+          setActiveJob(jobs.find((j) => j.workerId === w.id) ?? null);
+        } catch {
+          // jobs endpoint not yet available — silently ignore
+        }
       } catch {
         show('Could not load profile', 'error');
       } finally {
