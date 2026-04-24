@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useAuthStore } from '../../stores/authStore';
+import { TabHeader } from '../../components/layout/AppHeader';
 import { colors } from '../../constants/colors';
 import { radius } from '../../constants/radius';
 import { spacing } from '../../constants/spacing';
@@ -38,20 +39,7 @@ export default function CustomerProfileScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
-      {/* Fixed top bar — outside ScrollView so it never scrolls */}
-      <View style={styles.topBar}>
-        <Pressable style={styles.menuBtn}>
-          <Ionicons name="menu-outline" size={24} color={colors.textPrimary} />
-        </Pressable>
-        <Text style={styles.brand}>TradeFind</Text>
-        <View style={styles.avatarBtn}>
-          {user?.avatarUrl ? (
-            <Image source={{ uri: user.avatarUrl }} style={styles.avatarBtnImg} />
-          ) : (
-            <Ionicons name="person-outline" size={18} color={colors.primary} />
-          )}
-        </View>
-      </View>
+      <TabHeader />
 
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         {/* (header moved above ScrollView) */}
@@ -126,25 +114,6 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
   scroll: { paddingBottom: 40 },
 
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-  },
-  brand: { ...typography.h3, color: colors.primary, fontWeight: '800', letterSpacing: -0.5 },
-  menuBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
-  avatarBtn: {
-    width: 36, height: 36, borderRadius: 18,
-    backgroundColor: colors.primaryLight,
-    alignItems: 'center', justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  avatarBtnImg: { width: 36, height: 36 },
 
   avatarSection: { alignItems: 'center', paddingVertical: spacing.xxl, gap: 4 },
   avatarWrap: { position: 'relative', marginBottom: spacing.sm },

@@ -15,6 +15,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useToast } from '../../../components/ui/Toast';
+import { StackHeader } from '../../../components/layout/AppHeader';
 import { colors } from '../../../constants/colors';
 import { radius } from '../../../constants/radius';
 import { spacing } from '../../../constants/spacing';
@@ -88,19 +89,10 @@ export default function RequestWorkerScreen() {
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <Pressable
-            onPress={() => (mode === 'choose' ? router.back() : setMode('choose'))}
-            style={styles.backBtn}
-          >
-            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
-          </Pressable>
-          <Text style={styles.headerTitle}>
-            {mode === 'choose' ? `Request ${firstName}` : mode === 'in_app' ? 'Describe the Job' : 'Call & Confirm'}
-          </Text>
-          <View style={{ width: 36 }} />
-        </View>
+        <StackHeader
+          title={mode === 'choose' ? `Request ${firstName}` : mode === 'in_app' ? 'Describe the Job' : 'Call & Confirm'}
+          onBack={() => mode === 'choose' ? router.back() : setMode('choose')}
+        />
 
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
 

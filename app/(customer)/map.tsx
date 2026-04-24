@@ -15,6 +15,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import WorkerMapPin from '../../components/map/WorkerMapPin';
+import { TabHeader } from '../../components/layout/AppHeader';
 import { colors } from '../../constants/colors';
 import { radius } from '../../constants/radius';
 import { spacing } from '../../constants/spacing';
@@ -86,19 +87,7 @@ export default function MapScreen() {
     <View style={styles.screen}>
       {/* ── Header + Search ─────────────────────────────────── */}
       <SafeAreaView edges={['top']} style={styles.topSafe}>
-        <View style={styles.header}>
-          <Pressable style={styles.menuBtn}>
-            <Ionicons name="menu-outline" size={24} color={colors.textPrimary} />
-          </Pressable>
-          <Text style={styles.headerTitle}>TradeFind</Text>
-          <Pressable
-            style={styles.profileBtn}
-            onPress={() => router.push('/(customer)/profile')}
-          >
-            <Ionicons name="person-outline" size={18} color={colors.primary} />
-          </Pressable>
-        </View>
-
+        <TabHeader />
         <Pressable
           style={styles.searchBar}
           onPress={() => router.push('/(customer)/search')}
@@ -278,32 +267,7 @@ function MapWorkerCard({ worker, onPress }: { worker: Worker; onPress: () => voi
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
 
-  // Header
-  topSafe: { backgroundColor: colors.surface, ...shadows.sm },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.xs,
-  },
-  menuBtn: {
-    width: 36, height: 36,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    ...typography.h3,
-    color: colors.primary,
-    fontWeight: '800',
-    letterSpacing: -0.5,
-  },
-  profileBtn: {
-    width: 36, height: 36, borderRadius: 18,
-    backgroundColor: colors.primaryLight,
-    alignItems: 'center', justifyContent: 'center',
-  },
+  topSafe: { backgroundColor: colors.surface },
 
   // Search
   searchBar: {

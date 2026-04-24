@@ -72,7 +72,14 @@
       "Bash(npx prisma *)",
       "PowerShell($env:DATABASE_URL = \"postgresql://tradefind:tradefind%4012345@178.104.119.210:5432/tradefind?connection_limit=20&pool_timeout=20\"; cd D:\\\\tradefind-backend\\\\api; npx prisma migrate dev --name add_job_request 2>&1)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(git fetch *)",
+      "Bash(git show *)",
+      "Bash(git merge *)",
+      "Bash(git add *)",
+      "Bash(ssh-keygen *)",
+      "Bash(git -C D:/tradefind checkout origin/main -- \"app/\\(customer\\)/worker/tracking.tsx\")",
+      "Bash(git -C D:/tradefind show origin/main:app/\\\\\\(customer\\\\\\)/worker/tracking.tsx)"
     ]
   }
 }

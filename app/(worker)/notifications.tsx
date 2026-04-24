@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import SkeletonLoader from '../../components/ui/SkeletonLoader';
+import { TabHeader } from '../../components/layout/AppHeader';
 import EmptyState from '../../components/ui/EmptyState';
 import StarRating from '../../components/ui/StarRating';
 import { useToast } from '../../components/ui/Toast';
@@ -156,26 +157,7 @@ export default function WorkerNotificationsScreen() {
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
 
-      {/* ── Top bar ─────────────────────────────────────────── */}
-      <View style={styles.topBar}>
-        <View style={styles.brandRow}>
-          <View style={styles.brandAvatar}>
-            <Ionicons name="person" size={15} color={colors.textInverse} />
-          </View>
-          <Text style={styles.brandText}>TradeFind</Text>
-        </View>
-        <View style={styles.topBarRight}>
-          {unreadCount > 0 && (
-            <Pressable onPress={handleMarkAll} hitSlop={8}>
-              <Text style={styles.markAll}>Mark all as read</Text>
-            </Pressable>
-          )}
-          <View style={styles.bellWrap}>
-            <Ionicons name="notifications" size={20} color={colors.textPrimary} />
-            {unreadCount > 0 && <View style={styles.bellBadge} />}
-          </View>
-        </View>
-      </View>
+      <TabHeader profileRoute="/(worker)/preview" />
 
       {/* ── Page header ─────────────────────────────────────── */}
       <View style={styles.pageHeader}>

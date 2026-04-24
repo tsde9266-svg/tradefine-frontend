@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useToast } from '../../components/ui/Toast';
+import { StackHeader } from '../../components/layout/AppHeader';
 import { useAuthStore } from '../../stores/authStore';
 import { colors } from '../../constants/colors';
 import { radius } from '../../constants/radius';
@@ -40,13 +41,7 @@ export default function CustomerEditProfileScreen() {
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
-          </Pressable>
-          <Text style={styles.title}>Edit Profile</Text>
-          <View style={{ width: 36 }} />
-        </View>
+        <StackHeader title="Edit Profile" />
 
         <View style={styles.form}>
           <View style={styles.field}>

@@ -29,6 +29,7 @@ import { TRADES } from '../../constants/trades';
 import { updateWorkerProfile } from '../../services/workers';
 import { uploadImage } from '../../services/upload';
 import { useWorkerProfileStore } from '../../stores/workerProfileStore';
+import { StackHeader } from '../../components/layout/AppHeader';
 
 const QUICK_CERTS = ['Gas Safe', 'NICEIC', 'CSCS', 'City & Guilds'];
 
@@ -153,14 +154,7 @@ export default function EditProfileScreen() {
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
       <KeyboardView>
-        {/* Header */}
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()} hitSlop={8} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
-          </Pressable>
-          <Text style={styles.headerTitle}>Edit Profile</Text>
-          <View style={{ width: 38 }} />
-        </View>
+        <StackHeader title="Edit Profile" />
 
         <ScrollView
           showsVerticalScrollIndicator={false}

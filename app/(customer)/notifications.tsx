@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import SkeletonLoader from '../../components/ui/SkeletonLoader';
+import { StackHeader } from '../../components/layout/AppHeader';
 import { colors } from '../../constants/colors';
 import { radius } from '../../constants/radius';
 import { spacing } from '../../constants/spacing';
@@ -57,19 +58,12 @@ export default function CustomerNotificationsScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
-        </Pressable>
-        <Text style={styles.title}>Notifications</Text>
-        {unreadCount > 0 ? (
-          <Pressable onPress={handleMarkAll}>
-            <Text style={styles.markAll}>Mark all read</Text>
-          </Pressable>
-        ) : (
-          <View style={{ width: 80 }} />
-        )}
-      </View>
+      <StackHeader
+        title="Notifications"
+        right={unreadCount > 0
+          ? <Pressable onPress={handleMarkAll}><Text style={styles.markAll}>Mark all read</Text></Pressable>
+          : undefined}
+      />
 
       {loading ? (
         <View style={styles.skeletons}>
@@ -113,9 +107,6 @@ export default function CustomerNotificationsScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.lg, paddingVertical: spacing.md, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.borderLight, ...shadows.sm },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.surfaceElevated, alignItems: 'center', justifyContent: 'center' },
-  title: { ...typography.h4, color: colors.textPrimary, fontWeight: '700' },
   markAll: { ...typography.small, color: colors.primary, fontWeight: '600' },
   list: { padding: spacing.lg, gap: spacing.sm },
   skeletons: { padding: spacing.lg, gap: spacing.sm },

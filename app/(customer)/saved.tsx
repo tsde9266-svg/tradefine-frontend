@@ -13,6 +13,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import SkeletonLoader from '../../components/ui/SkeletonLoader';
+import { TabHeader } from '../../components/layout/AppHeader';
 import EmptyState from '../../components/ui/EmptyState';
 import { useToast } from '../../components/ui/Toast';
 import { useAuthStore } from '../../stores/authStore';
@@ -58,23 +59,7 @@ export default function SavedScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
-      {/* Standard top bar — matches Map & Profile screens */}
-      <View style={styles.topBar}>
-        <Pressable style={styles.menuBtn}>
-          <Ionicons name="menu-outline" size={24} color={colors.textPrimary} />
-        </Pressable>
-        <Text style={styles.brand}>TradeFind</Text>
-        <Pressable
-          style={styles.avatarBtn}
-          onPress={() => router.push('/(customer)/profile')}
-        >
-          {user?.avatarUrl ? (
-            <Image source={{ uri: user.avatarUrl }} style={styles.avatarImg} />
-          ) : (
-            <Ionicons name="person-outline" size={18} color={colors.primary} />
-          )}
-        </Pressable>
-      </View>
+      <TabHeader />
 
       {/* Page title */}
       <View style={styles.pageHeader}>
@@ -204,26 +189,6 @@ function SavedCard({
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
 
-  /* Standard top bar */
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-  },
-  menuBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
-  brand: { ...typography.h3, color: colors.primary, fontWeight: '800', letterSpacing: -0.5 },
-  avatarBtn: {
-    width: 36, height: 36, borderRadius: 18,
-    backgroundColor: colors.primaryLight,
-    alignItems: 'center', justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  avatarImg: { width: 36, height: 36 },
 
   /* Page header */
   pageHeader: {

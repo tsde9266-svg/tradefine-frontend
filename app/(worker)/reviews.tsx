@@ -23,6 +23,7 @@ import { useWorkerProfileStore } from '../../stores/workerProfileStore';
 import { useAuth } from '../../hooks/useAuth';
 import { Review } from '../../types/review';
 import { formatRating } from '../../utils/formatters';
+import { TabHeader } from '../../components/layout/AppHeader';
 
 type FilterTab = 'all' | '5' | '4' | 'recent';
 
@@ -106,13 +107,7 @@ export default function WorkerReviewsScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.pageTitle}>My Reviews</Text>
-          <Text style={styles.pageSub}>What customers are saying about you</Text>
-        </View>
-      </View>
+      <TabHeader profileRoute="/(worker)/preview" />
 
       {loading ? (
         <View style={styles.skeletons}>

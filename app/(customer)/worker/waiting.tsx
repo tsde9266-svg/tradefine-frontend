@@ -15,6 +15,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useToast } from '../../../components/ui/Toast';
+import { StackHeader } from '../../../components/layout/AppHeader';
 import { colors } from '../../../constants/colors';
 import { radius } from '../../../constants/radius';
 import { spacing } from '../../../constants/spacing';
@@ -186,18 +187,7 @@ export default function WaitingScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      {/* Header */}
-      <View style={styles.header}>
-        {isTerminal ? (
-          <Pressable onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
-          </Pressable>
-        ) : (
-          <View style={{ width: 36 }} />
-        )}
-        <Text style={styles.headerTitle}>Job Status</Text>
-        <View style={{ width: 36 }} />
-      </View>
+      <StackHeader title="Job Status" onBack={isTerminal ? undefined : () => {}} />
 
       <View style={styles.content}>
         {!job ? (

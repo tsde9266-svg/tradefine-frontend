@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import SkeletonLoader from '../../components/ui/SkeletonLoader';
+import { StackHeader } from '../../components/layout/AppHeader';
 import { colors } from '../../constants/colors';
 import { radius } from '../../constants/radius';
 import { spacing } from '../../constants/spacing';
@@ -52,13 +53,7 @@ export default function MyReviewsScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
-        </Pressable>
-        <Text style={styles.title}>My Reviews</Text>
-        <View style={{ width: 36 }} />
-      </View>
+      <StackHeader title="My Reviews" />
 
       {loading ? (
         <View style={styles.skeletons}>
@@ -117,9 +112,6 @@ export default function MyReviewsScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.lg, paddingVertical: spacing.md, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.borderLight, ...shadows.sm },
-  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.surfaceElevated, alignItems: 'center', justifyContent: 'center' },
-  title: { ...typography.h4, color: colors.textPrimary, fontWeight: '700' },
   list: { padding: spacing.lg, gap: spacing.md },
   skeletons: { padding: spacing.lg, gap: spacing.sm },
   empty: { alignItems: 'center', gap: spacing.sm, marginTop: 80, paddingHorizontal: spacing.xxl },

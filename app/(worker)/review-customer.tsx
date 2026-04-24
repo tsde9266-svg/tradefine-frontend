@@ -20,6 +20,7 @@ import { radius } from '../../constants/radius';
 import { spacing } from '../../constants/spacing';
 import { typography } from '../../constants/typography';
 import { createReview } from '../../services/reviews';
+import { StackHeader } from '../../components/layout/AppHeader';
 
 const RATING_LABELS: Record<number, string> = {
   1: 'Difficult',
@@ -62,13 +63,7 @@ export default function ReviewCustomerScreen() {
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
       <KeyboardView>
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()} hitSlop={8}>
-            <Text style={styles.backIcon}>←</Text>
-          </Pressable>
-          <Text style={styles.headerTitle}>Review Customer</Text>
-          <View style={{ width: 32 }} />
-        </View>
+        <StackHeader title="Review Customer" />
 
         <ScrollView
           contentContainerStyle={styles.scroll}

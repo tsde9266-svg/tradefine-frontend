@@ -26,6 +26,7 @@ import { useWorkerTracking } from '../../../hooks/useWorkerTracking';
 import { LIGHT_MAP_STYLE } from '../../../constants/mapStyle';
 import { useLocationStore } from '../../../stores/locationStore';
 import { getWorkerById } from '../../../services/workers';
+import { StackHeader } from '../../../components/layout/AppHeader';
 import { Worker } from '../../../types/worker';
 
 interface Position { latitude: number; longitude: number }
@@ -157,17 +158,17 @@ export default function TrackingScreen() {
 
   return (
     <View style={styles.screen}>
-      <SafeAreaView edges={['top']} style={styles.headerSafe}>
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()} style={styles.iconBtn}>
-            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
-          </Pressable>
-          <Text style={styles.headerTitle}>Live Tracking</Text>
-          <View style={styles.iconBtn}>
-            <Ionicons name="radio-outline" size={22}
-              color={isLive && !workerOffline ? colors.primary : colors.textSecondary} />
-          </View>
-        </View>
+      <SafeAreaView edges={['top']}>
+        <StackHeader
+          title="Live Tracking"
+          right={
+            <Ionicons
+              name="radio-outline"
+              size={22}
+              color={isLive && !workerOffline ? colors.primary : colors.textSecondary}
+            />
+          }
+        />
       </SafeAreaView>
 
       <View style={styles.mapContainer}>
