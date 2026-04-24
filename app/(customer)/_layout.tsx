@@ -76,6 +76,9 @@ export default function CustomerLayout() {
       <Tabs.Screen name="worker/request"  options={{ href: null }} />
       <Tabs.Screen name="worker/waiting"  options={{ href: null }} />
       <Tabs.Screen name="search"          options={{ href: null }} />
+      <Tabs.Screen name="notifications"   options={{ href: null }} />
+      <Tabs.Screen name="edit-profile"    options={{ href: null }} />
+      <Tabs.Screen name="my-reviews"      options={{ href: null }} />
     </Tabs>
   );
 }

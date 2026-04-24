@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Image, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, Image, Linking, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -25,11 +25,15 @@ export default function CustomerProfileScreen() {
   };
 
   const menuItems: MenuItem[] = [
-    { label: 'Location sharing', icon: 'location-outline', right: <Switch value={true} trackColor={{ false: colors.border, true: colors.primary }} thumbColor={colors.surface} style={{ transform: [{ scaleX: 0.85 }, { scaleY: 0.85 }] }} /> },
-    { label: 'Edit Profile',    icon: 'person-outline',      onPress: () => {} },
-    { label: 'My Reviews',      icon: 'star-outline',         onPress: () => {} },
-    { label: 'Notifications',   icon: 'notifications-outline', onPress: () => {} },
-    { label: 'Help & Support',  icon: 'help-circle-outline',  onPress: () => {} },
+    {
+      label: 'Location sharing',
+      icon: 'location-outline',
+      right: <Switch value={true} trackColor={{ false: colors.border, true: colors.primary }} thumbColor={colors.surface} style={{ transform: [{ scaleX: 0.85 }, { scaleY: 0.85 }] }} />,
+    },
+    { label: 'Edit Profile',   icon: 'person-outline',        onPress: () => router.push('/(customer)/edit-profile') },
+    { label: 'My Reviews',     icon: 'star-outline',          onPress: () => router.push('/(customer)/my-reviews') },
+    { label: 'Notifications',  icon: 'notifications-outline', onPress: () => router.push('/(customer)/notifications') },
+    { label: 'Help & Support', icon: 'help-circle-outline',   onPress: () => Linking.openURL('mailto:support@tradefind.app') },
   ];
 
   return (
