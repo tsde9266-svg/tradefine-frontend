@@ -27,6 +27,8 @@ export default function Input({
   iconRight,
   onIconRightPress,
   style,
+  onFocus,
+  onBlur,
   ...props
 }: InputProps) {
   const [focused, setFocused] = useState(false);
@@ -45,8 +47,8 @@ export default function Input({
         <TextInput
           style={[styles.input, style]}
           placeholderTextColor={colors.textDisabled}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+          onFocus={(e) => { setFocused(true); onFocus?.(e); }}
+          onBlur={(e) => { setFocused(false); onBlur?.(e); }}
           {...props}
         />
         {iconRight && (

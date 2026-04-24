@@ -9,6 +9,7 @@ interface StarRatingProps {
   interactive?: boolean;
   size?: Size;
   onChange?: (rating: number) => void;
+  style?: object;
 }
 
 const STAR_SIZE: Record<Size, number> = { sm: 14, md: 20, lg: 28 };
@@ -52,11 +53,12 @@ export default function StarRating({
   interactive = false,
   size = 'md',
   onChange,
+  style,
 }: StarRatingProps) {
   const sizePx = STAR_SIZE[size];
 
   return (
-    <View style={styles.row}>
+    <View style={[styles.row, style]}>
       {[1, 2, 3, 4, 5].map(i => {
         const filled = value >= i;
         const half   = !filled && value >= i - 0.5;

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import * as Location from 'expo-location';
 
 import Button from '../ui/Button';
@@ -17,7 +17,11 @@ import { useToast } from '../ui/Toast';
 // Module-level interval — must not live in React state
 let locationInterval: ReturnType<typeof setInterval> | null = null;
 
-export default function AvailabilityToggle() {
+interface AvailabilityToggleProps {
+  variant?: 'default' | 'dark';
+}
+
+export default function AvailabilityToggle({ variant = 'default' }: AvailabilityToggleProps) {
   const { isAvailable, setAvailable } = useWorkerProfileStore();
   const { setLocation } = useLocationStore();
   const { show } = useToast();
@@ -127,6 +131,21 @@ export default function AvailabilityToggle() {
     }
   };
 
+  // Dark variant: rendered inside the green live card on the dashboard — no card wrapper
+  if (variant === 'dark') {
+    return isAvailable ? (
+      <Pressable
+        style={({ pressed }) => [styles.darkOfflineBtn, pressed && { opacity: 0.85 }]}
+        onPress={handleGoOffline}
+        disabled={loading}
+      >
+        <Text style={styles.darkOfflineBtnText}>{loading ? 'Going offline…' : 'Go Offline'}</Text>
+      </Pressable>
+    ) : (
+      <Button label="Go Available" variant="primary" fullWidth loading={loading} onPress={handleGoAvailable} />
+    );
+  }
+
   if (isAvailable) {
     return (
       <View style={styles.cardOn}>
@@ -154,7 +173,9 @@ export default function AvailabilityToggle() {
   return (
     <View style={styles.cardOff}>
       <View style={styles.headerRow}>
-        <Text style={styles.toggleIcon}>👁‍🗨</Text>
+        <View style={styles.pulseWrapper}>
+          <View style={[styles.pulseDotCore, { backgroundColor: colors.border }]} />
+        </View>
         <View style={styles.textBlock}>
           <Text style={styles.titleOff}>You're currently invisible</Text>
           <Text style={styles.subtitleOff}>Customers cannot find you right now</Text>
@@ -210,8 +231,18 @@ const styles = StyleSheet.create({
     color: colors.success,
     marginTop: spacing.xs,
   },
-  toggleIcon: {
-    fontSize: 32,
+  darkOfflineBtn: {
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,255,255,0.6)',
+    borderRadius: radius.md,
+    paddingVertical: spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  darkOfflineBtnText: {
+    ...typography.bodyMd,
+    color: '#fff',
+    fontWeight: '600',
   },
   pulseWrapper: {
     width: 40,

@@ -1,51 +1,51 @@
 import React, { useCallback, useEffect } from 'react';
 import {
   FlatList,
+  Linking,
   Pressable,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
 import SkeletonLoader from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
+import StarRating from '../../components/ui/StarRating';
 import { useToast } from '../../components/ui/Toast';
 import { colors } from '../../constants/colors';
+import { radius } from '../../constants/radius';
 import { spacing } from '../../constants/spacing';
+import { shadows } from '../../constants/shadows';
 import { typography } from '../../constants/typography';
 import { getNotifications, markAllRead } from '../../services/notifications';
 import { useNotificationStore } from '../../stores/notificationStore';
 import { Notification } from '../../types/notification';
 import { formatDate } from '../../utils/formatters';
 
-const TYPE_ICON: Record<Notification['type'], string> = {
-  new_review:       '⭐',
-  account_approved: '✅',
-  profile_saved:    '🔖',
-  call_received:    '📞',
-};
+type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
 
-const TYPE_COLOR: Record<Notification['type'], string> = {
-  new_review:       '#FBBF24',
-  account_approved: '#16A34A',
-  profile_saved:    '#F97316',
-  call_received:    '#F97316',
+const TYPE_CONFIG: Record<Notification['type'], { icon: IoniconsName; bg: string; color: string }> = {
+  new_review:       { icon: 'star',            bg: '#FFFBEB', color: '#FBBF24' },
+  account_approved: { icon: 'checkmark-circle', bg: '#DCFCE7', color: colors.success },
+  profile_saved:    { icon: 'bookmark',         bg: '#FFF7ED', color: colors.primary },
+  call_received:    { icon: 'call',             bg: '#FFF1F2', color: colors.error },
 };
 
 export default function WorkerNotificationsScreen() {
   const { show } = useToast();
-  const { notifications, setNotifications, markAllRead: storeMarkAll, unreadCount } =
-    useNotificationStore();
+  const { notifications, setNotifications, markAllRead: storeMarkAll, unreadCount } = useNotificationStore();
   const [loading, setLoading] = React.useState(true);
 
   useEffect(() => {
     (async () => {
       try {
         const data = await getNotifications();
-        setNotifications(data);
+        setNotifications(Array.isArray(data) ? data : []);
       } catch {
         show('Could not load notifications', 'error');
+        setNotifications([]);
       } finally {
         setLoading(false);
       }
@@ -62,17 +62,50 @@ export default function WorkerNotificationsScreen() {
   }, []);
 
   const renderItem = useCallback(({ item }: { item: Notification }) => {
-    const iconColor = TYPE_COLOR[item.type];
+    const cfg = TYPE_CONFIG[item.type] ?? { icon: 'notifications-outline' as IoniconsName, bg: '#F3F4F6', color: colors.textSecondary };
+    const isCall = item.type === 'call_received';
+    const isReview = item.type === 'new_review';
+
     return (
-      <View style={[styles.row, !item.read && styles.rowUnread]}>
-        <View style={[styles.unreadBar, { backgroundColor: item.read ? 'transparent' : colors.primary }]} />
-        <View style={[styles.iconCircle, { backgroundColor: iconColor + '22' }]}>
-          <Text style={styles.icon}>{TYPE_ICON[item.type]}</Text>
-        </View>
-        <View style={styles.content}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.body}>{item.body}</Text>
-          <Text style={styles.time}>{formatDate(item.createdAt)}</Text>
+      <View style={[styles.card, !item.read && styles.cardUnread]}>
+        {!item.read && <View style={styles.unreadBar} />}
+
+        <View style={styles.cardInner}>
+          {/* Icon */}
+          <View style={[styles.iconWrap, { backgroundColor: cfg.bg }]}>
+            <Ionicons name={cfg.icon} size={20} color={cfg.color} />
+          </View>
+
+          {/* Content */}
+          <View style={styles.content}>
+            <View style={styles.titleRow}>
+              <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
+              <Text style={styles.time}>{formatDate(item.createdAt)}</Text>
+            </View>
+            <Text style={styles.body}>{item.body}</Text>
+
+            {/* Star display for reviews */}
+            {isReview && <StarRating value={5} size="sm" style={styles.stars} />}
+
+            {/* Action buttons for calls */}
+            {isCall && (
+              <View style={styles.actionBtns}>
+                <Pressable
+                  style={styles.callBackBtn}
+                  onPress={() => {
+                    const match = item.body.match(/[\d\s]{7,}/);
+                    if (match) Linking.openURL(`tel:${match[0].trim()}`);
+                  }}
+                >
+                  <Ionicons name="call" size={13} color={colors.textInverse} />
+                  <Text style={styles.callBackText}>Call Back</Text>
+                </Pressable>
+                <Pressable style={styles.msgBtn}>
+                  <Text style={styles.msgBtnText}>Message</Text>
+                </Pressable>
+              </View>
+            )}
+          </View>
         </View>
       </View>
     );
@@ -82,33 +115,38 @@ export default function WorkerNotificationsScreen() {
     <SafeAreaView style={styles.screen} edges={['top']}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.pageTitle}>Notifications</Text>
+        <View style={styles.headerLeft}>
+          <Text style={styles.pageTitle}>Notifications</Text>
+          <Text style={styles.pageSub}>Stay updated with your latest job activity</Text>
+        </View>
         {unreadCount > 0 && (
           <Pressable onPress={handleMarkAll} hitSlop={8}>
-            <Text style={styles.markAllText}>Mark all read</Text>
+            <Text style={styles.markAll}>Mark all as read</Text>
           </Pressable>
         )}
       </View>
 
       {loading ? (
         <View style={styles.skeletons}>
-          {[1, 2, 3, 4].map((i) => (
-            <SkeletonLoader key={i} width="100%" height={72} borderRadius={12} style={styles.skeleton} />
+          {[1, 2, 3].map(i => (
+            <SkeletonLoader key={i} width="100%" height={90} borderRadius={14} style={{ marginBottom: spacing.md }} />
           ))}
         </View>
       ) : (
         <FlatList
           data={notifications}
-          keyExtractor={(item) => item.id}
+          keyExtractor={item => item.id}
           renderItem={renderItem}
           removeClippedSubviews
-          ListEmptyComponent={
-            <EmptyState
-              title="No notifications yet"
-              subtitle="You will be notified of reviews, saves and calls"
-            />
-          }
           contentContainerStyle={styles.list}
+          ListEmptyComponent={
+            <EmptyState title="No notifications yet" subtitle="You will be notified of reviews, saves and calls" />
+          }
+          ListFooterComponent={
+            notifications.length > 0
+              ? <Text style={styles.footer}>END OF RECENT ACTIVITY</Text>
+              : null
+          }
         />
       )}
     </SafeAreaView>
@@ -116,79 +154,70 @@ export default function WorkerNotificationsScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
+  screen: { flex: 1, backgroundColor: colors.background },
+
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
-  },
-  pageTitle: {
-    ...typography.h2,
-    color: colors.textPrimary,
-  },
-  markAllText: {
-    ...typography.small,
-    color: colors.primary,
-    fontWeight: '600',
-  },
-  list: {
-    paddingBottom: spacing.xxxl,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: spacing.md,
-    paddingRight: spacing.lg,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.lg,
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.borderLight,
-    gap: spacing.md,
   },
-  rowUnread: {
+  headerLeft: { flex: 1 },
+  pageTitle: { ...typography.h2, color: colors.textPrimary },
+  pageSub: { ...typography.small, color: colors.textSecondary, marginTop: 2 },
+  markAll: { ...typography.small, color: colors.primary, fontWeight: '600', marginTop: 4 },
+
+  skeletons: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg },
+  list: { padding: spacing.lg, paddingBottom: 32 },
+
+  card: {
     backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    marginBottom: spacing.md,
+    overflow: 'hidden',
+    flexDirection: 'row',
+    ...shadows.sm,
   },
-  unreadBar: {
-    width: 3,
-    alignSelf: 'stretch',
-    borderRadius: 2,
-  },
-  iconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+  cardUnread: { backgroundColor: '#FFFAF7' },
+  unreadBar: { width: 4, backgroundColor: colors.primary },
+  cardInner: { flex: 1, flexDirection: 'row', padding: spacing.md, gap: spacing.md },
+  iconWrap: {
+    width: 44, height: 44, borderRadius: 22,
+    alignItems: 'center', justifyContent: 'center',
     flexShrink: 0,
   },
-  icon: {
-    fontSize: 18,
+  content: { flex: 1, gap: 4 },
+  titleRow: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm },
+  title: { ...typography.bodyMd, color: colors.textPrimary, flex: 1 },
+  time: { ...typography.caption, color: colors.textDisabled, flexShrink: 0 },
+  body: { ...typography.small, color: colors.textSecondary },
+  stars: { marginTop: 4 },
+
+  actionBtns: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm },
+  callBackBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: colors.primary,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 8,
   },
-  content: {
-    flex: 1,
-    gap: 2,
+  callBackText: { ...typography.caption, color: colors.textInverse, fontWeight: '700' },
+  msgBtn: {
+    borderRadius: radius.sm,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  title: {
-    ...typography.bodyMd,
-    color: colors.textPrimary,
-  },
-  body: {
-    ...typography.small,
-    color: colors.textSecondary,
-  },
-  time: {
-    ...typography.caption,
-    color: colors.textDisabled,
-    marginTop: 2,
-  },
-  skeletons: {
-    paddingHorizontal: spacing.lg,
-    gap: spacing.sm,
-    marginTop: spacing.sm,
-  },
-  skeleton: { marginBottom: spacing.xs },
+  msgBtnText: { ...typography.caption, color: colors.textSecondary, fontWeight: '600' },
+  footer: { ...typography.label, color: colors.textDisabled, textAlign: 'center', paddingVertical: spacing.xl },
 });

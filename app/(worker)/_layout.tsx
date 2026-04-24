@@ -1,10 +1,22 @@
 import { Tabs } from 'expo-router';
-import { StyleSheet, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../constants/colors';
 import { spacing } from '../../constants/spacing';
 import { typography } from '../../constants/typography';
 import { useNotificationStore } from '../../stores/notificationStore';
+
+type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
+
+function TabIcon({ name, focused }: { name: IoniconsName; focused: boolean }) {
+  return (
+    <Ionicons
+      name={focused ? name : (`${name}-outline` as IoniconsName)}
+      size={24}
+      color={focused ? colors.primary : colors.textSecondary}
+    />
+  );
+}
 
 export default function WorkerLayout() {
   const insets = useSafeAreaInsets();
@@ -14,31 +26,35 @@ export default function WorkerLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: [
-          styles.tabBar,
-          { paddingBottom: insets.bottom + spacing.xs },
-        ],
+        tabBarStyle: {
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
+          borderTopWidth: 1,
+          height: 56 + insets.bottom,
+          paddingBottom: insets.bottom,
+          paddingTop: spacing.xs,
+        },
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
-        tabBarLabelStyle: styles.tabLabel,
+        tabBarLabelStyle: {
+          ...typography.caption,
+          fontWeight: '600',
+          marginTop: 2,
+        },
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Dashboard',
-          tabBarIcon: ({ focused }) => (
-            <Text style={[styles.icon, focused && styles.iconActive]}>📊</Text>
-          ),
+          title: 'Home',
+          tabBarIcon: ({ focused }) => <TabIcon name="home" focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="reviews"
         options={{
           title: 'Reviews',
-          tabBarIcon: ({ focused }) => (
-            <Text style={[styles.icon, focused && styles.iconActive]}>⭐</Text>
-          ),
+          tabBarIcon: ({ focused }) => <TabIcon name="star" focused={focused} />,
         }}
       />
       <Tabs.Screen
@@ -46,44 +62,18 @@ export default function WorkerLayout() {
         options={{
           title: 'Alerts',
           tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
-          tabBarIcon: ({ focused }) => (
-            <Text style={[styles.icon, focused && styles.iconActive]}>🔔</Text>
-          ),
+          tabBarIcon: ({ focused }) => <TabIcon name="notifications" focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="preview"
         options={{
-          title: 'Preview',
-          tabBarIcon: ({ focused }) => (
-            <Text style={[styles.icon, focused && styles.iconActive]}>👤</Text>
-          ),
+          title: 'Profile',
+          tabBarIcon: ({ focused }) => <TabIcon name="person" focused={focused} />,
         }}
       />
-      {/* Hidden screens */}
-      <Tabs.Screen name="edit-profile"      options={{ href: null }} />
-      <Tabs.Screen name="review-customer"   options={{ href: null }} />
+      <Tabs.Screen name="edit-profile"    options={{ href: null }} />
+      <Tabs.Screen name="review-customer" options={{ href: null }} />
     </Tabs>
   );
 }
-
-const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: colors.surface,
-    borderTopColor: colors.border,
-    borderTopWidth: 1,
-    height: 60,
-    paddingTop: spacing.xs,
-  },
-  tabLabel: {
-    ...typography.caption,
-    fontWeight: '600',
-  },
-  icon: {
-    fontSize: 22,
-    opacity: 0.5,
-  },
-  iconActive: {
-    opacity: 1,
-  },
-});

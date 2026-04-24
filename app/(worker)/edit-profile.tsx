@@ -10,13 +10,12 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { Image as ExpoImage } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import Slider from '@react-native-community/slider';
 
-import Avatar from '../../components/ui/Avatar';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import KeyboardView from '../../components/layout/KeyboardView';
@@ -156,11 +155,11 @@ export default function EditProfileScreen() {
       <KeyboardView>
         {/* Header */}
         <View style={styles.header}>
-          <Pressable onPress={() => router.back()} hitSlop={8}>
-            <Text style={styles.backIcon}>←</Text>
+          <Pressable onPress={() => router.back()} hitSlop={8} style={styles.backBtn}>
+            <Ionicons name="arrow-back" size={22} color={colors.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Edit Profile</Text>
-          <View style={{ width: 32 }} />
+          <View style={{ width: 38 }} />
         </View>
 
         <ScrollView
@@ -170,7 +169,17 @@ export default function EditProfileScreen() {
           {/* Profile photo */}
           <SectionHeader label="Profile Photo" />
           <View style={styles.avatarSection}>
-            <Avatar uri={avatarUri} name={name} size={100} />
+            <Pressable onPress={handleChangeAvatar} disabled={uploadingPhoto} style={styles.avatarPressable}>
+              {avatarUri
+                ? <Image source={{ uri: avatarUri }} style={styles.avatarImg} />
+                : <View style={[styles.avatarImg, styles.avatarFallback]}>
+                    <Ionicons name="person" size={40} color={colors.textInverse} />
+                  </View>
+              }
+              <View style={styles.editAvatarBadge}>
+                <Ionicons name="camera" size={14} color={colors.textInverse} />
+              </View>
+            </Pressable>
             <Pressable onPress={handleChangeAvatar} disabled={uploadingPhoto}>
               <Text style={styles.changePhotoLink}>
                 {uploadingPhoto ? 'Uploading…' : 'Change Photo'}
@@ -329,10 +338,10 @@ export default function EditProfileScreen() {
                   onPress={() => removePortfolioPhoto(uri)}
                   style={styles.photoThumb}
                 >
-                  <ExpoImage
+                  <Image
                     source={{ uri }}
                     style={styles.photoThumbImage}
-                    contentFit="cover"
+                    resizeMode="cover"
                   />
                   <View style={styles.photoRemoveOverlay}>
                     <Text style={styles.photoRemoveIcon}>×</Text>
@@ -399,9 +408,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.borderLight,
   },
-  backIcon: {
-    fontSize: 22,
-    color: colors.textPrimary,
+  backBtn: {
+    width: 38, height: 38, alignItems: 'center', justifyContent: 'center',
   },
   headerTitle: {
     ...typography.h4,
@@ -426,16 +434,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
   },
-  avatarSection: {
-    alignItems: 'center',
-    paddingVertical: spacing.xl,
-    gap: spacing.sm,
+  avatarSection: { alignItems: 'center', paddingVertical: spacing.xl, gap: spacing.sm },
+  avatarPressable: { position: 'relative' },
+  avatarImg: { width: 100, height: 100, borderRadius: 50 },
+  avatarFallback: { backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
+  editAvatarBadge: {
+    position: 'absolute', bottom: 2, right: 2,
+    width: 28, height: 28, borderRadius: 14,
+    backgroundColor: colors.primary,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 2, borderColor: colors.surface,
   },
-  changePhotoLink: {
-    ...typography.bodyMd,
-    color: colors.primary,
-    fontWeight: '600',
-  },
+  changePhotoLink: { ...typography.bodyMd, color: colors.primary, fontWeight: '600' },
   readOnly: {
     color: colors.textDisabled,
   },

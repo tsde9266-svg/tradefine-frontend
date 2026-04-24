@@ -7,8 +7,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
@@ -18,11 +16,20 @@ import { colors } from '../../constants/colors';
 import { spacing } from '../../constants/spacing';
 import { radius } from '../../constants/radius';
 import { typography } from '../../constants/typography';
-import { registerSchema, loginSchema, RegisterInput, LoginInput } from '../../utils/validators';
+import { registerSchema, loginSchema } from '../../utils/validators';
 import { register as apiRegister, login as apiLogin } from '../../services/auth';
 import { useAuthStore } from '../../stores/authStore';
 
 type Tab = 'signup' | 'login';
+
+function extractZodErrors(issues: { path: (string | number)[]; message: string }[]) {
+  const errs: Record<string, string> = {};
+  for (const issue of issues) {
+    const key = String(issue.path[0] ?? '');
+    if (key && !errs[key]) errs[key] = issue.message;
+  }
+  return errs;
+}
 
 export default function RegisterScreen() {
   const params = useLocalSearchParams<{ role?: string; tab?: string }>();
@@ -30,52 +37,70 @@ export default function RegisterScreen() {
   const role = (params.role ?? 'customer') as 'customer' | 'worker';
 
   const [activeTab, setActiveTab] = useState<Tab>(initialTab);
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // --- Login state ---
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginErrors, setLoginErrors] = useState<Record<string, string>>({});
+  const [loginLoading, setLoginLoading] = useState(false);
+
+  // --- Signup state ---
+  const [signupName, setSignupName] = useState('');
+  const [signupEmail, setSignupEmail] = useState('');
+  const [signupPhone, setSignupPhone] = useState('');
+  const [signupPassword, setSignupPassword] = useState('');
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [signupErrors, setSignupErrors] = useState<Record<string, string>>({});
+  const [signupLoading, setSignupLoading] = useState(false);
 
   const router = useRouter();
   const { show } = useToast();
   const setAuth = useAuthStore(s => s.setAuth);
 
-  // --- Sign Up form ---
-  const signupForm = useForm<RegisterInput>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: { name: '', email: '', phone: '', password: '' },
-    mode: 'onBlur',
-    reValidateMode: 'onBlur',
-  });
-
-  // --- Log In form ---
-  const loginForm = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
-    mode: 'onBlur',
-    reValidateMode: 'onBlur',
-  });
-
-  const onSignUp = signupForm.handleSubmit(async ({ agreedToTerms: _, ...values }) => {
+  const onSignUp = async () => {
+    const result = registerSchema.safeParse({
+      name: signupName,
+      email: signupEmail,
+      phone: signupPhone,
+      password: signupPassword,
+      agreedToTerms: agreedToTerms as true,
+    });
+    if (!result.success) {
+      setSignupErrors(extractZodErrors(result.error.issues));
+      return;
+    }
+    setSignupErrors({});
+    setSignupLoading(true);
     try {
-      const payload = await apiRegister({ ...values, role });
+      const payload = await apiRegister({ name: signupName, email: signupEmail, phone: signupPhone, password: signupPassword, role });
       await setAuth(payload.user, payload.accessToken, payload.refreshToken);
       router.replace('/(auth)/location-permission');
     } catch (err: any) {
       show(err?.response?.data?.error ?? 'Registration failed. Please try again.', 'error');
+    } finally {
+      setSignupLoading(false);
     }
-  });
+  };
 
-  const onLogin = loginForm.handleSubmit(async (values) => {
+  const onLogin = async () => {
+    const result = loginSchema.safeParse({ email: loginEmail, password: loginPassword });
+    if (!result.success) {
+      setLoginErrors(extractZodErrors(result.error.issues));
+      return;
+    }
+    setLoginErrors({});
+    setLoginLoading(true);
     try {
-      const payload = await apiLogin(values);
+      const payload = await apiLogin({ email: loginEmail, password: loginPassword });
       await setAuth(payload.user, payload.accessToken, payload.refreshToken);
-      if (payload.user.role === 'worker') {
-        router.replace('/(worker)');
-      } else {
-        router.replace('/(customer)');
-      }
+      router.replace(payload.user.role === 'worker' ? '/(worker)' : '/(customer)');
     } catch (err: any) {
       show(err?.response?.data?.error ?? 'Login failed. Check your credentials.', 'error');
+    } finally {
+      setLoginLoading(false);
     }
-  });
+  };
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -103,86 +128,51 @@ export default function RegisterScreen() {
 
           {activeTab === 'signup' ? (
             <View>
-              <Text style={styles.heading}>Create your account</Text>
+              <Text style={styles.heading}>Join our network</Text>
+              <Text style={styles.subheading}>Start finding trusted tradespeople in your area</Text>
 
-              <Controller
-                control={signupForm.control}
-                name="name"
-                render={({ field, fieldState }) => (
-                  <Input
-                    label="Full Name"
-                    placeholder="Jane Smith"
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    error={fieldState.error?.message}
-                    autoCapitalize="words"
-                    autoComplete="name"
-                  />
-                )}
+              <Input
+                label="Full Name"
+                placeholder="Jane Smith"
+                value={signupName}
+                onChangeText={setSignupName}
+                error={signupErrors.name}
+                autoCapitalize="words"
               />
-
-              <Controller
-                control={signupForm.control}
-                name="email"
-                render={({ field, fieldState }) => (
-                  <Input
-                    label="Email"
-                    placeholder="jane@example.com"
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    error={fieldState.error?.message}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoComplete="email"
-                  />
-                )}
+              <Input
+                label="Email"
+                placeholder="jane@example.com"
+                value={signupEmail}
+                onChangeText={setSignupEmail}
+                error={signupErrors.email}
+                keyboardType="email-address"
+                autoCapitalize="none"
               />
-
-              <Controller
-                control={signupForm.control}
-                name="phone"
-                render={({ field, fieldState }) => (
-                  <Input
-                    label="Phone"
-                    placeholder="07700 900000"
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    error={fieldState.error?.message}
-                    keyboardType="phone-pad"
-                    autoComplete="tel"
-                  />
-                )}
+              <Input
+                label="Phone"
+                placeholder="07700 900000"
+                value={signupPhone}
+                onChangeText={setSignupPhone}
+                error={signupErrors.phone}
+                keyboardType="phone-pad"
               />
-
-              <Controller
-                control={signupForm.control}
-                name="password"
-                render={({ field, fieldState }) => (
-                  <Input
-                    label="Password"
-                    placeholder="Min 8 chars, 1 uppercase, 1 number"
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    error={fieldState.error?.message}
-                    secureTextEntry={!showPassword}
-                    autoComplete="new-password"
-                    iconRight={
-                      <Text style={styles.showHide}>
-                        {showPassword ? 'Hide' : 'Show'}
-                      </Text>
-                    }
-                    onIconRightPress={() => setShowPassword(p => !p)}
-                  />
-                )}
+              <Input
+                label="Password"
+                placeholder="Min 8 chars, 1 uppercase, 1 number"
+                value={signupPassword}
+                onChangeText={setSignupPassword}
+                error={signupErrors.password}
+                secureTextEntry={!showPassword}
+                iconRight={
+                  <Text style={styles.showHide}>{showPassword ? 'Hide' : 'Show'}</Text>
+                }
+                onIconRightPress={() => setShowPassword(p => !p)}
               />
 
               {/* Terms checkbox */}
               <Pressable
                 style={styles.termsRow}
-                onPress={() => {
-                  setAgreedToTerms(p => !p);
-                  signupForm.setValue('agreedToTerms', !agreedToTerms as true);
-                }}
+                onPress={() => setAgreedToTerms(p => !p)}
               >
                 <View style={[styles.checkbox, agreedToTerms && styles.checkboxChecked]}>
                   {agreedToTerms && <Text style={styles.checkmark}>✓</Text>}
@@ -192,10 +182,8 @@ export default function RegisterScreen() {
                   <Text style={styles.termsLink}>Terms & Privacy Policy</Text>
                 </Text>
               </Pressable>
-              {signupForm.formState.errors.agreedToTerms && (
-                <Text style={styles.fieldError}>
-                  {signupForm.formState.errors.agreedToTerms.message}
-                </Text>
+              {signupErrors.agreedToTerms && (
+                <Text style={styles.fieldError}>{signupErrors.agreedToTerms}</Text>
               )}
 
               <View style={styles.buttonGap} />
@@ -203,7 +191,7 @@ export default function RegisterScreen() {
                 label="Create Account"
                 variant="primary"
                 fullWidth
-                loading={signupForm.formState.isSubmitting}
+                loading={signupLoading}
                 onPress={onSignUp}
               />
 
@@ -223,44 +211,28 @@ export default function RegisterScreen() {
           ) : (
             <View>
               <Text style={styles.heading}>Welcome back</Text>
+              <Text style={styles.subheading}>Sign in to continue to TradeFind</Text>
 
-              <Controller
-                control={loginForm.control}
-                name="email"
-                render={({ field, fieldState }) => (
-                  <Input
-                    label="Email"
-                    placeholder="jane@example.com"
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    error={fieldState.error?.message}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoComplete="email"
-                  />
-                )}
+              <Input
+                label="Email"
+                placeholder="jane@example.com"
+                value={loginEmail}
+                onChangeText={setLoginEmail}
+                error={loginErrors.email}
+                keyboardType="email-address"
+                autoCapitalize="none"
               />
-
-              <Controller
-                control={loginForm.control}
-                name="password"
-                render={({ field, fieldState }) => (
-                  <Input
-                    label="Password"
-                    placeholder="Your password"
-                    value={field.value}
-                    onChangeText={field.onChange}
-                    error={fieldState.error?.message}
-                    secureTextEntry={!showPassword}
-                    autoComplete="current-password"
-                    iconRight={
-                      <Text style={styles.showHide}>
-                        {showPassword ? 'Hide' : 'Show'}
-                      </Text>
-                    }
-                    onIconRightPress={() => setShowPassword(p => !p)}
-                  />
-                )}
+              <Input
+                label="Password"
+                placeholder="Your password"
+                value={loginPassword}
+                onChangeText={setLoginPassword}
+                error={loginErrors.password}
+                secureTextEntry={!showPassword}
+                iconRight={
+                  <Text style={styles.showHide}>{showPassword ? 'Hide' : 'Show'}</Text>
+                }
+                onIconRightPress={() => setShowPassword(p => !p)}
               />
 
               <Pressable style={styles.forgotRow}>
@@ -272,7 +244,7 @@ export default function RegisterScreen() {
                 label="Log In"
                 variant="primary"
                 fullWidth
-                loading={loginForm.formState.isSubmitting}
+                loading={loginLoading}
                 onPress={onLogin}
               />
 
@@ -337,6 +309,11 @@ const styles = StyleSheet.create({
   heading: {
     ...typography.h2,
     color: colors.textPrimary,
+    marginBottom: spacing.xs,
+  },
+  subheading: {
+    ...typography.small,
+    color: colors.textSecondary,
     marginBottom: spacing.xl,
   },
   showHide: {

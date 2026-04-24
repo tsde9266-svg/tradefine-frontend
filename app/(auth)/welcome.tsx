@@ -1,112 +1,160 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import Button from '../../components/ui/Button';
+import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../constants/colors';
 import { spacing } from '../../constants/spacing';
+import { radius } from '../../constants/radius';
 import { typography } from '../../constants/typography';
 
-const ILLUSTRATION = require('../../assets/illustrations/onboarding_illustration_for_a_construction_app_a_friendly_tradesperson_holding.png');
-const APP_ICON     = require('../../assets/icons/app_icon_app_icon_for_tradefi.png');
+const BG = require('../../assets/illustrations/onboarding_illustration_for_a_construction_app_a_friendly_tradesperson_holding.png');
+const LOGO = require('../../assets/icons/app_icon_app_icon_for_tradefi.png');
 
 export default function WelcomeScreen() {
   const router = useRouter();
 
   return (
-    <SafeAreaView style={styles.screen}>
-      {/* Top 55% — illustration */}
-      <View style={styles.illustrationContainer}>
-        <Image source={ILLUSTRATION} style={styles.illustration} resizeMode="contain" />
-      </View>
+    <View style={styles.screen}>
+      {/* Full-screen background */}
+      <ImageBackground source={BG} style={styles.bg} resizeMode="cover">
+        <View style={styles.overlay} />
+      </ImageBackground>
 
-      {/* Bottom 45% — branding + CTAs */}
-      <View style={styles.bottom}>
-        {/* Logo row */}
-        <View style={styles.logoRow}>
-          <Image source={APP_ICON} style={styles.logoIcon} resizeMode="contain" />
-          <Text style={styles.logoText}>TradeFind</Text>
-        </View>
+      {/* Bottom card */}
+      <SafeAreaView style={styles.safeCard} edges={['bottom']}>
+        <View style={styles.card}>
+          {/* Logo */}
+          <View style={styles.logoRow}>
+            <Image source={LOGO} style={styles.logoIcon} resizeMode="contain" />
+            <Text style={styles.logoText}>TradeFind</Text>
+          </View>
 
-        <Text style={styles.tagline}>
-          Find trusted tradespeople near you — instantly
-        </Text>
+          <Text style={styles.headline}>
+            Find trusted tradespeople{'\n'}near you — instantly
+          </Text>
+          <Text style={styles.sub}>
+            Your direct link to local professionals for every job, big or small.
+          </Text>
 
-        <View style={styles.buttons}>
-          <Button
-            variant="primary"
-            label="I need a tradesperson"
-            fullWidth
+          {/* CTAs */}
+          <Pressable
+            style={({ pressed }) => [styles.btnPrimary, pressed && styles.btnPrimaryPressed]}
             onPress={() => router.push('/(auth)/register?role=customer')}
-          />
+          >
+            <Ionicons name="search" size={18} color={colors.textInverse} style={styles.btnIcon} />
+            <Text style={styles.btnPrimaryText}>I need a tradesperson</Text>
+          </Pressable>
 
-          <View style={styles.gap} />
-
-          <Button
-            variant="outline"
-            label="I'm a tradesperson"
-            fullWidth
+          <Pressable
+            style={({ pressed }) => [styles.btnOutline, pressed && styles.btnOutlinePressed]}
             onPress={() => router.push('/(auth)/register?role=worker')}
-          />
+          >
+            <Ionicons name="person" size={18} color={colors.primary} style={styles.btnIcon} />
+            <Text style={styles.btnOutlineText}>I'm a tradesperson</Text>
+          </Pressable>
 
-          <View style={styles.gap} />
-
-          <Button
-            variant="ghost"
-            label="Already have an account? Log In"
-            fullWidth
-            onPress={() => router.push('/(auth)/register?tab=login')}
-          />
+          <Text style={styles.footer}>Join 50k+ professionals and homeowners today</Text>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#1a1a1a',
   },
-  illustrationContainer: {
-    flex: 55,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
+  bg: {
+    ...StyleSheet.absoluteFillObject,
   },
-  illustration: {
-    width: '100%',
-    height: '100%',
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.45)',
   },
-  bottom: {
-    flex: 45,
+  safeCard: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+  },
+  card: {
+    backgroundColor: colors.surface,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
     paddingHorizontal: spacing.xxl,
-    paddingBottom: spacing.xxl,
-    justifyContent: 'flex-end',
+    paddingTop: spacing.xxl,
+    paddingBottom: spacing.xxxl,
+    gap: spacing.md,
   },
   logoRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.sm,
     marginBottom: spacing.sm,
   },
   logoIcon: {
-    width: 36,
-    height: 36,
-    marginRight: spacing.sm,
+    width: 32,
+    height: 32,
   },
   logoText: {
-    ...typography.h2,
+    ...typography.h3,
     color: colors.primary,
   },
-  tagline: {
+  headline: {
+    ...typography.h1,
+    color: colors.textPrimary,
+    lineHeight: 36,
+  },
+  sub: {
     ...typography.body,
     color: colors.textSecondary,
-    marginBottom: spacing.xxl,
+    marginBottom: spacing.sm,
   },
-  buttons: {
-    width: '100%',
+  btnPrimary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primary,
+    borderRadius: radius.md,
+    paddingVertical: 16,
+    gap: spacing.sm,
   },
-  gap: {
-    height: spacing.md,
+  btnPrimaryPressed: {
+    backgroundColor: colors.primaryDark,
+  },
+  btnIcon: {
+    marginRight: 2,
+  },
+  btnPrimaryText: {
+    ...typography.bodyMd,
+    color: colors.textInverse,
+    fontWeight: '700',
+  },
+  btnOutline: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+    borderRadius: radius.md,
+    borderWidth: 2,
+    borderColor: colors.primary,
+    paddingVertical: 14,
+    gap: spacing.sm,
+  },
+  btnOutlinePressed: {
+    backgroundColor: colors.primaryLight,
+  },
+  btnOutlineText: {
+    ...typography.bodyMd,
+    color: colors.primary,
+    fontWeight: '700',
+  },
+  footer: {
+    ...typography.caption,
+    color: colors.textDisabled,
+    textAlign: 'center',
+    marginTop: spacing.xs,
   },
 });

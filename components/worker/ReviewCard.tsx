@@ -142,20 +142,21 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   replyBox: {
-    backgroundColor: colors.surfaceElevated,
+    backgroundColor: '#FFF7ED',
+    borderLeftWidth: 3,
+    borderLeftColor: colors.primary,
     borderRadius: radius.md,
     padding: spacing.md,
   },
   replyLabel: {
     ...typography.caption,
-    color: colors.textSecondary,
+    color: colors.primary,
     marginBottom: spacing.xs,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   replyText: {
     ...typography.small,
     color: colors.textPrimary,
-    fontStyle: 'italic',
   },
   replyAction: {
     ...typography.small,

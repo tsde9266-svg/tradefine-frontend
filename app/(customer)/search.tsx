@@ -1,25 +1,30 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   FlatList,
+  Image,
+  Linking,
   Pressable,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
-import WorkerCardLarge from '../../components/worker/WorkerCardLarge';
 import SkeletonLoader from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
 import { colors } from '../../constants/colors';
 import { radius } from '../../constants/radius';
 import { spacing } from '../../constants/spacing';
+import { shadows } from '../../constants/shadows';
 import { typography } from '../../constants/typography';
 import { getNearbyWorkers } from '../../services/workers';
 import { useLocation } from '../../hooks/useLocation';
 import { Worker } from '../../types/worker';
+import { formatDistance, formatRating } from '../../utils/formatters';
 
 export default function SearchScreen() {
   const router = useRouter();
@@ -58,79 +63,79 @@ export default function SearchScreen() {
     if (params.q) search(params.q);
   }, []);
 
-  useEffect(() => {
-    search(query);
-  }, [availableOnly, sortBy]);
-
-  const renderItem = useCallback(
-    ({ item }: { item: Worker }) => <WorkerCardLarge worker={item} />,
-    [],
-  );
+  useEffect(() => { search(query); }, [availableOnly, sortBy]);
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
-      {/* Search bar */}
-      <View style={styles.searchRow}>
-        <Pressable onPress={() => router.back()} hitSlop={8}>
-          <Text style={styles.back}>←</Text>
-        </Pressable>
-        <View style={styles.inputWrapper}>
-          <TextInput
-            ref={inputRef}
-            style={styles.input}
-            value={query}
-            onChangeText={setQuery}
-            onSubmitEditing={() => search(query)}
-            placeholder="Search plumbers, electricians..."
-            placeholderTextColor={colors.textDisabled}
-            returnKeyType="search"
-          />
-          {query.length > 0 && (
-            <Pressable onPress={() => { setQuery(''); setWorkers([]); }}>
-              <Text style={styles.clear}>✕</Text>
-            </Pressable>
-          )}
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.headerTop}>
+          <Pressable onPress={() => router.back()} hitSlop={10}>
+            <Ionicons name="arrow-back" size={24} color={colors.textPrimary} />
+          </Pressable>
+          <View style={styles.inputWrap}>
+            <Ionicons name="search" size={17} color={colors.textDisabled} />
+            <TextInput
+              ref={inputRef}
+              style={styles.input}
+              value={query}
+              onChangeText={setQuery}
+              onSubmitEditing={() => search(query)}
+              placeholder="Search plumbers, electricians..."
+              placeholderTextColor={colors.textDisabled}
+              returnKeyType="search"
+            />
+            {query.length > 0 && (
+              <Pressable onPress={() => { setQuery(''); setWorkers([]); }} hitSlop={8}>
+                <Ionicons name="close-circle" size={18} color={colors.textDisabled} />
+              </Pressable>
+            )}
+          </View>
+          <Pressable style={styles.filterBtn}>
+            <Ionicons name="options-outline" size={20} color={colors.textPrimary} />
+          </Pressable>
+        </View>
+
+        {/* Filter pills */}
+        <View style={styles.filtersRow}>
+          <Pressable
+            style={[styles.pill, sortBy === 'distance' && styles.pillActive]}
+            onPress={() => setSortBy('distance')}
+          >
+            <Ionicons name="navigate-outline" size={13} color={sortBy === 'distance' ? colors.textInverse : colors.textSecondary} />
+            <Text style={[styles.pillText, sortBy === 'distance' && styles.pillTextActive]}>Distance</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.pill, sortBy === 'rating' && styles.pillActive]}
+            onPress={() => setSortBy('rating')}
+          >
+            <Ionicons name="star-outline" size={13} color={sortBy === 'rating' ? colors.textInverse : colors.textSecondary} />
+            <Text style={[styles.pillText, sortBy === 'rating' && styles.pillTextActive]}>Rating</Text>
+          </Pressable>
+          <View style={styles.togglePill}>
+            <Text style={styles.toggleLabel}>Available Now</Text>
+            <Switch
+              value={availableOnly}
+              onValueChange={setAvailableOnly}
+              trackColor={{ false: colors.border, true: colors.primary }}
+              thumbColor={colors.surface}
+              style={{ transform: [{ scaleX: 0.85 }, { scaleY: 0.85 }] }}
+            />
+          </View>
         </View>
       </View>
 
-      {/* Filters */}
-      <View style={styles.filtersRow}>
-        <Pressable
-          style={[styles.filterChip, availableOnly && styles.filterChipActive]}
-          onPress={() => setAvailableOnly((p) => !p)}
-        >
-          <Text style={[styles.filterChipText, availableOnly && styles.filterChipTextActive]}>
-            Available Now
-          </Text>
-        </Pressable>
-        <Pressable
-          style={[styles.filterChip, sortBy === 'distance' && styles.filterChipActive]}
-          onPress={() => setSortBy('distance')}
-        >
-          <Text style={[styles.filterChipText, sortBy === 'distance' && styles.filterChipTextActive]}>
-            Nearest
-          </Text>
-        </Pressable>
-        <Pressable
-          style={[styles.filterChip, sortBy === 'rating' && styles.filterChipActive]}
-          onPress={() => setSortBy('rating')}
-        >
-          <Text style={[styles.filterChipText, sortBy === 'rating' && styles.filterChipTextActive]}>
-            Top Rated
-          </Text>
-        </Pressable>
-      </View>
-
-      {workers.length > 0 && !loading && (
+      {/* Results count */}
+      {!loading && workers.length > 0 && (
         <Text style={styles.resultCount}>
-          {workers.length} result{workers.length !== 1 ? 's' : ''} near you
+          {workers.length} {query ? `electricians` : 'tradespeople'} near Birmingham
         </Text>
       )}
 
       {loading ? (
         <View style={styles.skeletons}>
-          {[1, 2, 3, 4, 5].map((i) => (
-            <SkeletonLoader key={i} width="100%" height={100} borderRadius={14} style={styles.skeleton} />
+          {[1, 2, 3, 4].map(i => (
+            <SkeletonLoader key={i} width="100%" height={90} borderRadius={14} style={{ marginBottom: spacing.sm }} />
           ))}
         </View>
       ) : workers.length === 0 && query.length > 0 ? (
@@ -142,8 +147,13 @@ export default function SearchScreen() {
       ) : (
         <FlatList
           data={workers}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
+          keyExtractor={w => w.id}
+          renderItem={({ item }) => (
+            <SearchResultCard
+              worker={item}
+              onPress={() => router.push(`/(customer)/worker/${item.id}`)}
+            />
+          )}
           contentContainerStyle={styles.list}
           removeClippedSubviews
         />
@@ -152,86 +162,205 @@ export default function SearchScreen() {
   );
 }
 
+function SearchResultCard({ worker, onPress }: { worker: Worker; onPress: () => void }) {
+  const isAvailable = worker.isAvailable;
+  const handleCall = () => Linking.openURL(`tel:${worker.phone}`);
+
+  return (
+    <Pressable style={({ pressed }) => [styles.card, pressed && { opacity: 0.93 }]} onPress={onPress}>
+      {/* Avatar */}
+      <View style={styles.cardAvatarWrap}>
+        {worker.avatarUrl
+          ? <Image source={{ uri: worker.avatarUrl }} style={styles.cardAvatar} />
+          : <View style={[styles.cardAvatar, styles.cardAvatarFallback]}>
+              <Text style={styles.cardAvatarInitials}>
+                {worker.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+              </Text>
+            </View>
+        }
+      </View>
+
+      {/* Info */}
+      <View style={styles.cardInfo}>
+        <View style={styles.cardNameRow}>
+          <Text style={styles.cardName} numberOfLines={1}>{worker.name}</Text>
+          <View style={[styles.statusBadge, isAvailable ? styles.statusAvail : styles.statusBusy]}>
+            <Text style={[styles.statusText, { color: isAvailable ? colors.success : colors.warning }]}>
+              {isAvailable ? '● AVAILABLE' : '● BUSY'}
+            </Text>
+          </View>
+        </View>
+        <Text style={styles.cardTrade} numberOfLines={1}>
+          {worker.trades[0]} {worker.distance != null ? `• ${formatDistance(worker.distance)}` : ''}
+        </Text>
+        <View style={styles.cardStarRow}>
+          <Ionicons name="star" size={13} color="#FBBF24" />
+          <Text style={styles.cardRating}>{formatRating(worker.rating)}</Text>
+          <Text style={styles.cardReviews}>({worker.reviewCount} reviews)</Text>
+        </View>
+      </View>
+
+      {/* Action */}
+      <View style={styles.cardAction}>
+        {isAvailable ? (
+          <Pressable
+            style={styles.callBtn}
+            onPress={e => { e.stopPropagation(); handleCall(); }}
+          >
+            <Ionicons name="call" size={14} color={colors.textInverse} />
+            <Text style={styles.callBtnText}>Call</Text>
+          </Pressable>
+        ) : (
+          <Pressable style={styles.bookLaterBtn} onPress={onPress}>
+            <Ionicons name="calendar-outline" size={14} color={colors.textSecondary} />
+            <Text style={styles.bookLaterText}>Book later</Text>
+          </Pressable>
+        )}
+      </View>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
+  screen: { flex: 1, backgroundColor: colors.background },
+
+  /* Header */
+  header: {
+    backgroundColor: colors.surface,
+    paddingBottom: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
+    ...shadows.sm,
   },
-  searchRow: {
+  headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    gap: spacing.md,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sm,
+    gap: spacing.sm,
   },
-  back: {
-    fontSize: 22,
-    color: colors.textPrimary,
-  },
-  inputWrapper: {
+  inputWrap: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surfaceElevated,
     borderRadius: radius.md,
     paddingHorizontal: spacing.md,
-    borderWidth: 1.5,
+    paddingVertical: 10,
+    gap: spacing.sm,
+    borderWidth: 1,
     borderColor: colors.border,
   },
   input: {
     flex: 1,
     ...typography.body,
     color: colors.textPrimary,
-    paddingVertical: spacing.sm,
+    padding: 0,
   },
-  clear: {
-    fontSize: 16,
-    color: colors.textDisabled,
-    padding: spacing.xs,
+  filterBtn: {
+    width: 40, height: 40,
+    borderRadius: radius.md,
+    backgroundColor: colors.surfaceElevated,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: colors.border,
   },
+
+  /* Filters */
   filtersRow: {
     flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
     gap: spacing.sm,
   },
-  filterChip: {
+  pill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
+    paddingVertical: 7,
     borderRadius: radius.full,
     backgroundColor: colors.surfaceElevated,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  filterChipActive: {
-    backgroundColor: colors.primary,
+  pillActive: { backgroundColor: colors.primary, borderColor: colors.primary },
+  pillText: { ...typography.caption, color: colors.textSecondary, fontWeight: '600' },
+  pillTextActive: { color: colors.textInverse },
+  togglePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginLeft: 'auto',
+    backgroundColor: colors.surfaceElevated,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  filterChipText: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    fontWeight: '500',
-  },
-  filterChipTextActive: {
-    color: colors.textInverse,
-    fontWeight: '600',
-  },
+  toggleLabel: { ...typography.caption, color: colors.textSecondary, fontWeight: '600' },
+
+  /* Results */
   resultCount: {
-    ...typography.small,
-    color: colors.textSecondary,
+    ...typography.bodyMd,
+    color: colors.textPrimary,
+    fontWeight: '700',
     paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.sm,
+    paddingVertical: spacing.md,
   },
-  list: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxxl,
-  },
-  skeletons: {
-    paddingHorizontal: spacing.lg,
+  list: { paddingHorizontal: spacing.lg, paddingBottom: 32 },
+  skeletons: { paddingHorizontal: spacing.lg, marginTop: spacing.md },
+
+  /* Card */
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.md,
+    marginBottom: spacing.md,
     gap: spacing.md,
-    marginTop: spacing.md,
+    ...shadows.sm,
   },
-  skeleton: {
-    marginBottom: spacing.sm,
+  cardAvatarWrap: { flexShrink: 0 },
+  cardAvatar: { width: 64, height: 64, borderRadius: radius.md },
+  cardAvatarFallback: { backgroundColor: colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
+  cardAvatarInitials: { ...typography.h3, color: colors.primaryDark },
+  cardInfo: { flex: 1, gap: 3 },
+  cardNameRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, flexWrap: 'wrap' },
+  cardName: { ...typography.h4, color: colors.textPrimary },
+  statusBadge: {
+    borderRadius: radius.full,
+    paddingHorizontal: 7, paddingVertical: 2,
   },
+  statusAvail: { backgroundColor: colors.successBg },
+  statusBusy: { backgroundColor: colors.warningBg },
+  statusText: { fontSize: 10, fontWeight: '700' },
+  cardTrade: { ...typography.small, color: colors.textSecondary },
+  cardStarRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  cardRating: { ...typography.caption, color: colors.textPrimary, fontWeight: '700' },
+  cardReviews: { ...typography.caption, color: colors.textSecondary },
+  cardAction: { flexShrink: 0 },
+  callBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: colors.primary,
+    borderRadius: radius.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 9,
+  },
+  callBtnText: { ...typography.caption, color: colors.textInverse, fontWeight: '700' },
+  bookLaterBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    borderRadius: radius.sm,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 9,
+  },
+  bookLaterText: { ...typography.caption, color: colors.textSecondary, fontWeight: '600' },
 });

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  FlatList,
   Image,
   Linking,
   Pressable,
@@ -9,9 +8,9 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Image as ExpoImage } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 import Avatar from '../../../components/ui/Avatar';
 import Badge from '../../../components/ui/Badge';
@@ -128,13 +127,13 @@ export default function WorkerProfileScreen() {
       <ScrollView showsVerticalScrollIndicator={false} stickyHeaderIndices={[2]}>
         {/* Back button */}
         <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <Text style={styles.backIcon}>←</Text>
+          <Ionicons name="arrow-back" size={20} color={colors.textInverse} />
         </Pressable>
 
         {/* Hero photo */}
         <View style={styles.heroContainer}>
           {heroImage ? (
-            <ExpoImage source={{ uri: heroImage }} style={styles.hero} contentFit="cover" />
+            <Image source={{ uri: heroImage }} style={styles.hero} resizeMode="cover" />
           ) : (
             <View style={[styles.hero, styles.heroFallback]} />
           )}
@@ -215,17 +214,20 @@ export default function WorkerProfileScreen() {
 
       {/* Sticky bottom bar */}
       <SafeAreaView edges={['bottom']} style={styles.bottomBar}>
-        <Button
-          label={`Call ${worker.name.split(' ')[0]}`}
-          variant="primary"
-          onPress={handleCall}
-          fullWidth={false}
-          size="lg"
-        />
-        <Pressable onPress={handleSaveToggle} style={styles.saveButton} disabled={savingToggle}>
-          <Text style={[styles.bookmarkIcon, saved && styles.bookmarkSaved]}>
-            {saved ? '🔖' : '🔲'}
-          </Text>
+        <Pressable style={styles.callBtn} onPress={handleCall}>
+          <Ionicons name="call" size={18} color={colors.textInverse} />
+          <Text style={styles.callBtnText}>Call {worker.name.split(' ')[0]}</Text>
+        </Pressable>
+        <Pressable
+          onPress={handleSaveToggle}
+          style={[styles.saveButton, saved && styles.saveButtonActive]}
+          disabled={savingToggle}
+        >
+          <Ionicons
+            name={saved ? 'bookmark' : 'bookmark-outline'}
+            size={22}
+            color={saved ? colors.primary : colors.textSecondary}
+          />
         </Pressable>
       </SafeAreaView>
     </View>
@@ -233,34 +235,52 @@ export default function WorkerProfileScreen() {
 }
 
 function AboutTab({ worker }: { worker: Worker }) {
+  const CORE_SERVICES = [
+    { label: 'Emergency Call-out', price: 'From £80' },
+    { label: 'Standard Hourly Rate', price: '£45/hr' },
+    { label: 'Free Quote', price: 'Free' },
+  ];
+
   return (
     <View style={styles.aboutSection}>
       {worker.bio ? (
         <>
-          <Text style={styles.sectionLabel}>About</Text>
+          <Text style={styles.sectionLabel}>ABOUT</Text>
           <Text style={styles.bodyText}>{worker.bio}</Text>
         </>
       ) : null}
 
+      {/* Core Services */}
+      <Text style={styles.sectionLabel}>CORE SERVICES</Text>
+      <View style={styles.servicesCard}>
+        {CORE_SERVICES.map((s, i) => (
+          <View key={s.label} style={[styles.serviceRow, i > 0 && styles.serviceDivider]}>
+            <Text style={styles.serviceLabel}>{s.label}</Text>
+            <Text style={styles.servicePrice}>{s.price}</Text>
+          </View>
+        ))}
+      </View>
+
       {worker.certifications.length > 0 && (
         <>
-          <Text style={styles.sectionLabel}>Certifications</Text>
+          <Text style={styles.sectionLabel}>CERTIFICATIONS</Text>
           <View style={styles.pillsRow}>
             {worker.certifications.map((c) => (
               <View key={c} style={styles.certPill}>
-                <Text style={styles.certPillText}>🛡 {c}</Text>
+                <Ionicons name="shield-checkmark-outline" size={12} color={colors.primaryDark} />
+                <Text style={styles.certPillText}>{c}</Text>
               </View>
             ))}
           </View>
         </>
       )}
 
-      <Text style={styles.sectionLabel}>Service Area</Text>
+      <Text style={styles.sectionLabel}>SERVICE AREA</Text>
       <Text style={styles.bodyText}>Up to {worker.serviceAreaMiles} miles from current location</Text>
 
       {worker.pricingNotes ? (
         <>
-          <Text style={styles.sectionLabel}>Pricing</Text>
+          <Text style={styles.sectionLabel}>PRICING NOTES</Text>
           <Text style={[styles.bodyText, styles.italic]}>{worker.pricingNotes}</Text>
         </>
       ) : null}
@@ -275,13 +295,7 @@ function PhotosGrid({ photos }: { photos: string[] }) {
   return (
     <View style={styles.photosGrid}>
       {photos.map((uri, i) => (
-        <ExpoImage
-          key={i}
-          source={{ uri }}
-          style={styles.gridPhoto}
-          contentFit="cover"
-          transition={200}
-        />
+        <Image key={i} source={{ uri }} style={styles.gridPhoto} resizeMode="cover" />
       ))}
     </View>
   );
@@ -299,16 +313,12 @@ const styles = StyleSheet.create({
     top: 50,
     left: spacing.lg,
     zIndex: 10,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  backIcon: {
-    fontSize: 20,
-    color: colors.textInverse,
   },
   heroContainer: {
     position: 'relative',
@@ -414,6 +424,9 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   certPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     backgroundColor: colors.primaryLight,
     borderRadius: radius.full,
     paddingHorizontal: spacing.md,
@@ -424,6 +437,22 @@ const styles = StyleSheet.create({
     color: colors.primaryDark,
     fontWeight: '600',
   },
+  servicesCard: {
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    overflow: 'hidden',
+    ...shadows.sm,
+  },
+  serviceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+  },
+  serviceDivider: { borderTopWidth: 1, borderTopColor: colors.borderLight },
+  serviceLabel: { ...typography.body, color: colors.textPrimary },
+  servicePrice: { ...typography.bodyMd, color: colors.primary, fontWeight: '700' },
   photosGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -443,21 +472,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
+    paddingBottom: spacing.sm,
     backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: colors.border,
     gap: spacing.md,
     ...shadows.md,
   },
+  callBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.primary,
+    borderRadius: radius.lg,
+    paddingVertical: spacing.md,
+  },
+  callBtnText: { ...typography.bodyMd, color: colors.textInverse, fontWeight: '700' },
   saveButton: {
-    padding: spacing.md,
+    width: 48, height: 48, borderRadius: 24,
+    backgroundColor: colors.surfaceElevated,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1.5, borderColor: colors.borderLight,
   },
-  bookmarkIcon: {
-    fontSize: 26,
-    opacity: 0.4,
-  },
-  bookmarkSaved: {
-    opacity: 1,
+  saveButtonActive: {
+    backgroundColor: colors.primaryLight,
+    borderColor: colors.primary,
   },
   loadingBody: {
     padding: spacing.lg,

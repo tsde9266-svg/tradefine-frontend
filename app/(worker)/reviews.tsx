@@ -106,7 +106,13 @@ export default function WorkerReviewsScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
-      <Text style={styles.pageTitle}>My Reviews</Text>
+      {/* Header */}
+      <View style={styles.header}>
+        <View>
+          <Text style={styles.pageTitle}>My Reviews</Text>
+          <Text style={styles.pageSub}>What customers are saying about you</Text>
+        </View>
+      </View>
 
       {loading ? (
         <View style={styles.skeletons}>
@@ -154,7 +160,6 @@ export default function WorkerReviewsScreen() {
           }
           ListEmptyComponent={
             <EmptyState
-              illustration={require('../../assets/illustrations/empty_state_illustration_for_reviews_a_friendly_speech_bubble_with_a_plus_sign.png')}
               title="No reviews yet"
               subtitle="Your reviews from customers will appear here"
             />
@@ -167,17 +172,17 @@ export default function WorkerReviewsScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  pageTitle: {
-    ...typography.h2,
-    color: colors.textPrimary,
+  screen: { flex: 1, backgroundColor: colors.background },
+  header: {
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.lg,
+    backgroundColor: colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
   },
+  pageTitle: { ...typography.h2, color: colors.textPrimary },
+  pageSub: { ...typography.small, color: colors.textSecondary, marginTop: 2 },
   summaryCard: {
     flexDirection: 'row',
     backgroundColor: colors.surface,
