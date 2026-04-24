@@ -49,18 +49,12 @@ export default function WorkerDashboard() {
   const { user } = useAuth();
   const { show } = useToast();
   const accessToken = useAuthStore(s => s.accessToken);
-  const { logout } = useAuthStore();
   const { profile, setProfile } = useWorkerProfileStore();
   const [stats, setStats] = useState({ views: 124, calls: 8, reviews: 3 });
   const [activeJobs, setActiveJobs] = useState<JobRequest[]>([]);
   const [jobActionLoading, setJobActionLoading] = useState<string | null>(null);
 
-  const handleLogout = () => {
-    Alert.alert('Log Out', 'Are you sure you want to log out?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Log Out', style: 'destructive', onPress: logout },
-    ]);
-  };
+
 
   const firstName = user?.name?.split(' ')[0] ?? 'there';
   const isLive = profile?.isAvailable ?? false;
@@ -143,14 +137,9 @@ export default function WorkerDashboard() {
             <Text style={styles.greeting}>{getGreeting()}, {firstName} 👋</Text>
             <Text style={styles.subGreeting}>Here is what's happening with your business today.</Text>
           </View>
-          <View style={styles.headerBtns}>
-            <Pressable style={styles.avatarBtn} onPress={() => router.push('/(worker)/preview')}>
-              <Ionicons name="person" size={20} color={colors.textInverse} />
-            </Pressable>
-            <Pressable style={styles.logoutBtn} onPress={handleLogout}>
-              <Ionicons name="log-out-outline" size={20} color={colors.error} />
-            </Pressable>
-          </View>
+          <Pressable style={styles.avatarBtn} onPress={() => router.push('/(worker)/preview')}>
+            <Ionicons name="person" size={20} color={colors.textInverse} />
+          </Pressable>
         </View>
 
         {/* ── Incoming & Active Jobs ──────────────────────────── */}
@@ -194,7 +183,7 @@ export default function WorkerDashboard() {
             </View>
             <Text style={styles.offlineTitle}>You're currently invisible to customers</Text>
             <Text style={styles.offlineSub}>Go available to start receiving new service inquiries.</Text>
-            <AvailabilityToggle />
+            <AvailabilityToggle variant="dark" />
           </View>
         )}
 
@@ -485,17 +474,10 @@ const styles = StyleSheet.create({
   },
   greeting: { ...typography.h2, color: colors.textPrimary },
   subGreeting: { ...typography.small, color: colors.textSecondary, marginTop: 3, maxWidth: 260 },
-  headerBtns: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   avatarBtn: {
     width: 40, height: 40, borderRadius: 20,
     backgroundColor: colors.primary,
     alignItems: 'center', justifyContent: 'center',
-  },
-  logoutBtn: {
-    width: 40, height: 40, borderRadius: 20,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1.5, borderColor: colors.borderLight,
   },
 
   /* Live card */
