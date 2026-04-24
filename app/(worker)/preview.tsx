@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -10,6 +11,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuthStore } from '../../stores/authStore';
 
 import StarRating from '../../components/ui/StarRating';
 import { colors } from '../../constants/colors';
@@ -24,6 +26,14 @@ export default function ProfilePreviewScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { profile } = useWorkerProfileStore();
+  const { logout } = useAuthStore();
+
+  const handleLogout = () => {
+    Alert.alert('Log Out', 'Are you sure you want to log out?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Log Out', style: 'destructive', onPress: logout },
+    ]);
+  };
 
   if (!profile) {
     return (
@@ -156,6 +166,20 @@ export default function ProfilePreviewScreen() {
           </View>
         )}
 
+        {/* Settings row */}
+        <View style={styles.settingsSection}>
+          <Pressable style={styles.settingsRow} onPress={() => router.push('/(worker)/edit-profile')}>
+            <Ionicons name="create-outline" size={20} color={colors.textSecondary} />
+            <Text style={styles.settingsLabel}>Edit Profile</Text>
+            <Ionicons name="chevron-forward" size={16} color={colors.textDisabled} />
+          </Pressable>
+          <View style={styles.settingsDivider} />
+          <Pressable style={styles.settingsRow} onPress={handleLogout}>
+            <Ionicons name="log-out-outline" size={20} color={colors.error} />
+            <Text style={[styles.settingsLabel, { color: colors.error }]}>Log Out</Text>
+          </Pressable>
+        </View>
+
         <View style={{ height: 100 }} />
       </ScrollView>
 
@@ -287,6 +311,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     ...shadows.lg,
   },
+  settingsSection: {
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.lg,
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    overflow: 'hidden',
+    ...shadows.sm,
+  },
+  settingsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: 16,
+    gap: spacing.md,
+  },
+  settingsLabel: { ...typography.body, color: colors.textPrimary, flex: 1 },
+  settingsDivider: { height: 1, backgroundColor: colors.borderLight, marginLeft: spacing.lg },
+
   empty: {
     ...typography.body,
     color: colors.textSecondary,
