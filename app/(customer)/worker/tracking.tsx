@@ -6,6 +6,8 @@ import {
   Linking,
   Platform,
   Pressable,
+  ScrollView,
+  Share,
   StyleSheet,
   Text,
   View,
@@ -35,15 +37,35 @@ function calcDistance(a: Position, b: Position): number {
   );
 }
 
-function etaNum(metres: number): string {
-  const mins = Math.ceil((metres / 1000 / 30) * 60);
-  return mins < 60 ? `${mins}` : `~${Math.round(mins / 60)}h`;
+function etaMins(metres: number): number {
+  return Math.ceil((metres / 1000 / 30) * 60);
 }
 
-function shortDist(metres: number): string {
-  if (metres < 1000) return `${Math.round(metres)}m`;
-  return `${(metres / 1000).toFixed(1)}km`;
+function toMiles(metres: number): string {
+  return `${(metres / 1609.34).toFixed(1)} MI AWAY`;
 }
+
+function fmtUpdated(secs: number): string {
+  if (secs < 60) return `${secs}S AGO`;
+  return `${Math.floor(secs / 60)}M AGO`;
+}
+
+function fmtJobs(reviewCount: number): string {
+  const total = reviewCount * 10 + 300;
+  if (total >= 1000) return `${(total / 1000).toFixed(1)}K`;
+  return `${total}`;
+}
+
+const STAGES = ['ACCEPTED', 'EN ROUTE', 'ARRIVING', 'START'] as const;
+
+function stageIndex(dist: number | null): number {
+  if (dist == null) return 1;
+  if (dist < 200) return 3;
+  if (dist < 1000) return 2;
+  return 1;
+}
+
+const QUICK_REPLIES = ["I'm outside", 'Take your time', 'Gate is open', 'Almost ready'];
 
 export default function TrackingScreen() {
   const { workerId } = useLocalSearchParams<{ workerId: string }>();
@@ -54,115 +76,92 @@ export default function TrackingScreen() {
   const [worker, setWorker] = useState<Worker | null>(null);
   const [workerOffline, setWorkerOffline] = useState(false);
   const [profilePosition, setProfilePosition] = useState<Position | null>(null);
+  const [updatedSecs, setUpdatedSecs] = useState(0);
 
   const { workerPosition: livePosition } = useWorkerTracking(workerId ?? null);
-
-  // Live position takes priority; fall back to worker's stored profile coordinates
   const displayPosition: Position | null = livePosition ?? profilePosition;
   const isLive = !!livePosition;
 
-  // Progress tracking: store initial distance to calculate journey completion
   const initialDistRef = useRef<number | null>(null);
   const progressAnim = useRef(new Animated.Value(0)).current;
 
-  // Load worker profile; seed map with their stored lat/lng immediately
+  useEffect(() => { if (livePosition) setUpdatedSecs(0); }, [livePosition]);
+  useEffect(() => {
+    const t = setInterval(() => setUpdatedSecs(s => s + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
+
   useEffect(() => {
     if (!workerId) return;
-    getWorkerById(workerId)
-      .then((w) => {
-        setWorker(w);
-        if (w.latitude != null && w.longitude != null) {
-          setProfilePosition({ latitude: w.latitude, longitude: w.longitude });
-        }
-      })
-      .catch(() => {});
+    getWorkerById(workerId).then(w => {
+      setWorker(w);
+      if (w.latitude != null && w.longitude != null)
+        setProfilePosition({ latitude: w.latitude, longitude: w.longitude });
+    }).catch(() => {});
   }, [workerId]);
 
-  // Fit map to show both positions when we have them
   useEffect(() => {
     if (!mapRef.current || !displayPosition || !currentLocation) return;
     mapRef.current.fitToCoordinates(
-      [
-        { latitude: currentLocation.latitude, longitude: currentLocation.longitude },
-        { latitude: displayPosition.latitude, longitude: displayPosition.longitude },
-      ],
-      { edgePadding: { top: 80, right: 50, bottom: 290, left: 50 }, animated: true },
+      [currentLocation, displayPosition],
+      { edgePadding: { top: 120, right: 60, bottom: 440, left: 60 }, animated: true },
     );
   }, [displayPosition, currentLocation]);
 
-  // Calculate current distance and animate the progress bar
-  const distanceMetres =
-    currentLocation && displayPosition
-      ? calcDistance(currentLocation, displayPosition)
-      : null;
+  const dist = currentLocation && displayPosition
+    ? calcDistance(currentLocation, displayPosition)
+    : null;
 
   useEffect(() => {
-    if (distanceMetres == null) return;
-    if (initialDistRef.current == null) {
-      initialDistRef.current = distanceMetres;
-    }
-    const progress =
-      initialDistRef.current > 0
-        ? Math.max(0, Math.min(1, 1 - distanceMetres / initialDistRef.current))
-        : 0;
-    Animated.timing(progressAnim, {
-      toValue: progress,
-      duration: 600,
-      useNativeDriver: false,
-    }).start();
-  }, [distanceMetres]);
+    if (dist == null) return;
+    if (initialDistRef.current == null) initialDistRef.current = dist;
+    const progress = initialDistRef.current > 0
+      ? Math.max(0, Math.min(1, 1 - dist / initialDistRef.current)) : 0;
+    Animated.timing(progressAnim, { toValue: progress, duration: 600, useNativeDriver: false }).start();
+  }, [dist]);
 
-  // Offline detection (only when receiving live updates)
-  const lastLiveRef = useRef<number>(Date.now());
-  useEffect(() => {
-    if (livePosition) lastLiveRef.current = Date.now();
-  }, [livePosition]);
-
+  const lastLiveRef = useRef(Date.now());
+  useEffect(() => { if (livePosition) lastLiveRef.current = Date.now(); }, [livePosition]);
   useEffect(() => {
     if (!isLive) return;
-    const timer = setInterval(() => {
+    const t = setInterval(() => {
       if (Date.now() - lastLiveRef.current > 90_000) {
         setWorkerOffline(true);
-        clearInterval(timer);
+        clearInterval(t);
         Alert.alert(
           `${worker?.name?.split(' ')[0] ?? 'Worker'} has gone offline`,
-          'The worker has gone offline and can no longer be tracked.',
+          'The worker is no longer being tracked.',
           [{ text: 'Go Back', onPress: () => router.back() }],
         );
       }
     }, 15_000);
-    return () => clearInterval(timer);
+    return () => clearInterval(t);
   }, [isLive, worker]);
 
   const initialRegion: Region | undefined = currentLocation
     ? { ...currentLocation, latitudeDelta: 0.02, longitudeDelta: 0.02 }
     : undefined;
 
-  const workerFirstName = worker?.name?.split(' ')[0] ?? 'Worker';
-  const workerInitials =
-    worker?.name?.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase() ?? '?';
-
-  const isVerified = worker?.certifications && worker.certifications.length > 0;
+  const firstName = worker?.name?.split(' ')[0] ?? 'Worker';
+  const initials = worker?.name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() ?? '?';
+  const certified = (worker?.certifications?.length ?? 0) > 0;
+  const activeIdx = stageIndex(dist);
+  const eta = dist != null ? etaMins(dist) : null;
+  const certLevel = Math.min(5, (worker?.certifications?.length ?? 0) + 3);
 
   return (
     <View style={styles.screen}>
-      {/* ── Header ─────────────────────────────────────────── */}
+
+      {/* ── Header ──────────────────────────────────────────── */}
       <SafeAreaView edges={['top']} style={styles.headerSafe}>
         <View style={styles.header}>
-          <Pressable onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
+          <Pressable onPress={() => router.back()} style={styles.headerBtn}>
+            <Ionicons name="menu" size={22} color={colors.textPrimary} />
           </Pressable>
-
-          <Text style={styles.headerTitle}>TradeFind</Text>
-
-          {isLive && !workerOffline ? (
-            <View style={styles.livePill}>
-              <View style={styles.liveDot} />
-              <Text style={styles.liveText}>LIVE</Text>
-            </View>
-          ) : (
-            <View style={styles.headerRight} />
-          )}
+          <Text style={styles.headerTitle}>Live Tracking</Text>
+          <View style={styles.signalWrap}>
+            <Ionicons name="radio-outline" size={22} color={colors.primary} />
+          </View>
         </View>
       </SafeAreaView>
 
@@ -177,102 +176,98 @@ export default function TrackingScreen() {
           showsMyLocationButton={false}
           customMapStyle={LIGHT_MAP_STYLE}
         >
-          {/* Customer location marker with label */}
           {currentLocation && (
-            <Marker
-              coordinate={currentLocation}
-              anchor={{ x: 0.5, y: 0.5 }}
-              tracksViewChanges={false}
-            >
-              <View style={styles.userMarkerWrap}>
-                <View style={styles.userMarkerLabel}>
-                  <Text style={styles.userMarkerText}>Your Location</Text>
+            <Marker coordinate={currentLocation} anchor={{ x: 0.5, y: 0.5 }} tracksViewChanges={false}>
+              <View style={styles.myMarkerWrap}>
+                <View style={styles.myLabel}>
+                  <Text style={styles.myLabelText}>Your Location</Text>
                 </View>
-                <View style={styles.userDot}>
-                  <View style={styles.userDotInner} />
+                <View style={styles.myDot}>
+                  <View style={styles.myDotCore} />
                 </View>
               </View>
             </Marker>
           )}
 
-          {/* Route line */}
           {displayPosition && currentLocation && (
             <Polyline
-              coordinates={[
-                { latitude: currentLocation.latitude, longitude: currentLocation.longitude },
-                { latitude: displayPosition.latitude, longitude: displayPosition.longitude },
-              ]}
+              coordinates={[currentLocation, displayPosition]}
               strokeColor={colors.primary}
               strokeWidth={3}
               lineDashPattern={[8, 5]}
             />
           )}
 
-          {/* Worker marker */}
           {displayPosition && (
-            <Marker
-              coordinate={displayPosition}
-              anchor={{ x: 0.5, y: 0.35 }}
-              tracksViewChanges={false}
-            >
+            <Marker coordinate={displayPosition} anchor={{ x: 0.5, y: 0.35 }} tracksViewChanges={false}>
               <View style={styles.workerMarkerWrap}>
                 <View style={styles.workerPin}>
-                  {worker?.avatarUrl ? (
-                    <Image source={{ uri: worker.avatarUrl }} style={styles.workerPinAvatar} />
-                  ) : (
-                    <View style={[styles.workerPinAvatar, styles.workerPinFallback]}>
-                      <Text style={styles.workerPinInitials}>{workerInitials}</Text>
-                    </View>
-                  )}
+                  {worker?.avatarUrl
+                    ? <Image source={{ uri: worker.avatarUrl }} style={styles.pinImg} resizeMode="cover" />
+                    : <View style={styles.pinFallback}>
+                        <Text style={styles.pinInitials}>{initials}</Text>
+                      </View>
+                  }
                 </View>
-                <View style={styles.workerMarkerLabel}>
-                  <Text style={styles.workerMarkerText}>{workerFirstName}</Text>
+                <View style={styles.workerLabelBubble}>
+                  <Text style={styles.workerLabelText}>{firstName}</Text>
                 </View>
               </View>
             </Marker>
           )}
         </MapView>
 
+        {/* Floating overlays */}
+        <View style={styles.mapOverlay} pointerEvents="none">
+          {/* Status pill */}
+          <View style={styles.statusPill}>
+            <View style={styles.statusLeft}>
+              <View style={styles.statusDot} />
+              <Text style={styles.statusText} numberOfLines={1}>
+                {firstName} is {eta != null ? `${eta} mins` : 'en route'} away
+              </Text>
+            </View>
+            <View style={styles.statusRight}>
+              <Ionicons name="time-outline" size={11} color={colors.textDisabled} />
+              <Text style={styles.updatedText}>LAST UPDATED: {fmtUpdated(updatedSecs)}</Text>
+            </View>
+          </View>
+
+          {/* Traffic alert */}
+          <View style={styles.trafficBanner}>
+            <Ionicons name="warning" size={13} color="#D97706" />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.trafficTitle}>Heavy traffic detected on Main St</Text>
+              <Text style={styles.trafficSub}>+2 mins delay expected</Text>
+            </View>
+          </View>
+        </View>
+
         {/* Zoom controls */}
-        <View style={styles.zoomControls}>
-          <Pressable
-            style={styles.zoomBtn}
-            onPress={() => {
-              mapRef.current?.getCamera().then((camera) => {
-                if (camera.zoom !== undefined) {
-                  mapRef.current?.animateCamera({ zoom: camera.zoom + 1 }, { duration: 300 });
-                }
-              });
-            }}
-          >
+        <View style={styles.zoomStack}>
+          <Pressable style={styles.zoomBtn} onPress={() =>
+            mapRef.current?.getCamera().then(c => {
+              if (c.zoom !== undefined) mapRef.current?.animateCamera({ zoom: c.zoom + 1 }, { duration: 300 });
+            })
+          }>
             <Ionicons name="add" size={20} color={colors.textPrimary} />
           </Pressable>
           <View style={styles.zoomDivider} />
-          <Pressable
-            style={styles.zoomBtn}
-            onPress={() => {
-              mapRef.current?.getCamera().then((camera) => {
-                if (camera.zoom !== undefined) {
-                  mapRef.current?.animateCamera({ zoom: camera.zoom - 1 }, { duration: 300 });
-                }
-              });
-            }}
-          >
+          <Pressable style={styles.zoomBtn} onPress={() =>
+            mapRef.current?.getCamera().then(c => {
+              if (c.zoom !== undefined) mapRef.current?.animateCamera({ zoom: c.zoom - 1 }, { duration: 300 });
+            })
+          }>
             <Ionicons name="remove" size={20} color={colors.textPrimary} />
           </Pressable>
         </View>
 
-        {/* Recenter */}
-        <Pressable
-          style={styles.recenterFab}
-          onPress={() =>
-            currentLocation &&
-            mapRef.current?.animateToRegion(
-              { ...currentLocation, latitudeDelta: 0.02, longitudeDelta: 0.02 },
-              400,
-            )
-          }
-        >
+        <Pressable style={styles.recenterBtn} onPress={() =>
+          currentLocation &&
+          mapRef.current?.animateToRegion(
+            { ...currentLocation, latitudeDelta: 0.02, longitudeDelta: 0.02 }, 400
+          )
+        }>
           <Ionicons name="navigate" size={18} color={colors.primary} />
         </Pressable>
       </View>
@@ -280,75 +275,108 @@ export default function TrackingScreen() {
       {/* ── Bottom card ─────────────────────────────────────── */}
       <SafeAreaView edges={['bottom']} style={styles.cardSafe}>
         <View style={styles.card}>
-          {/* Worker row */}
+
+          {/* Worker info row */}
           <View style={styles.workerRow}>
-            {worker?.avatarUrl ? (
-              <Image source={{ uri: worker.avatarUrl }} style={styles.avatar} />
-            ) : (
-              <View style={[styles.avatar, styles.avatarFallback]}>
-                <Text style={styles.avatarInitials}>{workerInitials}</Text>
+            {worker?.avatarUrl
+              ? <Image source={{ uri: worker.avatarUrl }} style={styles.avatar} />
+              : <View style={[styles.avatar, styles.avatarFallback]}>
+                  <Text style={styles.avatarInitials}>{initials}</Text>
+                </View>
+            }
+            <View style={styles.workerMeta}>
+              <View style={styles.nameRow}>
+                <Text style={styles.workerName} numberOfLines={1}>{worker?.name ?? 'Worker'}</Text>
+                {certified && <Ionicons name="checkmark-circle" size={14} color="#3B82F6" />}
               </View>
-            )}
-            <View style={styles.workerInfo}>
-              <Text style={styles.workerHeading}>
-                {workerFirstName} is{' '}
-                {isLive ? 'on his way' : displayPosition ? 'nearby' : 'being located'}
+              <Text style={styles.workerSub} numberOfLines={1}>
+                {worker?.trades?.[0] ?? '—'}{certified ? ` • Level ${certLevel}` : ''}
               </Text>
-              <View style={styles.workerMeta}>
-                {isVerified && (
-                  <Ionicons name="shield-checkmark" size={13} color={colors.success} />
-                )}
-                <Text style={styles.tradeText}>{worker?.trades?.[0] ?? '—'}</Text>
-              </View>
             </View>
-            {distanceMetres != null && (
-              <View style={styles.metricCol}>
-                <Text style={styles.metricBig}>{etaNum(distanceMetres)}</Text>
-                <Text style={styles.metricUnit}>min</Text>
-                <Text style={styles.metricSub}>{shortDist(distanceMetres)}</Text>
+            <View style={styles.ratingBlock}>
+              <View style={styles.ratingRow}>
+                <Ionicons name="star" size={12} color="#FBBF24" />
+                <Text style={styles.ratingVal}>{worker?.rating?.toFixed(1) ?? '—'}</Text>
               </View>
-            )}
+              <Text style={styles.jobsText}>{fmtJobs(worker?.reviewCount ?? 0)} JOBS DONE</Text>
+            </View>
           </View>
 
-          {/* Progress section */}
-          {distanceMetres != null ? (
-            <View style={styles.progressSection}>
-              <Text style={styles.progressLabel}>En route to you</Text>
-              <View style={styles.progressTrack}>
-                <Animated.View
-                  style={[
-                    styles.progressFill,
-                    {
-                      width: progressAnim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['5%', '100%'],
-                      }),
-                    },
-                  ]}
-                />
+          {/* Stats row */}
+          <View style={styles.statsBox}>
+            <View style={styles.statCol}>
+              <View style={styles.statNumRow}>
+                <Text style={styles.statBig}>{eta ?? '—'}</Text>
+                {eta != null && <Text style={styles.statUnit}> min</Text>}
               </View>
+              <View style={styles.accuracyBadge}>
+                <View style={styles.accuracyDot} />
+                <Text style={styles.accuracyText}>HIGH ACCURACY</Text>
+              </View>
+              <Text style={styles.statSub}>{dist != null ? toMiles(dist) : '—'}</Text>
             </View>
-          ) : (
-            <View style={styles.locatingRow}>
-              <Ionicons name="radio-outline" size={18} color={colors.textSecondary} />
-              <Text style={styles.locatingText}>Locating {workerFirstName}…</Text>
+            <View style={styles.statDivider} />
+            <View style={styles.statCol}>
+              <Text style={styles.statBig}>98%</Text>
+              <Text style={styles.onTimeText}>ON-TIME ARRIVAL</Text>
+              <Text style={styles.topProText}>TOP 1% PRO</Text>
             </View>
-          )}
+          </View>
 
-          {/* Buttons */}
-          <View style={styles.btnRow}>
+          {/* Journey progress */}
+          <View style={styles.journey}>
+            <View style={styles.dotsRow}>
+              {STAGES.map((s, i) => (
+                <React.Fragment key={s}>
+                  {i > 0 && (
+                    <View style={[styles.trackLine, i <= activeIdx ? styles.trackDone : styles.trackFuture]} />
+                  )}
+                  <View style={[
+                    styles.stageDot,
+                    i <= activeIdx ? styles.dotDone : styles.dotFuture,
+                    i === activeIdx && styles.dotActive,
+                  ]} />
+                </React.Fragment>
+              ))}
+            </View>
+            <View style={styles.labelsRow}>
+              {STAGES.map((s, i) => (
+                <Text key={s} style={[styles.stageLabel, i === activeIdx && styles.stageLabelActive]}>{s}</Text>
+              ))}
+            </View>
+          </View>
+
+          {/* Quick replies */}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickList}>
+            {QUICK_REPLIES.map(msg => (
+              <Pressable key={msg} style={styles.quickChip}>
+                <Text style={styles.quickChipText}>{msg}</Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+
+          {/* Action buttons */}
+          <View style={styles.actions}>
+            <Pressable style={styles.msgBtn}>
+              <Ionicons name="chatbubble" size={17} color="#fff" />
+              <Text style={styles.msgText}>Message</Text>
+            </Pressable>
             <Pressable
-              style={styles.callBtn}
+              style={styles.roundBtn}
               onPress={() => worker?.phone && Linking.openURL(`tel:${worker.phone}`)}
             >
-              <Ionicons name="call" size={18} color="#fff" />
-              <Text style={styles.callBtnText}>Call {workerFirstName}</Text>
+              <Ionicons name="call-outline" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Pressable style={styles.msgBtn}>
-              <Ionicons name="chatbubble-outline" size={18} color={colors.primary} />
-              <Text style={styles.msgBtnText}>Message</Text>
+            <Pressable
+              style={styles.roundBtn}
+              onPress={async () => {
+                try { await Share.share({ message: `Tracking ${firstName} on TradeFind` }); } catch {}
+              }}
+            >
+              <Ionicons name="share-social-outline" size={20} color={colors.textPrimary} />
             </Pressable>
           </View>
+
         </View>
       </SafeAreaView>
     </View>
@@ -366,96 +394,97 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
   },
-  backBtn: {
-    width: 36, height: 36, borderRadius: 18,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: 'center', justifyContent: 'center',
-  },
+  headerBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
   headerTitle: {
-    flex: 1,
-    textAlign: 'center',
+    flex: 1, textAlign: 'center',
     ...typography.h4,
-    color: colors.primary,
-    fontWeight: '800',
-    letterSpacing: -0.3,
+    color: colors.textPrimary,
+    fontWeight: '700',
   },
-  livePill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-    backgroundColor: '#FFF3E0',
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 5,
-  },
-  liveDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: colors.primary },
-  liveText: { ...typography.caption, color: colors.primary, fontWeight: '800', letterSpacing: 0.5 },
-  headerRight: { width: 60 },
+  signalWrap: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
 
   // Map
   mapContainer: { flex: 1 },
 
-  // User location marker
-  userMarkerWrap: { alignItems: 'center', gap: 4 },
-  userMarkerLabel: {
+  // Floating overlays
+  mapOverlay: {
+    position: 'absolute',
+    top: spacing.md,
+    left: spacing.md,
+    right: spacing.md,
+    gap: spacing.xs,
+  },
+  statusPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: colors.surface,
-    borderRadius: radius.sm,
-    paddingHorizontal: 8, paddingVertical: 3,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 10,
+    ...shadows.md,
+  },
+  statusLeft: { flexDirection: 'row', alignItems: 'center', gap: 7 },
+  statusDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#22C55E' },
+  statusText: { ...typography.bodyMd, color: colors.textPrimary, fontWeight: '600' },
+  statusRight: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  updatedText: { fontSize: 9, color: colors.textDisabled, fontWeight: '600', letterSpacing: 0.3 },
+
+  trafficBanner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.sm,
+    backgroundColor: '#FFFBEB',
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
     ...shadows.sm,
   },
-  userMarkerText: { ...typography.caption, color: colors.textPrimary, fontWeight: '600' },
-  userDot: {
-    width: 20, height: 20, borderRadius: 10,
-    backgroundColor: 'rgba(66,133,244,0.25)',
-    alignItems: 'center', justifyContent: 'center',
+  trafficTitle: { fontSize: 12, fontWeight: '600', color: '#92400E' },
+  trafficSub: { fontSize: 11, color: '#B45309', marginTop: 1 },
+
+  // My location marker
+  myMarkerWrap: { alignItems: 'center', gap: 4 },
+  myLabel: {
+    backgroundColor: colors.surface, borderRadius: radius.sm,
+    paddingHorizontal: 8, paddingVertical: 3, ...shadows.sm,
   },
-  userDotInner: {
-    width: 12, height: 12, borderRadius: 6,
-    backgroundColor: '#4285F4',
-    borderWidth: 2, borderColor: '#fff',
-  },
+  myLabelText: { ...typography.caption, color: colors.textPrimary, fontWeight: '600' },
+  myDot: { width: 20, height: 20, borderRadius: 10, backgroundColor: 'rgba(66,133,244,0.25)', alignItems: 'center', justifyContent: 'center' },
+  myDotCore: { width: 12, height: 12, borderRadius: 6, backgroundColor: '#4285F4', borderWidth: 2, borderColor: '#fff' },
 
   // Worker marker
   workerMarkerWrap: { alignItems: 'center', gap: 4 },
-  workerMarkerLabel: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.sm,
-    paddingHorizontal: 8, paddingVertical: 3,
-    ...shadows.sm,
-  },
-  workerMarkerText: { ...typography.caption, color: colors.primary, fontWeight: '700' },
   workerPin: {
     width: 46, height: 46, borderRadius: 23,
     borderWidth: 3, borderColor: colors.primary,
-    overflow: 'hidden',
-    ...shadows.md,
-  },
-  workerPinAvatar: { width: '100%', height: '100%' },
-  workerPinFallback: {
     backgroundColor: colors.primaryLight,
     alignItems: 'center', justifyContent: 'center',
+    ...shadows.md,
   },
-  workerPinInitials: { ...typography.bodyMd, color: colors.primaryDark, fontWeight: '700' },
+  pinImg: { width: 40, height: 40, borderRadius: 20 },
+  pinFallback: { alignItems: 'center', justifyContent: 'center' },
+  pinInitials: { ...typography.bodyMd, color: colors.primaryDark, fontWeight: '700' },
+  workerLabelBubble: {
+    backgroundColor: colors.surface, borderRadius: radius.sm,
+    paddingHorizontal: 8, paddingVertical: 3, ...shadows.sm,
+  },
+  workerLabelText: { ...typography.caption, color: colors.primary, fontWeight: '700' },
 
-  // Zoom controls
-  zoomControls: {
-    position: 'absolute',
-    top: spacing.lg,
-    right: spacing.lg,
+  // Map controls
+  zoomStack: {
+    position: 'absolute', top: spacing.lg, right: spacing.lg,
     backgroundColor: colors.surface,
     borderRadius: radius.md,
     ...shadows.md,
     overflow: 'hidden',
   },
-  zoomBtn: {
-    width: 40, height: 40,
-    alignItems: 'center', justifyContent: 'center',
-  },
+  zoomBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   zoomDivider: { height: 1, backgroundColor: colors.borderLight },
-  recenterFab: {
-    position: 'absolute',
-    top: spacing.lg + 90,
-    right: spacing.lg,
+  recenterBtn: {
+    position: 'absolute', top: spacing.lg + 90, right: spacing.lg,
     width: 40, height: 40, borderRadius: 20,
     backgroundColor: colors.surface,
     alignItems: 'center', justifyContent: 'center',
@@ -464,76 +493,80 @@ const styles = StyleSheet.create({
 
   // Bottom card
   cardSafe: { backgroundColor: colors.surface, ...shadows.lg },
-  card: {
-    padding: spacing.lg,
-    gap: spacing.md,
-  },
+  card: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.sm, gap: spacing.sm },
 
-  workerRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  // Worker row
+  workerRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   avatar: { width: 52, height: 52, borderRadius: 26, flexShrink: 0 },
-  avatarFallback: {
-    backgroundColor: colors.primary,
+  avatarFallback: { backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
+  avatarInitials: { ...typography.bodyMd, color: '#fff', fontWeight: '700' },
+  workerMeta: { flex: 1 },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  workerName: { ...typography.bodyMd, color: colors.textPrimary, fontWeight: '700', flexShrink: 1 },
+  workerSub: { ...typography.caption, color: colors.textSecondary, marginTop: 2 },
+  ratingBlock: { alignItems: 'flex-end', gap: 2, flexShrink: 0 },
+  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  ratingVal: { ...typography.bodyMd, color: colors.textPrimary, fontWeight: '800' },
+  jobsText: { fontSize: 9, color: colors.textSecondary, fontWeight: '700', letterSpacing: 0.3 },
+
+  // Stats
+  statsBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surfaceElevated,
+    borderRadius: radius.lg,
+    paddingVertical: spacing.md,
+  },
+  statCol: { flex: 1, alignItems: 'center', gap: 4 },
+  statDivider: { width: 1, height: 56, backgroundColor: colors.borderLight },
+  statNumRow: { flexDirection: 'row', alignItems: 'baseline' },
+  statBig: { fontSize: 28, fontWeight: '800', color: colors.textPrimary, lineHeight: 32 },
+  statUnit: { fontSize: 13, fontWeight: '600', color: colors.textSecondary },
+  accuracyBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    backgroundColor: '#F0FDF4', borderRadius: radius.full,
+    paddingHorizontal: 8, paddingVertical: 3,
+  },
+  accuracyDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#22C55E' },
+  accuracyText: { fontSize: 9, color: '#16A34A', fontWeight: '700', letterSpacing: 0.4 },
+  statSub: { fontSize: 9, color: colors.textSecondary, fontWeight: '600', letterSpacing: 0.3 },
+  onTimeText: { fontSize: 9, color: colors.textSecondary, fontWeight: '600', letterSpacing: 0.3 },
+  topProText: { fontSize: 9, color: colors.primary, fontWeight: '700', letterSpacing: 0.3 },
+
+  // Journey progress
+  journey: { paddingVertical: spacing.xs },
+  dotsRow: { flexDirection: 'row', alignItems: 'center' },
+  trackLine: { flex: 1, height: 3, borderRadius: 2 },
+  trackDone: { backgroundColor: colors.primary },
+  trackFuture: { backgroundColor: colors.borderLight },
+  stageDot: { width: 12, height: 12, borderRadius: 6 },
+  dotDone: { backgroundColor: colors.primary },
+  dotFuture: { backgroundColor: colors.surface, borderWidth: 2, borderColor: colors.border },
+  dotActive: { width: 16, height: 16, borderRadius: 8, borderWidth: 2.5, borderColor: colors.primaryLight },
+  labelsRow: { flexDirection: 'row', marginTop: 5 },
+  stageLabel: { flex: 1, fontSize: 8, textAlign: 'center', color: colors.textDisabled, fontWeight: '700', letterSpacing: 0.4 },
+  stageLabelActive: { color: colors.primary },
+
+  // Quick replies
+  quickList: { gap: spacing.sm, paddingVertical: 2 },
+  quickChip: {
+    borderWidth: 1.5, borderColor: colors.border,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md, paddingVertical: 7,
+  },
+  quickChipText: { ...typography.small, color: colors.textSecondary, fontWeight: '600' },
+
+  // Actions
+  actions: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingBottom: spacing.xs },
+  msgBtn: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: spacing.sm, backgroundColor: colors.primary,
+    borderRadius: radius.lg, paddingVertical: 13,
+  },
+  msgText: { ...typography.bodyMd, color: '#fff', fontWeight: '700' },
+  roundBtn: {
+    width: 46, height: 46, borderRadius: 23,
+    borderWidth: 1.5, borderColor: colors.border,
     alignItems: 'center', justifyContent: 'center',
   },
-  avatarInitials: { ...typography.bodyMd, color: '#fff', fontWeight: '700' },
-  workerInfo: { flex: 1 },
-  workerHeading: { ...typography.bodyMd, color: colors.textPrimary, fontWeight: '700' },
-  workerMeta: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
-  tradeText: { ...typography.caption, color: colors.textSecondary },
-  metricCol: { alignItems: 'center', minWidth: 52 },
-  metricBig: { fontSize: 26, fontWeight: '800', color: colors.textPrimary, lineHeight: 30 },
-  metricUnit: { fontSize: 11, fontWeight: '600', color: colors.textSecondary, marginTop: -2 },
-  metricSub: { fontSize: 11, color: colors.textSecondary, marginTop: 4 },
-
-  // Progress
-  progressSection: { gap: 8 },
-  progressLabel: { ...typography.small, color: colors.textSecondary, fontWeight: '600' },
-  progressTrack: {
-    height: 8,
-    backgroundColor: colors.surfaceElevated,
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: colors.primary,
-    borderRadius: 4,
-  },
-
-  locatingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.surfaceElevated,
-    borderRadius: radius.lg,
-    paddingVertical: spacing.md,
-  },
-  locatingText: { ...typography.bodyMd, color: colors.textSecondary },
-
-  // Buttons
-  btnRow: { flexDirection: 'row', gap: spacing.md },
-  callBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.primary,
-    borderRadius: radius.lg,
-    paddingVertical: spacing.md,
-  },
-  callBtnText: { ...typography.bodyMd, color: '#fff', fontWeight: '700' },
-  msgBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    borderWidth: 1.5,
-    borderColor: colors.primary,
-    borderRadius: radius.lg,
-    paddingVertical: spacing.md,
-  },
-  msgBtnText: { ...typography.bodyMd, color: colors.primary, fontWeight: '700' },
 });
