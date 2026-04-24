@@ -28,31 +28,26 @@ function WorkerMapPin({ worker, onPress, selected = false }: WorkerMapPinProps) 
       tracksViewChanges={!imageReady}
     >
       <View style={styles.wrapper}>
-        {/* Orange border ring — NO overflow:hidden, NO elevation */}
-        <View style={[styles.ring, selected && styles.ringSelected]}>
-          {/*
-            Inner clip view: overflow:hidden clips the image into a circle.
-            This works on Android ONLY when this view has NO elevation.
-            Never combine elevation + overflow:hidden on the same View on Android.
-          */}
-          <View style={styles.imageClip}>
-            {worker.avatarUrl ? (
-              <Image
-                source={{ uri: worker.avatarUrl }}
-                style={styles.avatar}
-                resizeMode="cover"
-                onLoad={() => setImageReady(true)}
-                onError={() => setImageReady(true)}
-              />
-            ) : (
-              <View style={styles.fallback}>
-                <Text style={styles.initials}>{getInitials(worker.name)}</Text>
-              </View>
-            )}
-          </View>
+        {/*
+          Single view handles both the border AND the circular clip.
+          overflow:hidden works here because there is NO elevation on
+          any view in this component — elevation disables clipping on Android.
+        */}
+        <View style={[styles.pin, selected && styles.pinSelected]}>
+          {worker.avatarUrl ? (
+            <Image
+              source={{ uri: worker.avatarUrl }}
+              style={styles.img}
+              resizeMode="cover"
+              onLoad={() => setImageReady(true)}
+              onError={() => setImageReady(true)}
+            />
+          ) : (
+            <View style={styles.fallback}>
+              <Text style={styles.initials}>{getInitials(worker.name)}</Text>
+            </View>
+          )}
         </View>
-
-        {/* Tail */}
         <View style={[styles.tail, selected && styles.tailSelected]} />
       </View>
     </Marker>
@@ -61,52 +56,39 @@ function WorkerMapPin({ worker, onPress, selected = false }: WorkerMapPinProps) 
 
 export default memo(WorkerMapPin);
 
-const RING  = 44;
-const INNER = 34;
+const PIN = 46;
 
 const styles = StyleSheet.create({
   wrapper: { alignItems: 'center' },
 
-  // Draws the circular orange border — no overflow:hidden, no elevation
-  ring: {
-    width: RING,
-    height: RING,
-    borderRadius: RING / 2,
+  pin: {
+    width: PIN,
+    height: PIN,
+    borderRadius: PIN / 2,
     borderWidth: 3,
     borderColor: colors.primary,
-    backgroundColor: colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ringSelected: {
-    borderColor: colors.primaryDark,
-    borderWidth: 4,
-  },
-
-  // Clips the image to circle — overflow:hidden works here because NO elevation on this view
-  imageClip: {
-    width: INNER,
-    height: INNER,
-    borderRadius: INNER / 2,
-    overflow: 'hidden',
-  },
-
-  avatar: {
-    width: INNER,
-    height: INNER,
-  },
-  fallback: {
-    width: INNER,
-    height: INNER,
     backgroundColor: colors.primaryLight,
+    overflow: 'hidden', // clips image to circle — works without elevation
     alignItems: 'center',
     justifyContent: 'center',
+    // NO elevation, NO shadow — elevation breaks overflow:hidden on Android
+  },
+  pinSelected: { borderColor: colors.primaryDark, borderWidth: 4 },
+
+  img: { width: PIN, height: PIN },
+
+  fallback: {
+    width: PIN,
+    height: PIN,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primaryLight,
   },
   initials: {
     ...typography.caption,
     color: colors.primaryDark,
     fontWeight: '800',
-    fontSize: 12,
+    fontSize: 13,
   },
 
   tail: {
@@ -119,7 +101,5 @@ const styles = StyleSheet.create({
     borderRightColor: 'transparent',
     borderTopColor: colors.primary,
   },
-  tailSelected: {
-    borderTopColor: colors.primaryDark,
-  },
+  tailSelected: { borderTopColor: colors.primaryDark },
 });

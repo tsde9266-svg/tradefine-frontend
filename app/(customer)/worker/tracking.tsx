@@ -84,20 +84,17 @@ export default function TrackingScreen() {
   const progressAnim = useRef(new Animated.Value(0)).current;
   const lastLiveRef = useRef(Date.now());
 
-  // Load worker profile
   useEffect(() => {
     if (!workerId) return;
     getWorkerById(workerId)
       .then((w) => {
         setWorker(w);
-        if (w.latitude != null && w.longitude != null) {
+        if (w.latitude != null && w.longitude != null)
           setProfilePosition({ latitude: w.latitude, longitude: w.longitude });
-        }
       })
       .catch(() => {});
   }, [workerId]);
 
-  // Fit map to show both positions
   useEffect(() => {
     if (!mapRef.current || !displayPosition || !currentLocation) return;
     mapRef.current.fitToCoordinates(
@@ -109,11 +106,10 @@ export default function TrackingScreen() {
     );
   }, [displayPosition, currentLocation]);
 
-  const distanceMetres =
-    currentLocation && displayPosition ? calcDistance(currentLocation, displayPosition) : null;
+  const distanceMetres = currentLocation && displayPosition
+    ? calcDistance(currentLocation, displayPosition) : null;
   const etaMinutes = distanceMetres != null ? etaMins(distanceMetres) : null;
 
-  // Animate progress + update journey step
   useEffect(() => {
     if (distanceMetres == null) return;
     const progress = distanceMetres < 200 ? 0.85 : distanceMetres < 800 ? 0.6 : 0.3;
@@ -122,12 +118,8 @@ export default function TrackingScreen() {
     else setJourneyStep('en_route');
   }, [distanceMetres]);
 
-  // Track live update timestamp
   useEffect(() => {
-    if (livePosition) {
-      lastLiveRef.current = Date.now();
-      setLastUpdatedMs(Date.now());
-    }
+    if (livePosition) { lastLiveRef.current = Date.now(); setLastUpdatedMs(Date.now()); }
   }, [livePosition]);
 
   useEffect(() => {
@@ -136,7 +128,6 @@ export default function TrackingScreen() {
     return () => clearInterval(interval);
   }, [lastUpdatedMs]);
 
-  // Offline detection
   useEffect(() => {
     if (!isLive) return;
     const timer = setInterval(() => {
@@ -154,12 +145,11 @@ export default function TrackingScreen() {
   }, [isLive, worker]);
 
   const initialRegion: Region | undefined = currentLocation
-    ? { ...currentLocation, latitudeDelta: 0.02, longitudeDelta: 0.02 }
-    : undefined;
+    ? { ...currentLocation, latitudeDelta: 0.02, longitudeDelta: 0.02 } : undefined;
 
   const firstName = worker?.name?.split(' ')[0] ?? 'Worker';
   const initials = worker?.name?.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase() ?? '?';
-  const isVerified = !!(worker?.certifications && worker.certifications.length > 0);
+  const isVerified = !!(worker?.certifications?.length);
   const reviewCountLabel = worker?.reviewCount != null
     ? worker.reviewCount >= 1000 ? `${(worker.reviewCount / 1000).toFixed(1)}k` : `${worker.reviewCount}`
     : null;
@@ -167,7 +157,6 @@ export default function TrackingScreen() {
 
   return (
     <View style={styles.screen}>
-      {/* Header */}
       <SafeAreaView edges={['top']} style={styles.headerSafe}>
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.iconBtn}>
@@ -175,16 +164,12 @@ export default function TrackingScreen() {
           </Pressable>
           <Text style={styles.headerTitle}>Live Tracking</Text>
           <View style={styles.iconBtn}>
-            <Ionicons
-              name="radio-outline"
-              size={22}
-              color={isLive && !workerOffline ? colors.primary : colors.textSecondary}
-            />
+            <Ionicons name="radio-outline" size={22}
+              color={isLive && !workerOffline ? colors.primary : colors.textSecondary} />
           </View>
         </View>
       </SafeAreaView>
 
-      {/* Map */}
       <View style={styles.mapContainer}>
         <MapView
           ref={mapRef}
@@ -198,44 +183,30 @@ export default function TrackingScreen() {
           {currentLocation && (
             <Marker coordinate={currentLocation} anchor={{ x: 0.5, y: 0.5 }} tracksViewChanges={false}>
               <View style={styles.myMarkerWrap}>
-                <View style={styles.myLabel}>
-                  <Text style={styles.myLabelText}>Your Location</Text>
-                </View>
-                <View style={styles.myDot}>
-                  <View style={styles.myDotCore} />
-                </View>
+                <View style={styles.myLabel}><Text style={styles.myLabelText}>Your Location</Text></View>
+                <View style={styles.myDot}><View style={styles.myDotCore} /></View>
               </View>
             </Marker>
           )}
-
           {displayPosition && currentLocation && (
-            <Polyline
-              coordinates={[currentLocation, displayPosition]}
-              strokeColor={colors.primary}
-              strokeWidth={3}
-              lineDashPattern={[8, 5]}
-            />
+            <Polyline coordinates={[currentLocation, displayPosition]}
+              strokeColor={colors.primary} strokeWidth={3} lineDashPattern={[8, 5]} />
           )}
-
           {displayPosition && (
             <Marker coordinate={displayPosition} anchor={{ x: 0.5, y: 1.0 }} tracksViewChanges={false}>
               <View style={styles.workerMarkerWrap}>
                 <View style={styles.workerPin}>
                   {worker?.avatarUrl
                     ? <Image source={{ uri: worker.avatarUrl }} style={styles.pinImg} resizeMode="cover" />
-                    : <View style={styles.pinFallback}><Text style={styles.pinInitials}>{initials}</Text></View>
-                  }
+                    : <View style={styles.pinFallback}><Text style={styles.pinInitials}>{initials}</Text></View>}
                 </View>
-                <View style={styles.workerLabel}>
-                  <Text style={styles.workerLabelText}>{firstName}</Text>
-                </View>
+                <View style={styles.workerLabel}><Text style={styles.workerLabelText}>{firstName}</Text></View>
                 <View style={styles.pinTail} />
               </View>
             </Marker>
           )}
         </MapView>
 
-        {/* Status pill */}
         {etaMinutes != null && (
           <View style={styles.statusPill}>
             <View style={styles.statusLeft}>
@@ -251,7 +222,6 @@ export default function TrackingScreen() {
           </View>
         )}
 
-        {/* Zoom controls */}
         <View style={styles.zoomControls}>
           <Pressable style={styles.zoomBtn} onPress={() =>
             mapRef.current?.getCamera().then((c) => {
@@ -270,22 +240,17 @@ export default function TrackingScreen() {
 
         <Pressable style={styles.recenterBtn} onPress={() =>
           currentLocation && mapRef.current?.animateToRegion(
-            { ...currentLocation, latitudeDelta: 0.02, longitudeDelta: 0.02 }, 400,
-          )}>
+            { ...currentLocation, latitudeDelta: 0.02, longitudeDelta: 0.02 }, 400)}>
           <Ionicons name="navigate" size={18} color={colors.primary} />
         </Pressable>
       </View>
 
-      {/* Bottom card */}
       <SafeAreaView edges={['bottom']} style={styles.cardSafe}>
         <ScrollView scrollEnabled={false} contentContainerStyle={styles.card}>
-
-          {/* Worker info */}
           <View style={styles.workerRow}>
             {worker?.avatarUrl
               ? <Image source={{ uri: worker.avatarUrl }} style={styles.avatar} />
-              : <View style={[styles.avatar, styles.avatarFallback]}><Text style={styles.avatarInitials}>{initials}</Text></View>
-            }
+              : <View style={[styles.avatar, styles.avatarFallback]}><Text style={styles.avatarInitials}>{initials}</Text></View>}
             <View style={styles.workerInfo}>
               <View style={styles.nameRow}>
                 <Text style={styles.workerName}>{worker?.name ?? 'Worker'}</Text>
@@ -302,7 +267,6 @@ export default function TrackingScreen() {
             </View>
           </View>
 
-          {/* Stat boxes */}
           {distanceMetres != null && etaMinutes != null && (
             <View style={styles.statsRow}>
               <View style={styles.statBox}>
@@ -325,7 +289,6 @@ export default function TrackingScreen() {
             </View>
           )}
 
-          {/* Journey steps */}
           <View style={styles.stepsRow}>
             {STEPS.map((step, index) => {
               const isActive = index === activeStepIndex;
@@ -348,30 +311,26 @@ export default function TrackingScreen() {
             })}
           </View>
 
-          {/* Quick chips */}
           <View style={styles.chipsRow}>
             {QUICK_ACTIONS.map((a) => (
-              <Pressable key={a} style={styles.chip}>
-                <Text style={styles.chipText}>{a}</Text>
-              </Pressable>
+              <Pressable key={a} style={styles.chip}><Text style={styles.chipText}>{a}</Text></Pressable>
             ))}
           </View>
 
-          {/* Action buttons */}
           <View style={styles.btnRow}>
             <Pressable style={styles.msgBtn}>
               <Ionicons name="chatbubble" size={18} color="#fff" />
               <Text style={styles.msgBtnText}>Message</Text>
             </Pressable>
-            <Pressable style={styles.roundBtn} onPress={() => worker?.phone && Linking.openURL(`tel:${worker.phone}`)}>
+            <Pressable style={styles.roundBtn}
+              onPress={() => worker?.phone && Linking.openURL(`tel:${worker.phone}`)}>
               <Ionicons name="call" size={20} color={colors.textPrimary} />
             </Pressable>
-            <Pressable style={styles.roundBtn} onPress={() =>
-              Share.share({ message: `I'm being visited by ${worker?.name ?? 'a tradesperson'} via TradeFind.` })}>
+            <Pressable style={styles.roundBtn}
+              onPress={() => Share.share({ message: `I'm being visited by ${worker?.name ?? 'a tradesperson'} via TradeFind.` })}>
               <Ionicons name="share-outline" size={20} color={colors.textPrimary} />
             </Pressable>
           </View>
-
         </ScrollView>
       </SafeAreaView>
     </View>
@@ -380,59 +339,37 @@ export default function TrackingScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
-
-  // Header
   headerSafe: { backgroundColor: colors.surface, ...shadows.sm },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.lg, paddingVertical: spacing.sm },
   iconBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.surfaceElevated, alignItems: 'center', justifyContent: 'center' },
   headerTitle: { flex: 1, textAlign: 'center', ...typography.h4, color: colors.textPrimary, fontWeight: '700' },
-
-  // Map
   mapContainer: { flex: 1 },
-
-  // Status pill
-  statusPill: {
-    position: 'absolute', top: spacing.md, left: spacing.md, right: spacing.md,
-    backgroundColor: colors.surface, borderRadius: radius.lg,
-    paddingHorizontal: spacing.md, paddingVertical: spacing.sm,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    ...shadows.md,
-  },
+  statusPill: { position: 'absolute', top: spacing.md, left: spacing.md, right: spacing.md, backgroundColor: colors.surface, borderRadius: radius.lg, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', ...shadows.md },
   statusLeft: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   statusDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.success },
   statusText: { ...typography.bodyMd, color: colors.textPrimary },
   statusBold: { fontWeight: '700' },
   statusRight: { flexDirection: 'row', alignItems: 'center', gap: 3 },
   updatedText: { fontSize: 9, color: colors.textSecondary, fontWeight: '600' },
-
-  // My location marker
   myMarkerWrap: { alignItems: 'center', gap: 4 },
   myLabel: { backgroundColor: colors.surface, borderRadius: radius.sm, paddingHorizontal: 8, paddingVertical: 3, ...shadows.sm },
   myLabelText: { ...typography.caption, color: colors.textPrimary, fontWeight: '600' },
   myDot: { width: 20, height: 20, borderRadius: 10, backgroundColor: 'rgba(66,133,244,0.25)', alignItems: 'center', justifyContent: 'center' },
   myDotCore: { width: 12, height: 12, borderRadius: 6, backgroundColor: '#4285F4', borderWidth: 2, borderColor: '#fff' },
-
-  // Worker marker
   workerMarkerWrap: { alignItems: 'center' },
-  workerPin: { width: 46, height: 46, borderRadius: 23, borderWidth: 3, borderColor: colors.primary, overflow: 'hidden', ...shadows.md },
-  pinImg: { width: '100%', height: '100%' },
-  pinFallback: { flex: 1, backgroundColor: colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
+  workerPin: { width: 46, height: 46, borderRadius: 23, borderWidth: 3, borderColor: colors.primary, overflow: 'hidden', backgroundColor: colors.primaryLight },
+  pinImg: { width: 40, height: 40 },
+  pinFallback: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   pinInitials: { ...typography.bodyMd, color: colors.primaryDark, fontWeight: '700' },
   workerLabel: { backgroundColor: colors.surface, borderRadius: radius.sm, paddingHorizontal: 8, paddingVertical: 2, marginTop: 3, ...shadows.sm },
   workerLabelText: { ...typography.caption, color: colors.primary, fontWeight: '700' },
   pinTail: { width: 0, height: 0, borderLeftWidth: 6, borderRightWidth: 6, borderTopWidth: 8, borderLeftColor: 'transparent', borderRightColor: 'transparent', borderTopColor: colors.primary, marginTop: 1 },
-
-  // Zoom & recenter
   zoomControls: { position: 'absolute', top: spacing.lg + 56, right: spacing.lg, backgroundColor: colors.surface, borderRadius: radius.md, overflow: 'hidden', ...shadows.md },
   zoomBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   zoomDivider: { height: 1, backgroundColor: colors.borderLight },
   recenterBtn: { position: 'absolute', top: spacing.lg + 148, right: spacing.lg, width: 40, height: 40, borderRadius: 20, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center', ...shadows.md },
-
-  // Bottom card
   cardSafe: { backgroundColor: colors.surface, ...shadows.lg },
   card: { padding: spacing.lg, gap: spacing.md },
-
-  // Worker row
   workerRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   avatar: { width: 52, height: 52, borderRadius: 26, flexShrink: 0 },
   avatarFallback: { backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
@@ -445,8 +382,6 @@ const styles = StyleSheet.create({
   ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 3 },
   ratingVal: { ...typography.bodyMd, color: colors.textPrimary, fontWeight: '700' },
   jobsLabel: { fontSize: 9, fontWeight: '700', color: colors.textSecondary, letterSpacing: 0.3 },
-
-  // Stats
   statsRow: { flexDirection: 'row', backgroundColor: colors.surfaceElevated, borderRadius: radius.lg, padding: spacing.md, alignItems: 'center' },
   statBox: { flex: 1, alignItems: 'center', gap: 3 },
   statDivider: { width: 1, height: 40, backgroundColor: colors.borderLight, marginHorizontal: spacing.sm },
@@ -457,8 +392,6 @@ const styles = StyleSheet.create({
   statBadgeText: { fontSize: 9, fontWeight: '700', color: colors.success, letterSpacing: 0.3 },
   statLabel: { fontSize: 9, fontWeight: '700', color: colors.textSecondary, letterSpacing: 0.3 },
   statSub: { fontSize: 9, color: colors.textSecondary, fontWeight: '600', letterSpacing: 0.3 },
-
-  // Journey steps
   stepsRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing.xs },
   stepItem: { alignItems: 'center', gap: 5 },
   stepDot: { width: 18, height: 18, borderRadius: 9, borderWidth: 2, borderColor: colors.borderLight, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center' },
@@ -469,13 +402,9 @@ const styles = StyleSheet.create({
   stepLabelDone: { color: colors.primary },
   stepLine: { flex: 1, height: 2, backgroundColor: colors.borderLight, marginBottom: 12 },
   stepLineFilled: { backgroundColor: colors.primary },
-
-  // Chips
   chipsRow: { flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap' },
   chip: { borderWidth: 1.5, borderColor: colors.borderLight, borderRadius: radius.full, paddingHorizontal: spacing.md, paddingVertical: 7 },
   chipText: { ...typography.caption, color: colors.textPrimary, fontWeight: '600' },
-
-  // Buttons
   btnRow: { flexDirection: 'row', gap: spacing.sm, alignItems: 'center' },
   msgBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, backgroundColor: colors.primary, borderRadius: radius.lg, paddingVertical: spacing.md },
   msgBtnText: { ...typography.bodyMd, color: '#fff', fontWeight: '700' },

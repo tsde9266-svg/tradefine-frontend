@@ -47,7 +47,12 @@ export default function RequestWorkerScreen() {
       const job = await createJobRequest({ workerId, type: 'in_app', description: description.trim() });
       router.replace(`/(customer)/worker/waiting?jobId=${job.id}`);
     } catch (e: any) {
-      show(e?.response?.data?.error ?? 'Could not send request', 'error');
+      const msg = e?.response?.data?.error;
+      if (!msg && e?.response?.status === 404) {
+        show('Booking feature coming soon — call the worker directly for now', 'info');
+      } else {
+        show(msg ?? 'Could not send request', 'error');
+      }
     } finally {
       setSubmitting(false);
     }
@@ -59,7 +64,12 @@ export default function RequestWorkerScreen() {
       const job = await createJobRequest({ workerId, type: 'call' });
       router.replace(`/(customer)/worker/waiting?jobId=${job.id}`);
     } catch (e: any) {
-      show(e?.response?.data?.error ?? 'Could not confirm agreement', 'error');
+      const msg = e?.response?.data?.error;
+      if (!msg && e?.response?.status === 404) {
+        show('Booking feature coming soon — call the worker directly for now', 'info');
+      } else {
+        show(msg ?? 'Could not confirm agreement', 'error');
+      }
     } finally {
       setSubmitting(false);
     }
