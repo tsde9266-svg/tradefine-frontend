@@ -347,9 +347,8 @@ const styles = StyleSheet.create({
 
   /* Results */
   resultCount: {
-    ...typography.bodyMd,
+    ...typography.h3,
     color: colors.textPrimary,
-    fontWeight: '700',
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
   },
@@ -371,11 +370,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: spacing.md,
+    paddingBottom: spacing.sm,
     gap: spacing.md,
   },
   avatar: {
-    width: 64, height: 64,
-    borderRadius: radius.md,
+    width: 72, height: 72,
+    borderRadius: 10,
     flexShrink: 0,
   },
   avatarFallback: {
