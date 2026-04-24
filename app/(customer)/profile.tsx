@@ -41,9 +41,17 @@ export default function CustomerProfileScreen() {
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.topBar}>
-          <Ionicons name="menu" size={24} color={colors.textPrimary} />
+          <Pressable style={styles.menuBtn}>
+            <Ionicons name="menu-outline" size={24} color={colors.textPrimary} />
+          </Pressable>
           <Text style={styles.brand}>TradeFind</Text>
-          <View style={{ width: 24 }} />
+          <View style={styles.avatarBtn}>
+            {user?.avatarUrl ? (
+              <Image source={{ uri: user.avatarUrl }} style={styles.avatarBtnImg} />
+            ) : (
+              <Ionicons name="person-outline" size={18} color={colors.primary} />
+            )}
+          </View>
         </View>
 
         {/* Avatar section */}
@@ -126,7 +134,15 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.borderLight,
   },
-  brand: { ...typography.h4, color: colors.primary },
+  brand: { ...typography.h3, color: colors.primary, fontWeight: '800', letterSpacing: -0.5 },
+  menuBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
+  avatarBtn: {
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: colors.primaryLight,
+    alignItems: 'center', justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  avatarBtnImg: { width: 36, height: 36 },
 
   avatarSection: { alignItems: 'center', paddingVertical: spacing.xxl, gap: 4 },
   avatarWrap: { position: 'relative', marginBottom: spacing.sm },
