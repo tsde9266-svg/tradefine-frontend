@@ -13,67 +13,67 @@ interface WorkerMapPinProps {
 }
 
 function getInitials(name: string) {
-  return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  return name.split(' ').slice(0, 2).map((w) => w[0]).join('').toUpperCase();
 }
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
 function getTradeIcon(trade: string): IoniconName {
   const t = trade.toLowerCase();
-  if (t.includes('electr'))  return 'flash';
-  if (t.includes('plumb') || t.includes('bathroom')) return 'water';
-  if (t.includes('gas'))     return 'flame';
-  if (t.includes('carpenter') || t.includes('joiner')) return 'hammer';
-  if (t.includes('paint'))   return 'color-palette';
+  if (t.includes('electr'))                        return 'flash';
+  if (t.includes('plumb') || t.includes('bath'))   return 'water';
+  if (t.includes('gas'))                           return 'flame';
+  if (t.includes('carpen') || t.includes('join'))  return 'hammer';
+  if (t.includes('paint') || t.includes('decor'))  return 'color-palette';
   if (t.includes('landscape') || t.includes('garden')) return 'leaf';
-  if (t.includes('lock'))    return 'key';
-  if (t.includes('hvac') || t.includes('heating')) return 'thermometer';
-  if (t.includes('roof'))    return 'home';
-  if (t.includes('tile'))    return 'grid';
-  if (t.includes('kitchen')) return 'restaurant';
-  if (t.includes('floor'))   return 'layers';
-  if (t.includes('architect')) return 'compass';
-  if (t.includes('survey'))  return 'analytics';
-  if (t.includes('glazier')) return 'glasses-outline';
-  if (t.includes('scaffold')) return 'git-network';
-  if (t.includes('ground'))  return 'earth';
-  if (t.includes('demo'))    return 'warning';
-  if (t.includes('damp'))    return 'shield-checkmark';
-  if (t.includes('builder') || t.includes('contractor')) return 'construct';
+  if (t.includes('lock'))                          return 'key';
+  if (t.includes('roof'))                          return 'home';
+  if (t.includes('tile'))                          return 'grid';
+  if (t.includes('clean'))                         return 'sparkles';
+  if (t.includes('build') || t.includes('contract')) return 'construct';
   return 'build';
 }
 
 function WorkerMapPin({ worker, onPress, selected = false }: WorkerMapPinProps) {
-  const [ready, setReady] = useState(!worker.avatarUrl);
+  const [imageReady, setImageReady] = useState(!worker.avatarUrl);
 
   if (worker.latitude == null || worker.longitude == null) return null;
+
+  const initials = getInitials(worker.name);
+  const tradeIcon = getTradeIcon(worker.trades[0] ?? '');
 
   return (
     <Marker
       coordinate={{ latitude: worker.latitude, longitude: worker.longitude }}
       onPress={() => onPress(worker)}
-      tracksViewChanges={!ready}
+      // anchor at bottom-center of the tail — this is critical on Android Google Maps
+      anchor={{ x: 0.5, y: 1.0 }}
+      tracksViewChanges={!imageReady}
     >
+      {/* Wrapper: avatar circle + tail below, centered */}
       <View style={styles.wrapper}>
-        <View style={styles.pinWrap}>
-          <View style={[styles.pin, selected && styles.pinSelected]}>
-            {worker.avatarUrl ? (
-              <Image
-                source={{ uri: worker.avatarUrl }}
-                style={styles.avatar}
-                resizeMode="cover"
-                onLoad={() => setReady(true)}
-              />
-            ) : (
-              <View style={styles.avatarFallback}>
-                <Text style={styles.initials}>{getInitials(worker.name)}</Text>
-              </View>
-            )}
-          </View>
-          <View style={styles.badge}>
-            <Ionicons name={getTradeIcon(worker.trades[0] ?? '')} size={9} color={colors.primary} />
-          </View>
+        {/* Avatar ring */}
+        <View style={[styles.ring, selected && styles.ringSelected]}>
+          {worker.avatarUrl ? (
+            <Image
+              source={{ uri: worker.avatarUrl }}
+              style={styles.avatar}
+              resizeMode="cover"
+              onLoad={() => setImageReady(true)}
+            />
+          ) : (
+            <View style={styles.avatarFallback}>
+              <Text style={styles.initials}>{initials}</Text>
+            </View>
+          )}
         </View>
+
+        {/* Trade badge — sits at top-right outside the ring */}
+        <View style={styles.badge}>
+          <Ionicons name={tradeIcon} size={9} color={colors.primary} />
+        </View>
+
+        {/* Tail triangle */}
         <View style={[styles.tail, selected && styles.tailSelected]} />
       </View>
     </Marker>
@@ -82,58 +82,44 @@ function WorkerMapPin({ worker, onPress, selected = false }: WorkerMapPinProps) 
 
 export default memo(WorkerMapPin);
 
-const AVATAR_SIZE = 36;
-const PIN_SIZE = AVATAR_SIZE + 6;  // 42
-const BADGE_SIZE = 18;
-const WRAP_SIZE = PIN_SIZE + 10;   // 52 — extra room so badge never clips
+const AVATAR = 38;
+const RING   = AVATAR + 8;   // 46 — includes 4px border each side
 
 const styles = StyleSheet.create({
-  wrapper: { alignItems: 'center' },
-  pinWrap: {
-    width: WRAP_SIZE,
-    height: WRAP_SIZE,
-  },
-  badge: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    width: BADGE_SIZE,
-    height: BADGE_SIZE,
-    borderRadius: BADGE_SIZE / 2,
-    backgroundColor: colors.surface,
+  // The whole marker: ring on top, tail below, centered
+  wrapper: {
     alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1.5,
-    borderColor: colors.primaryLight,
-    elevation: 10,
+    // Do NOT add overflow:hidden here — it clips the badge
   },
-  pin: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    width: PIN_SIZE,
-    height: PIN_SIZE,
-    borderRadius: PIN_SIZE / 2,
-    backgroundColor: colors.primary,
-    padding: 3,
-    borderWidth: 2.5,
-    borderColor: colors.surface,
+
+  // Circular photo frame
+  ring: {
+    width: RING,
+    height: RING,
+    borderRadius: RING / 2,
+    borderWidth: 3,
+    borderColor: colors.primary,
+    backgroundColor: colors.surface,
     overflow: 'hidden',
+    // Shadow so it pops off the map
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
     elevation: 6,
   },
-  pinSelected: {
+  ringSelected: {
     borderColor: colors.primaryDark,
-    transform: [{ scale: 1.15 }],
+    borderWidth: 4,
   },
+
   avatar: {
-    width: AVATAR_SIZE,
-    height: AVATAR_SIZE,
-    borderRadius: AVATAR_SIZE / 2,
+    width: '100%',
+    height: '100%',
   },
   avatarFallback: {
-    width: AVATAR_SIZE,
-    height: AVATAR_SIZE,
-    borderRadius: AVATAR_SIZE / 2,
+    width: '100%',
+    height: '100%',
     backgroundColor: colors.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',
@@ -141,15 +127,38 @@ const styles = StyleSheet.create({
   initials: {
     ...typography.caption,
     color: colors.primaryDark,
-    fontWeight: '700',
-    fontSize: 12,
+    fontWeight: '800',
+    fontSize: 13,
   },
+
+  // Trade icon badge — absolutely over top-right of ring
+  badge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: colors.surface,
+    borderWidth: 1.5,
+    borderColor: colors.primaryLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 2,
+  },
+
+  // Downward-pointing triangle
   tail: {
+    marginTop: -1,
     width: 0,
     height: 0,
-    borderLeftWidth: 6,
-    borderRightWidth: 6,
-    borderTopWidth: 8,
+    borderLeftWidth: 7,
+    borderRightWidth: 7,
+    borderTopWidth: 9,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
     borderTopColor: colors.primary,

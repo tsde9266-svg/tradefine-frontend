@@ -70,9 +70,11 @@ export default function CustomerLayout() {
           tabBarIcon: ({ focused }) => <TabIcon name="person" focused={focused} />,
         }}
       />
-      <Tabs.Screen name="worker/[id]"     options={{ href: null }} />
+      <Tabs.Screen name="worker/[id]"      options={{ href: null }} />
       <Tabs.Screen name="worker/tracking" options={{ href: null }} />
       <Tabs.Screen name="worker/review"   options={{ href: null }} />
+      <Tabs.Screen name="worker/request"  options={{ href: null }} />
+      <Tabs.Screen name="worker/waiting"  options={{ href: null }} />
       <Tabs.Screen name="search"          options={{ href: null }} />
     </Tabs>
   );

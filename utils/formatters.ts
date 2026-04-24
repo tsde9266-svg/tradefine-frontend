@@ -1,9 +1,10 @@
 import { formatDistanceToNow, parseISO } from 'date-fns';
 
 export function formatDistance(metres: number): string {
-  if (metres < 1000) return `${Math.round(metres)}m away`;
-  const km = metres / 1000;
-  return `${km < 10 ? km.toFixed(1) : Math.round(km)}km away`;
+  const miles = metres / 1609.344;
+  if (miles < 0.1) return 'nearby';
+  if (miles < 10) return `${miles.toFixed(1)} miles`;
+  return `${Math.round(miles)} miles`;
 }
 
 export function formatDate(iso: string): string {

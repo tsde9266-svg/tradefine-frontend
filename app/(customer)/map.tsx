@@ -211,8 +211,14 @@ export default function MapScreen() {
 }
 
 function shortDist(metres: number): string {
-  if (metres < 1000) return `${Math.round(metres)}m`;
-  return `${(metres / 1000).toFixed(1)}km`;
+  const miles = metres / 1609.344;
+  if (miles < 0.1) return 'nearby';
+  return `${miles.toFixed(1)} mi`;
+}
+
+function extractPrice(notes: string): string | null {
+  const match = notes.match(/£[\d,]+(?:\/(?:hr|day|m²|visit))?/i);
+  return match ? match[0] : null;
 }
 
 function MapWorkerCard({ worker, onPress }: { worker: Worker; onPress: () => void }) {
@@ -260,8 +266,8 @@ function MapWorkerCard({ worker, onPress }: { worker: Worker; onPress: () => voi
           {worker.reviewCount > 0 && (
             <Text style={styles.reviewCount}>({worker.reviewCount})</Text>
           )}
-          {!!worker.pricingNotes && (
-            <Text style={styles.priceText} numberOfLines={1}>{worker.pricingNotes}</Text>
+          {!!worker.pricingNotes && extractPrice(worker.pricingNotes) && (
+            <Text style={styles.priceText}>{extractPrice(worker.pricingNotes)}</Text>
           )}
         </View>
       </View>
@@ -398,7 +404,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     ...shadows.sm,
   },
-  avatar: { width: 64, height: 64, borderRadius: radius.lg },
+  avatar: { width: 56, height: 56, borderRadius: 28 },
   avatarFallback: {
     backgroundColor: colors.primaryLight,
     alignItems: 'center',

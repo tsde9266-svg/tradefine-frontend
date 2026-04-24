@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Linking,
   Platform,
   Pressable,
@@ -22,10 +23,12 @@ import { shadows } from '../../constants/shadows';
 import { typography } from '../../constants/typography';
 import { getWorkerById } from '../../services/workers';
 import { connectSocket } from '../../services/socket';
+import { getActiveJobs, respondToJob, startJob, completeJob } from '../../services/jobs';
 import { useAuth } from '../../hooks/useAuth';
 import { useWorkerProfileStore } from '../../stores/workerProfileStore';
 import { useAuthStore } from '../../stores/authStore';
 import { getGreeting } from '../../utils/formatters';
+import { JobRequest } from '../../types/job';
 
 interface ActivityItem {
   id: string;
@@ -48,6 +51,8 @@ export default function WorkerDashboard() {
   const accessToken = useAuthStore(s => s.accessToken);
   const { profile, setProfile } = useWorkerProfileStore();
   const [stats, setStats] = useState({ views: 124, calls: 8, reviews: 3 });
+  const [activeJobs, setActiveJobs] = useState<JobRequest[]>([]);
+  const [jobActionLoading, setJobActionLoading] = useState<string | null>(null);
 
   const firstName = user?.name?.split(' ')[0] ?? 'there';
   const isLive = profile?.isAvailable ?? false;
@@ -56,14 +61,51 @@ export default function WorkerDashboard() {
     if (!user?.id) return;
     (async () => {
       try {
-        const w = await getWorkerById(user.id);
+        const [w, jobs] = await Promise.all([
+          getWorkerById(user.id),
+          getActiveJobs(),
+        ]);
         setProfile(w);
+        setActiveJobs(jobs);
         if (accessToken) connectSocket(accessToken, w.id);
       } catch {
         if (accessToken) connectSocket(accessToken);
       }
     })();
   }, [user?.id, accessToken]);
+
+  const handleJobAction = useCallback(async (
+    jobId: string,
+    action: 'accept' | 'decline' | 'confirm_call' | 'start' | 'complete',
+  ) => {
+    setJobActionLoading(jobId + action);
+    try {
+      let updated: JobRequest;
+      if (action === 'accept' || action === 'decline' || action === 'confirm_call') {
+        updated = await respondToJob(jobId, action);
+      } else if (action === 'start') {
+        updated = await startJob(jobId);
+      } else {
+        updated = await completeJob(jobId);
+      }
+      setActiveJobs((prev) => {
+        const next = prev.map((j) => (j.id === jobId ? updated : j));
+        return next.filter((j) => ['pending', 'call_pending', 'accepted', 'started'].includes(j.status));
+      });
+      show(
+        action === 'accept' ? 'Request accepted' :
+        action === 'decline' ? 'Request declined' :
+        action === 'confirm_call' ? 'Confirmed — customer notified' :
+        action === 'start' ? 'Journey started — customer is tracking you' :
+        'Job marked complete',
+        action === 'decline' ? 'info' : 'success',
+      );
+    } catch {
+      show('Action failed, please try again', 'error');
+    } finally {
+      setJobActionLoading(null);
+    }
+  }, [show]);
 
   const handleShare = useCallback(async () => {
     if (!profile) return;
@@ -95,6 +137,30 @@ export default function WorkerDashboard() {
             <Ionicons name="person" size={20} color={colors.textInverse} />
           </Pressable>
         </View>
+
+        {/* ── Incoming & Active Jobs ──────────────────────────── */}
+        {activeJobs.length > 0 && (
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>
+                {activeJobs.some((j) => j.status === 'pending' || j.status === 'call_pending')
+                  ? '🔔 Incoming Requests'
+                  : 'Active Job'}
+              </Text>
+              <View style={styles.jobsBadge}>
+                <Text style={styles.jobsBadgeText}>{activeJobs.length}</Text>
+              </View>
+            </View>
+            {activeJobs.map((job) => (
+              <JobCard
+                key={job.id}
+                job={job}
+                loading={jobActionLoading}
+                onAction={handleJobAction}
+              />
+            ))}
+          </View>
+        )}
 
         {/* Live / Offline status card */}
         {isLive ? (
@@ -198,6 +264,197 @@ export default function WorkerDashboard() {
   );
 }
 
+// ── JobCard component ─────────────────────────────────────────
+
+interface JobCardProps {
+  job: JobRequest;
+  loading: string | null;
+  onAction: (jobId: string, action: 'accept' | 'decline' | 'confirm_call' | 'start' | 'complete') => void;
+}
+
+function JobCard({ job, loading, onAction }: JobCardProps) {
+  const { colors: c, spacing: sp, radius: r, shadows: sh, typography: t } = {
+    colors, spacing, radius, shadows, typography,
+  };
+
+  const customerName = job.customer?.name ?? 'A customer';
+  const isLoading = (action: string) => loading === job.id + action;
+
+  const statusColors: Record<string, string> = {
+    pending: colors.primary,
+    call_pending: colors.warning,
+    accepted: colors.success,
+    started: colors.primary,
+  };
+
+  const statusLabels: Record<string, string> = {
+    pending: 'New Request',
+    call_pending: 'Call Agreement',
+    accepted: 'Accepted',
+    started: 'En Route',
+  };
+
+  return (
+    <View style={jobCardStyles.card}>
+      {/* Status indicator strip */}
+      <View style={[jobCardStyles.strip, { backgroundColor: statusColors[job.status] ?? colors.textSecondary }]} />
+
+      <View style={jobCardStyles.body}>
+        {/* Customer info + status badge */}
+        <View style={jobCardStyles.topRow}>
+          <View style={jobCardStyles.customerInfo}>
+            <Text style={jobCardStyles.customerName}>{customerName}</Text>
+            <View style={[jobCardStyles.statusBadge, { backgroundColor: (statusColors[job.status] ?? colors.textSecondary) + '20' }]}>
+              <Text style={[jobCardStyles.statusText, { color: statusColors[job.status] ?? colors.textSecondary }]}>
+                {statusLabels[job.status] ?? job.status}
+              </Text>
+            </View>
+          </View>
+          {job.type === 'call' && (
+            <View style={jobCardStyles.callTypeBadge}>
+              <Ionicons name="call" size={11} color={colors.warning} />
+              <Text style={jobCardStyles.callTypeText}>Via call</Text>
+            </View>
+          )}
+        </View>
+
+        {/* Job description */}
+        {job.description ? (
+          <Text style={jobCardStyles.description} numberOfLines={2}>"{job.description}"</Text>
+        ) : (
+          job.type === 'call' && (
+            <Text style={jobCardStyles.description}>Agreed verbally on a phone call.</Text>
+          )
+        )}
+
+        {/* Action buttons */}
+        <View style={jobCardStyles.actions}>
+          {job.status === 'pending' && (
+            <>
+              <Pressable
+                style={[jobCardStyles.actionBtn, jobCardStyles.acceptBtn]}
+                onPress={() => onAction(job.id, 'accept')}
+                disabled={!!loading}
+              >
+                {isLoading('accept') ? <ActivityIndicator size="small" color="#fff" /> : (
+                  <>
+                    <Ionicons name="checkmark" size={15} color="#fff" />
+                    <Text style={jobCardStyles.acceptBtnText}>Accept</Text>
+                  </>
+                )}
+              </Pressable>
+              <Pressable
+                style={[jobCardStyles.actionBtn, jobCardStyles.declineBtn]}
+                onPress={() => onAction(job.id, 'decline')}
+                disabled={!!loading}
+              >
+                {isLoading('decline') ? <ActivityIndicator size="small" color={colors.error} /> : (
+                  <>
+                    <Ionicons name="close" size={15} color={colors.error} />
+                    <Text style={jobCardStyles.declineBtnText}>Decline</Text>
+                  </>
+                )}
+              </Pressable>
+            </>
+          )}
+
+          {job.status === 'call_pending' && (
+            <>
+              <Pressable
+                style={[jobCardStyles.actionBtn, jobCardStyles.acceptBtn, { flex: 1 }]}
+                onPress={() => onAction(job.id, 'confirm_call')}
+                disabled={!!loading}
+              >
+                {isLoading('confirm_call') ? <ActivityIndicator size="small" color="#fff" /> : (
+                  <>
+                    <Ionicons name="checkmark-circle" size={15} color="#fff" />
+                    <Text style={jobCardStyles.acceptBtnText}>I'm heading there</Text>
+                  </>
+                )}
+              </Pressable>
+              <Pressable
+                style={[jobCardStyles.actionBtn, jobCardStyles.declineBtn]}
+                onPress={() => onAction(job.id, 'decline')}
+                disabled={!!loading}
+              >
+                <Ionicons name="close" size={15} color={colors.error} />
+                <Text style={jobCardStyles.declineBtnText}>Decline</Text>
+              </Pressable>
+            </>
+          )}
+
+          {job.status === 'accepted' && (
+            <Pressable
+              style={[jobCardStyles.actionBtn, jobCardStyles.startBtn, { flex: 1 }]}
+              onPress={() => onAction(job.id, 'start')}
+              disabled={!!loading}
+            >
+              {isLoading('start') ? <ActivityIndicator size="small" color="#fff" /> : (
+                <>
+                  <Ionicons name="navigate" size={15} color="#fff" />
+                  <Text style={jobCardStyles.acceptBtnText}>Start Journey</Text>
+                </>
+              )}
+            </Pressable>
+          )}
+
+          {job.status === 'started' && (
+            <Pressable
+              style={[jobCardStyles.actionBtn, jobCardStyles.completeBtn, { flex: 1 }]}
+              onPress={() => onAction(job.id, 'complete')}
+              disabled={!!loading}
+            >
+              {isLoading('complete') ? <ActivityIndicator size="small" color="#fff" /> : (
+                <>
+                  <Ionicons name="checkmark-done" size={15} color="#fff" />
+                  <Text style={jobCardStyles.acceptBtnText}>Job Complete</Text>
+                </>
+              )}
+            </Pressable>
+          )}
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const jobCardStyles = StyleSheet.create({
+  card: {
+    flexDirection: 'row',
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    overflow: 'hidden',
+    marginBottom: spacing.sm,
+    ...shadows.sm,
+  },
+  strip: { width: 4 },
+  body: { flex: 1, padding: spacing.md, gap: spacing.sm },
+  topRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  customerInfo: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flex: 1 },
+  customerName: { ...typography.bodyMd, color: colors.textPrimary, fontWeight: '700' },
+  statusBadge: { borderRadius: radius.full, paddingHorizontal: 8, paddingVertical: 2 },
+  statusText: { fontSize: 10, fontWeight: '700' },
+  callTypeBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 3,
+    backgroundColor: '#FFF7ED', borderRadius: radius.full,
+    paddingHorizontal: 7, paddingVertical: 2,
+  },
+  callTypeText: { fontSize: 10, fontWeight: '600', color: colors.warning },
+  description: { ...typography.small, color: colors.textSecondary, fontStyle: 'italic', lineHeight: 18 },
+  actions: { flexDirection: 'row', gap: spacing.sm },
+  actionBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 5, paddingVertical: 9, paddingHorizontal: spacing.md,
+    borderRadius: radius.md, flex: 1,
+  },
+  acceptBtn: { backgroundColor: colors.success },
+  declineBtn: { borderWidth: 1.5, borderColor: colors.error, flex: 0, paddingHorizontal: spacing.md },
+  startBtn: { backgroundColor: colors.primary },
+  completeBtn: { backgroundColor: '#059669' },
+  acceptBtnText: { ...typography.caption, color: '#fff', fontWeight: '700' },
+  declineBtnText: { ...typography.caption, color: colors.error, fontWeight: '600' },
+});
+
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
   scroll: { paddingBottom: 32 },
@@ -292,6 +549,13 @@ const styles = StyleSheet.create({
   sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md },
   sectionTitle: { ...typography.h3, color: colors.textPrimary },
   viewAll: { ...typography.small, color: colors.primary, fontWeight: '600' },
+  jobsBadge: {
+    minWidth: 22, height: 22, borderRadius: 11,
+    backgroundColor: colors.primary,
+    alignItems: 'center', justifyContent: 'center',
+    paddingHorizontal: 5,
+  },
+  jobsBadgeText: { fontSize: 11, fontWeight: '700', color: '#fff' },
 
   /* Activity */
   activityCard: { backgroundColor: colors.surface, borderRadius: radius.lg, overflow: 'hidden', ...shadows.sm },

@@ -27,9 +27,11 @@ import { typography } from '../../../constants/typography';
 import { getWorkerById } from '../../../services/workers';
 import { getWorkerReviews, replyToReview } from '../../../services/reviews';
 import { saveWorker, unsaveWorker } from '../../../services/workers';
+import { getActiveJobs } from '../../../services/jobs';
 import { useWorkerStore } from '../../../stores/workerStore';
 import { Worker } from '../../../types/worker';
 import { Review } from '../../../types/review';
+import { JobRequest } from '../../../types/job';
 import { formatRating } from '../../../utils/formatters';
 
 type ProfileTab = 'about' | 'reviews' | 'photos';
@@ -42,6 +44,7 @@ export default function WorkerProfileScreen() {
 
   const [worker, setWorker] = useState<Worker | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [activeJob, setActiveJob] = useState<JobRequest | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<ProfileTab>('about');
   const [savingToggle, setSavingToggle] = useState(false);
@@ -50,12 +53,16 @@ export default function WorkerProfileScreen() {
     if (!id) return;
     (async () => {
       try {
-        const [w, r] = await Promise.all([
+        const [w, r, jobs] = await Promise.all([
           getWorkerById(id),
           getWorkerReviews(id),
+          getActiveJobs(),
         ]);
         setWorker(w);
         setReviews(r);
+        // Find active job for this specific worker
+        const jobForThisWorker = jobs.find((j) => j.workerId === w.id) ?? null;
+        setActiveJob(jobForThisWorker);
       } catch {
         show('Could not load profile', 'error');
       } finally {
@@ -199,33 +206,56 @@ export default function WorkerProfileScreen() {
           )}
         </View>
 
-        {/* Track button */}
-        {worker.isAvailable && (
-          <View style={styles.trackButtonContainer}>
-            <Button
-              label="Track on Map"
-              variant="outline"
-              fullWidth
-              onPress={() => router.push(`/(customer)/worker/tracking?workerId=${worker.id}`)}
-            />
-          </View>
-        )}
+        <View style={{ height: spacing.huge }} />
       </ScrollView>
 
       {/* Sticky bottom bar */}
       <SafeAreaView edges={['bottom']} style={styles.bottomBar}>
-        <Pressable style={styles.callBtn} onPress={handleCall}>
-          <Ionicons name="call" size={18} color={colors.textInverse} />
-          <Text style={styles.callBtnText}>Call {worker.name.split(' ')[0]}</Text>
+        {/* Primary CTA — changes based on job state */}
+        {activeJob?.status === 'started' ? (
+          <Pressable
+            style={styles.primaryCta}
+            onPress={() => router.push(`/(customer)/worker/tracking?workerId=${worker.id}`)}
+          >
+            <Ionicons name="navigate" size={18} color="#fff" />
+            <Text style={styles.primaryCtaText}>Track {worker.name.split(' ')[0]} Live</Text>
+          </Pressable>
+        ) : activeJob ? (
+          <Pressable
+            style={[styles.primaryCta, { backgroundColor: colors.warning }]}
+            onPress={() => router.push(`/(customer)/worker/waiting?jobId=${activeJob.id}`)}
+          >
+            <Ionicons name="time" size={18} color="#fff" />
+            <Text style={styles.primaryCtaText}>View Request Status</Text>
+          </Pressable>
+        ) : (
+          <Pressable
+            style={styles.primaryCta}
+            onPress={() =>
+              router.push(
+                `/(customer)/worker/request?workerId=${worker.id}&workerName=${encodeURIComponent(worker.name)}&workerPhone=${encodeURIComponent(worker.phone ?? '')}`,
+              )
+            }
+          >
+            <Ionicons name="send" size={18} color="#fff" />
+            <Text style={styles.primaryCtaText}>Request {worker.name.split(' ')[0]}</Text>
+          </Pressable>
+        )}
+
+        {/* Call icon button */}
+        <Pressable onPress={handleCall} style={styles.iconBtn}>
+          <Ionicons name="call" size={20} color={colors.primary} />
         </Pressable>
+
+        {/* Save icon button */}
         <Pressable
           onPress={handleSaveToggle}
-          style={[styles.saveButton, saved && styles.saveButtonActive]}
+          style={[styles.iconBtn, saved && styles.iconBtnActive]}
           disabled={savingToggle}
         >
           <Ionicons
             name={saved ? 'bookmark' : 'bookmark-outline'}
-            size={22}
+            size={20}
             color={saved ? colors.primary : colors.textSecondary}
           />
         </Pressable>
@@ -476,10 +506,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderTopWidth: 1,
     borderTopColor: colors.border,
-    gap: spacing.md,
+    gap: spacing.sm,
     ...shadows.md,
   },
-  callBtn: {
+  primaryCta: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
@@ -489,14 +519,14 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     paddingVertical: spacing.md,
   },
-  callBtnText: { ...typography.bodyMd, color: colors.textInverse, fontWeight: '700' },
-  saveButton: {
+  primaryCtaText: { ...typography.bodyMd, color: '#fff', fontWeight: '700' },
+  iconBtn: {
     width: 48, height: 48, borderRadius: 24,
     backgroundColor: colors.surfaceElevated,
     alignItems: 'center', justifyContent: 'center',
     borderWidth: 1.5, borderColor: colors.borderLight,
   },
-  saveButtonActive: {
+  iconBtnActive: {
     backgroundColor: colors.primaryLight,
     borderColor: colors.primary,
   },
