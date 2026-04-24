@@ -20,8 +20,6 @@ function WorkerMapPin({ worker, onPress, selected = false }: WorkerMapPinProps) 
 
   if (worker.latitude == null || worker.longitude == null) return null;
 
-  const initials = getInitials(worker.name);
-
   return (
     <Marker
       coordinate={{ latitude: worker.latitude, longitude: worker.longitude }}
@@ -30,24 +28,31 @@ function WorkerMapPin({ worker, onPress, selected = false }: WorkerMapPinProps) 
       tracksViewChanges={!imageReady}
     >
       <View style={styles.wrapper}>
-        {/* Circle ring + avatar — no elevation, no overflow:hidden, no shadows */}
+        {/* Orange border ring — NO overflow:hidden, NO elevation */}
         <View style={[styles.ring, selected && styles.ringSelected]}>
-          {worker.avatarUrl ? (
-            <Image
-              source={{ uri: worker.avatarUrl }}
-              style={styles.avatar}
-              resizeMode="cover"
-              onLoad={() => setImageReady(true)}
-              onError={() => setImageReady(true)}
-            />
-          ) : (
-            <View style={styles.fallback}>
-              <Text style={styles.initials}>{initials}</Text>
-            </View>
-          )}
+          {/*
+            Inner clip view: overflow:hidden clips the image into a circle.
+            This works on Android ONLY when this view has NO elevation.
+            Never combine elevation + overflow:hidden on the same View on Android.
+          */}
+          <View style={styles.imageClip}>
+            {worker.avatarUrl ? (
+              <Image
+                source={{ uri: worker.avatarUrl }}
+                style={styles.avatar}
+                resizeMode="cover"
+                onLoad={() => setImageReady(true)}
+                onError={() => setImageReady(true)}
+              />
+            ) : (
+              <View style={styles.fallback}>
+                <Text style={styles.initials}>{getInitials(worker.name)}</Text>
+              </View>
+            )}
+          </View>
         </View>
 
-        {/* Downward tail */}
+        {/* Tail */}
         <View style={[styles.tail, selected && styles.tailSelected]} />
       </View>
     </Marker>
@@ -57,14 +62,12 @@ function WorkerMapPin({ worker, onPress, selected = false }: WorkerMapPinProps) 
 export default memo(WorkerMapPin);
 
 const RING  = 44;
-const INNER = 34; // RING minus border space
+const INNER = 34;
 
 const styles = StyleSheet.create({
-  // Keep wrapper completely plain — any elevation/shadow kills the marker on Android
-  wrapper: {
-    alignItems: 'center',
-  },
+  wrapper: { alignItems: 'center' },
 
+  // Draws the circular orange border — no overflow:hidden, no elevation
   ring: {
     width: RING,
     height: RING,
@@ -80,16 +83,21 @@ const styles = StyleSheet.create({
     borderWidth: 4,
   },
 
-  // borderRadius on image directly — works on Android without overflow:hidden
-  avatar: {
+  // Clips the image to circle — overflow:hidden works here because NO elevation on this view
+  imageClip: {
     width: INNER,
     height: INNER,
     borderRadius: INNER / 2,
+    overflow: 'hidden',
+  },
+
+  avatar: {
+    width: INNER,
+    height: INNER,
   },
   fallback: {
     width: INNER,
     height: INNER,
-    borderRadius: INNER / 2,
     backgroundColor: colors.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',
