@@ -38,21 +38,23 @@ export default function CustomerProfileScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View style={styles.topBar}>
-          <Pressable style={styles.menuBtn}>
-            <Ionicons name="menu-outline" size={24} color={colors.textPrimary} />
-          </Pressable>
-          <Text style={styles.brand}>TradeFind</Text>
-          <View style={styles.avatarBtn}>
-            {user?.avatarUrl ? (
-              <Image source={{ uri: user.avatarUrl }} style={styles.avatarBtnImg} />
-            ) : (
-              <Ionicons name="person-outline" size={18} color={colors.primary} />
-            )}
-          </View>
+      {/* Fixed top bar — outside ScrollView so it never scrolls */}
+      <View style={styles.topBar}>
+        <Pressable style={styles.menuBtn}>
+          <Ionicons name="menu-outline" size={24} color={colors.textPrimary} />
+        </Pressable>
+        <Text style={styles.brand}>TradeFind</Text>
+        <View style={styles.avatarBtn}>
+          {user?.avatarUrl ? (
+            <Image source={{ uri: user.avatarUrl }} style={styles.avatarBtnImg} />
+          ) : (
+            <Ionicons name="person-outline" size={18} color={colors.primary} />
+          )}
         </View>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        {/* (header moved above ScrollView) */}
 
         {/* Avatar section */}
         <View style={styles.avatarSection}>
