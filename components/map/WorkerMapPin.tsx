@@ -82,44 +82,44 @@ function WorkerMapPin({ worker, onPress, selected = false }: WorkerMapPinProps) 
 
 export default memo(WorkerMapPin);
 
-const AVATAR = 38;
-const RING   = AVATAR + 8;   // 46 — includes 4px border each side
+const BORDER = 3;
+const RING   = 46;
+const INNER  = RING - BORDER * 2; // 40 — the circular image area inside the border
 
 const styles = StyleSheet.create({
-  // The whole marker: ring on top, tail below, centered
-  wrapper: {
-    alignItems: 'center',
-    // Do NOT add overflow:hidden here — it clips the badge
-  },
+  wrapper: { alignItems: 'center', elevation: 6 },
 
-  // Circular photo frame
+  // Circular border ring — NO overflow:hidden because elevation breaks it on Android
   ring: {
     width: RING,
     height: RING,
     borderRadius: RING / 2,
-    borderWidth: 3,
+    borderWidth: BORDER,
     borderColor: colors.primary,
     backgroundColor: colors.surface,
-    overflow: 'hidden',
-    // Shadow so it pops off the map
+    alignItems: 'center',
+    justifyContent: 'center',
+    // iOS shadow only — Android uses elevation on the wrapper instead
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3,
-    elevation: 6,
   },
   ringSelected: {
     borderColor: colors.primaryDark,
     borderWidth: 4,
   },
 
+  // Image has its own borderRadius — does NOT rely on parent overflow:hidden
   avatar: {
-    width: '100%',
-    height: '100%',
+    width: INNER,
+    height: INNER,
+    borderRadius: INNER / 2,
   },
   avatarFallback: {
-    width: '100%',
-    height: '100%',
+    width: INNER,
+    height: INNER,
+    borderRadius: INNER / 2,
     backgroundColor: colors.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',
