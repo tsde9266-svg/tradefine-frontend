@@ -233,11 +233,13 @@ const styles = StyleSheet.create({
   },
   darkOfflineBtn: {
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.6)',
-    borderRadius: radius.md,
-    paddingVertical: spacing.sm,
+    borderColor: 'rgba(255,255,255,0.8)',
+    borderRadius: radius.full,
+    paddingVertical: 12,
+    paddingHorizontal: spacing.xxl,
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: 'stretch',
   },
   darkOfflineBtnText: {
     ...typography.bodyMd,

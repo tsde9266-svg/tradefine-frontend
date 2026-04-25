@@ -14,8 +14,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import AvailabilityToggle from '../../components/worker/AvailabilityToggle';
 import { TabHeader } from '../../components/layout/AppHeader';
+import { BROADCAST_MAP_STYLE } from '../../constants/mapStyle';
 import { useToast } from '../../components/ui/Toast';
 import { colors } from '../../constants/colors';
 import { radius } from '../../constants/radius';
@@ -230,10 +232,39 @@ export default function WorkerDashboard() {
                   {profile?.serviceAreaMiles ?? 10} miles radius
                 </Text>
               </View>
-              {/* Simulated map area */}
-              <View style={styles.broadcastMap}>
-                <Ionicons name="location" size={52} color={colors.primary} />
-              </View>
+              {/* Real styled map — non-interactive, custom teal theme */}
+              <MapView
+                style={styles.broadcastMap}
+                provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
+                customMapStyle={BROADCAST_MAP_STYLE}
+                scrollEnabled={false}
+                zoomEnabled={false}
+                rotateEnabled={false}
+                pitchEnabled={false}
+                showsUserLocation={false}
+                showsMyLocationButton={false}
+                showsCompass={false}
+                showsScale={false}
+                showsBuildings={false}
+                showsTraffic={false}
+                toolbarEnabled={false}
+                initialRegion={{
+                  latitude:  profile?.latitude  ?? 52.4862,
+                  longitude: profile?.longitude ?? -1.8904,
+                  latitudeDelta:  0.35,
+                  longitudeDelta: 0.35,
+                }}
+              >
+                {profile?.latitude != null && (
+                  <Marker
+                    coordinate={{ latitude: profile.latitude, longitude: profile.longitude }}
+                    anchor={{ x: 0.5, y: 1.0 }}
+                    tracksViewChanges={false}
+                  >
+                    <Ionicons name="location" size={44} color={colors.primary} />
+                  </Marker>
+                )}
+              </MapView>
               <View style={styles.broadcastFooter}>
                 <Ionicons name="location-outline" size={14} color={colors.textSecondary} />
                 <Text style={styles.broadcastAddress} numberOfLines={1}>
@@ -616,7 +647,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: radius.xl,
     overflow: 'hidden',
-    ...shadows.sm,
+    // No elevation — elevation breaks overflow:hidden on Android,
+    // which would prevent the map from being clipped to the card corners
+    borderWidth: 1,
+    borderColor: colors.borderLight,
   },
   broadcastHeader: {
     flexDirection: 'row',
@@ -629,10 +663,7 @@ const styles = StyleSheet.create({
   broadcastTitle: { ...typography.bodyMd, color: colors.textPrimary, fontWeight: '700' },
   broadcastRadius: { ...typography.small, color: colors.success, fontWeight: '600' },
   broadcastMap: {
-    height: 130,
-    backgroundColor: '#5eaaa8',
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: 160,
   },
   broadcastFooter: {
     flexDirection: 'row',

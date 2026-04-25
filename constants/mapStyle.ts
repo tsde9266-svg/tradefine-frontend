@@ -1,3 +1,15 @@
+// Custom teal map style for the Live Broadcast Area card (no labels, artistic look)
+export const BROADCAST_MAP_STYLE = [
+  { elementType: 'geometry',                    stylers: [{ color: '#5eaaa8' }] },
+  { elementType: 'labels',                      stylers: [{ visibility: 'off' }] },
+  { featureType: 'road',         elementType: 'geometry', stylers: [{ color: '#4a9e9c' }] },
+  { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#3d9290' }] },
+  { featureType: 'water',        elementType: 'geometry', stylers: [{ color: '#2d7a78' }] },
+  { featureType: 'poi',          elementType: 'geometry', stylers: [{ color: '#67b5b3' }] },
+  { featureType: 'administrative', elementType: 'all',    stylers: [{ visibility: 'off' }] },
+  { featureType: 'transit',      elementType: 'all',      stylers: [{ visibility: 'off' }] },
+];
+
 export const LIGHT_MAP_STYLE = [
   { elementType: 'geometry', stylers: [{ color: '#f5f5f5' }] },
   { elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
