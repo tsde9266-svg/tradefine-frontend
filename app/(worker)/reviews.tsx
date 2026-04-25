@@ -7,12 +7,14 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
 import ReviewCard from '../../components/worker/ReviewCard';
 import StarRating from '../../components/ui/StarRating';
 import SkeletonLoader from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
 import { useToast } from '../../components/ui/Toast';
+import { TabHeader } from '../../components/layout/AppHeader';
 import { colors } from '../../constants/colors';
 import { radius } from '../../constants/radius';
 import { spacing } from '../../constants/spacing';
@@ -23,31 +25,32 @@ import { useWorkerProfileStore } from '../../stores/workerProfileStore';
 import { useAuth } from '../../hooks/useAuth';
 import { Review } from '../../types/review';
 import { formatRating } from '../../utils/formatters';
-import { TabHeader } from '../../components/layout/AppHeader';
 
-type FilterTab = 'all' | '5' | '4' | 'recent';
+type FilterTab = 'all' | '5' | 'recent';
 
-function RatingBar({ star, count, total }: { star: number; count: number; total: number }) {
-  const pct = total > 0 ? (count / total) * 100 : 0;
+// ── Rating bar — shows count, not percentage ──────────────────────────────────
+function RatingBar({ star, count, max }: { star: number; count: number; max: number }) {
+  const pct = max > 0 ? (count / max) * 100 : 0;
   return (
-    <View style={barStyles.row}>
-      <Text style={barStyles.label}>{star}★</Text>
-      <View style={barStyles.track}>
-        <View style={[barStyles.fill, { width: `${pct}%` }]} />
+    <View style={bar.row}>
+      <Text style={bar.label}>{star} Star</Text>
+      <View style={bar.track}>
+        <View style={[bar.fill, { width: `${pct}%` }]} />
       </View>
-      <Text style={barStyles.pct}>{Math.round(pct)}%</Text>
+      <Text style={bar.count}>{count}</Text>
     </View>
   );
 }
 
-const barStyles = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.xs },
-  label: { ...typography.small, color: colors.textSecondary, width: 24, textAlign: 'right' },
-  track: { flex: 1, height: 8, backgroundColor: colors.surfaceElevated, borderRadius: radius.full, overflow: 'hidden' },
-  fill: { height: '100%', backgroundColor: colors.star, borderRadius: radius.full },
-  pct: { ...typography.caption, color: colors.textSecondary, width: 34, textAlign: 'right' },
+const bar = StyleSheet.create({
+  row: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: 5 },
+  label: { ...typography.caption, color: colors.textSecondary, width: 42 },
+  track: { flex: 1, height: 7, backgroundColor: colors.surfaceElevated, borderRadius: radius.full, overflow: 'hidden' },
+  fill: { height: '100%', backgroundColor: '#F97316', borderRadius: radius.full },
+  count: { ...typography.caption, color: colors.textSecondary, width: 20, textAlign: 'right' },
 });
 
+// ── Main screen ───────────────────────────────────────────────────────────────
 export default function WorkerReviewsScreen() {
   const { user } = useAuth();
   const { profile } = useWorkerProfileStore();
@@ -81,29 +84,22 @@ export default function WorkerReviewsScreen() {
 
   const filtered = reviews.filter((r) => {
     if (activeTab === '5') return r.rating === 5;
-    if (activeTab === '4') return r.rating === 4;
-    if (activeTab === 'recent') {
-      const d = new Date(r.createdAt);
-      return Date.now() - d.getTime() < 30 * 24 * 60 * 60 * 1000;
-    }
+    if (activeTab === 'recent') return Date.now() - new Date(r.createdAt).getTime() < 30 * 24 * 60 * 60 * 1000;
     return true;
   });
 
-  const avgRating = reviews.length
-    ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
-    : 0;
-
+  const avgRating = reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : 0;
+  const maxCount = Math.max(...[5, 4, 3, 2, 1].map((s) => reviews.filter((r) => r.rating === s).length), 1);
   const starCounts = [5, 4, 3, 2, 1].map((s) => ({
     star: s,
     count: reviews.filter((r) => r.rating === s).length,
   }));
 
-  const renderItem = useCallback(
-    ({ item }: { item: Review }) => (
-      <ReviewCard review={item} onReply={handleReply} isWorkerView />
-    ),
-    [handleReply],
-  );
+  const TABS: { key: FilterTab; label: string }[] = [
+    { key: 'all', label: 'All' },
+    { key: '5', label: '5 Star' },
+    { key: 'recent', label: 'Recent' },
+  ];
 
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
@@ -112,41 +108,54 @@ export default function WorkerReviewsScreen() {
       {loading ? (
         <View style={styles.skeletons}>
           {[1, 2, 3].map((i) => (
-            <SkeletonLoader key={i} width="100%" height={100} borderRadius={14} style={styles.skeleton} />
+            <SkeletonLoader key={i} width="100%" height={100} borderRadius={14} style={{ marginBottom: spacing.md }} />
           ))}
         </View>
       ) : (
         <FlatList
           data={filtered}
           keyExtractor={(item) => item.id}
-          renderItem={renderItem}
+          renderItem={({ item }) => (
+            <ReviewCard review={item} onReply={handleReply} isWorkerView />
+          )}
           removeClippedSubviews
+          showsVerticalScrollIndicator={false}
           ListHeaderComponent={
             <View>
-              {/* Summary card */}
+              {/* Page title */}
+              <View style={styles.pageHeader}>
+                <Text style={styles.pageTitle}>My Reviews</Text>
+                <View style={styles.pageRatingRow}>
+                  <Ionicons name="star" size={16} color="#F59E0B" />
+                  <Text style={styles.pageRating}>{formatRating(avgRating)}</Text>
+                  <Text style={styles.pageCount}>({reviews.length} reviews)</Text>
+                </View>
+              </View>
+
+              {/* Summary card: big rating + bar chart */}
               <View style={styles.summaryCard}>
                 <View style={styles.summaryLeft}>
                   <Text style={styles.bigRating}>{formatRating(avgRating)}</Text>
                   <StarRating value={avgRating} size="md" />
-                  <Text style={styles.reviewCount}>({reviews.length} reviews)</Text>
+                  <Text style={styles.reviewCount}>{reviews.length} reviews</Text>
                 </View>
                 <View style={styles.summaryRight}>
                   {starCounts.map(({ star, count }) => (
-                    <RatingBar key={star} star={star} count={count} total={reviews.length} />
+                    <RatingBar key={star} star={star} count={count} max={maxCount} />
                   ))}
                 </View>
               </View>
 
-              {/* Filter tabs */}
+              {/* Filter pills */}
               <View style={styles.tabRow}>
-                {(['all', '5', '4', 'recent'] as FilterTab[]).map((tab) => (
+                {TABS.map((tab) => (
                   <Pressable
-                    key={tab}
-                    style={[styles.tab, activeTab === tab && styles.tabActive]}
-                    onPress={() => setActiveTab(tab)}
+                    key={tab.key}
+                    style={[styles.pill, activeTab === tab.key && styles.pillActive]}
+                    onPress={() => setActiveTab(tab.key)}
                   >
-                    <Text style={[styles.tabLabel, activeTab === tab && styles.tabLabelActive]}>
-                      {tab === 'all' ? 'All' : tab === 'recent' ? 'Recent' : `${tab}★`}
+                    <Text style={[styles.pillLabel, activeTab === tab.key && styles.pillLabelActive]}>
+                      {tab.label}
                     </Text>
                   </Pressable>
                 ))}
@@ -154,10 +163,7 @@ export default function WorkerReviewsScreen() {
             </View>
           }
           ListEmptyComponent={
-            <EmptyState
-              title="No reviews yet"
-              subtitle="Your reviews from customers will appear here"
-            />
+            <EmptyState title="No reviews yet" subtitle="Your reviews from customers will appear here" />
           }
           contentContainerStyle={styles.list}
         />
@@ -168,77 +174,55 @@ export default function WorkerReviewsScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
-  header: {
+  skeletons: { padding: spacing.lg, gap: spacing.md },
+
+  /* Page header */
+  pageHeader: {
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.lg,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
+    gap: 4,
   },
   pageTitle: { ...typography.h2, color: colors.textPrimary },
-  pageSub: { ...typography.small, color: colors.textSecondary, marginTop: 2 },
+  pageRatingRow: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  pageRating: { ...typography.bodyMd, color: colors.textPrimary, fontWeight: '700' },
+  pageCount: { ...typography.small, color: colors.textSecondary },
+
+  /* Summary card */
   summaryCard: {
     flexDirection: 'row',
     backgroundColor: colors.surface,
-    borderRadius: radius.lg,
+    borderRadius: radius.xl,
     padding: spacing.lg,
     marginHorizontal: spacing.lg,
     marginBottom: spacing.md,
     gap: spacing.lg,
+    alignItems: 'center',
     ...shadows.sm,
   },
-  summaryLeft: {
-    alignItems: 'center',
-    gap: spacing.xs,
-    minWidth: 70,
-  },
-  bigRating: {
-    ...typography.h1,
-    color: colors.textPrimary,
-  },
-  reviewCount: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  summaryRight: {
-    flex: 1,
-    justifyContent: 'center',
-  },
+  summaryLeft: { alignItems: 'center', gap: spacing.xs, minWidth: 72 },
+  bigRating: { fontSize: 40, fontWeight: '800', color: colors.textPrimary, lineHeight: 44 },
+  reviewCount: { ...typography.caption, color: colors.textSecondary },
+  summaryRight: { flex: 1, justifyContent: 'center' },
+
+  /* Filter pills */
   tabRow: {
     flexDirection: 'row',
-    marginHorizontal: spacing.lg,
-    backgroundColor: colors.surfaceElevated,
-    borderRadius: radius.md,
-    padding: 3,
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
     marginBottom: spacing.md,
   },
-  tab: {
-    flex: 1,
-    paddingVertical: spacing.xs,
-    alignItems: 'center',
-    borderRadius: radius.sm,
+  pill: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: 8,
+    borderRadius: radius.full,
+    backgroundColor: colors.surfaceElevated,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
   },
-  tabActive: {
-    backgroundColor: colors.surface,
-    ...shadows.sm,
-  },
-  tabLabel: {
-    ...typography.small,
-    color: colors.textSecondary,
-  },
-  tabLabelActive: {
-    color: colors.textPrimary,
-    fontWeight: '600',
-  },
-  list: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.xxxl,
-  },
-  skeletons: {
-    paddingHorizontal: spacing.lg,
-    gap: spacing.md,
-    marginTop: spacing.md,
-  },
-  skeleton: { marginBottom: spacing.sm },
+  pillActive: { backgroundColor: colors.primary, borderColor: colors.primary },
+  pillLabel: { ...typography.caption, color: colors.textSecondary, fontWeight: '600' },
+  pillLabelActive: { color: '#fff' },
+
+  list: { paddingHorizontal: spacing.lg, paddingBottom: 40 },
 });
