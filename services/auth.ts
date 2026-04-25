@@ -45,3 +45,17 @@ export async function getMe(): Promise<User> {
   const { data } = await api.get<ApiResponse<User>>('/api/auth/me');
   return data.data;
 }
+
+export interface SocialAuthPayload extends AuthPayload {
+  isNewUser: boolean;
+}
+
+export async function socialAuth(params: {
+  provider: 'google' | 'apple';
+  token: string;
+  role: 'customer' | 'worker';
+  name?: string;
+}): Promise<SocialAuthPayload> {
+  const { data } = await api.post<ApiResponse<SocialAuthPayload>>('/api/auth/social', params);
+  return data.data;
+}

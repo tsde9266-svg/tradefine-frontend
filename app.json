@@ -34,11 +34,12 @@
         }
       },
       "permissions": [
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_BACKGROUND_LOCATION",
-        "VIBRATE",
-        "RECEIVE_BOOT_COMPLETED"
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.VIBRATE",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "web": {
@@ -48,6 +49,7 @@
     "plugins": [
       "expo-router",
       "expo-image-picker",
+      "expo-web-browser",
       [
         "expo-notifications",
         {
@@ -64,15 +66,18 @@
           "locationAlwaysPermission": "TradeFind uses your background location to share your availability with customers."
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "extra": {
-      "apiUrl": "http://localhost:3000",
-      "socketUrl": "ws://localhost:4000",
+      "apiUrl": "http://178.104.119.210:3001",
+      "socketUrl": "ws://178.104.119.210:4000",
       "r2PublicUrl": "",
+      "router": {},
       "eas": {
-        "projectId": "YOUR_EAS_PROJECT_ID"
+        "projectId": "0f5a69b9-2f0e-4172-a389-07dbf805a008"
       }
-    }
+    },
+    "owner": "taqi-vorvex"
   }
 }
