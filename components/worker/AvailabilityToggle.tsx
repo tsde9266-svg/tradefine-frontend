@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import * as Location from 'expo-location';
+import { Ionicons } from '@expo/vector-icons';
 
 import Button from '../ui/Button';
 import { colors } from '../../constants/colors';
@@ -139,6 +140,7 @@ export default function AvailabilityToggle({ variant = 'default' }: Availability
         onPress={handleGoOffline}
         disabled={loading}
       >
+        {!loading && <Ionicons name="power" size={16} color="#16A34A" />}
         <Text style={styles.darkOfflineBtnText}>{loading ? 'Going offline…' : 'Go Offline'}</Text>
       </Pressable>
     ) : (
@@ -232,19 +234,19 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   darkOfflineBtn: {
-    borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.8)',
+    backgroundColor: '#fff',           // white background matching design
     borderRadius: radius.full,
-    paddingVertical: 12,
-    paddingHorizontal: spacing.xxl,
+    paddingVertical: 13,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'stretch',
+    flexDirection: 'row',
+    gap: spacing.sm,
   },
   darkOfflineBtnText: {
     ...typography.bodyMd,
-    color: '#fff',
-    fontWeight: '600',
+    color: '#16A34A',                  // green text matching design
+    fontWeight: '700',
   },
   pulseWrapper: {
     width: 40,

@@ -274,14 +274,18 @@ export default function WorkerDashboard() {
                     anchor={{ x: 0.5, y: 1.0 }}
                     tracksViewChanges={false}
                   >
-                    {/* Large decorative teardrop pin matching design */}
+                    {/* Classic red teardrop location pin matching design */}
                     <View style={pinS.wrap}>
-                      <View style={pinS.outer}>
-                        <View style={pinS.inner}>
-                          <Ionicons name="construct" size={18} color={colors.primary} />
+                      {/* Subtle radius halo behind pin */}
+                      <View style={pinS.halo} />
+                      {/* Teardrop shape via Ionicons location icon */}
+                      <Ionicons name="location" size={90} color="#DC2626" />
+                      {/* Badge overlaid on the pin head (top circle area) */}
+                      <View style={pinS.badge}>
+                        <View style={pinS.badgeInner}>
+                          <Ionicons name="construct" size={11} color="#fff" />
                         </View>
                       </View>
-                      <View style={pinS.tail} />
                     </View>
                   </Marker>
                 )}
@@ -464,22 +468,34 @@ export default function WorkerDashboard() {
 
 // ── Broadcast map pin styles ─────────────────────────────────────────────────
 const pinS = StyleSheet.create({
-  wrap: { alignItems: 'center' },
-  outer: {
-    width: 56, height: 56, borderRadius: 28,
-    backgroundColor: colors.primary,
-    alignItems: 'center', justifyContent: 'center',
+  // Wrapper keeps the icon + badge layered correctly
+  wrap: {
+    width: 90,
+    height: 90,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
-  inner: {
-    width: 36, height: 36, borderRadius: 18,
+  // Subtle semi-transparent halo representing broadcast radius
+  halo: {
+    position: 'absolute',
+    top: 8,
+    width: 70, height: 70, borderRadius: 35,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+  },
+  // Badge sits on top of the circular head of the location pin
+  // Ionicons 'location' at 90px: circle head spans roughly y 0–52
+  // Badge centered at y ≈ 20
+  badge: {
+    position: 'absolute',
+    top: 14,
+    width: 30, height: 30, borderRadius: 15,
     backgroundColor: '#fff',
     alignItems: 'center', justifyContent: 'center',
   },
-  tail: {
-    width: 0, height: 0,
-    borderLeftWidth: 10, borderRightWidth: 10, borderTopWidth: 14,
-    borderLeftColor: 'transparent', borderRightColor: 'transparent',
-    borderTopColor: colors.primary,
+  badgeInner: {
+    width: 22, height: 22, borderRadius: 11,
+    backgroundColor: colors.primary,
+    alignItems: 'center', justifyContent: 'center',
   },
 });
 
