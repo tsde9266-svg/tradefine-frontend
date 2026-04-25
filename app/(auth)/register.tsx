@@ -143,8 +143,11 @@ export default function RegisterScreen() {
 
   // ─── Google button handler ──────────────────────────────────────────────────
   async function handleGoogle() {
+    // Expo Go → needs WEB_CLIENT_ID (auth.expo.io proxy)
+    // APK     → needs ANDROID_CLIENT_ID
+    // Show message only if truly zero client IDs are configured
     if (!GOOGLE_ANDROID_CLIENT_ID && !GOOGLE_IOS_CLIENT_ID && !GOOGLE_WEB_CLIENT_ID) {
-      show('Google sign-in is not configured yet', 'info');
+      show('Google sign-in coming soon', 'info');
       return;
     }
     setSocialLoading('google');
