@@ -103,7 +103,7 @@ export default function WorkerDashboard() {
   const { show } = useToast();
   const accessToken = useAuthStore((s) => s.accessToken);
   const { profile, setProfile } = useWorkerProfileStore();
-  const [stats] = useState({ views: 124, calls: 8, reviews: 3, rating: 4.9 });
+  const [stats] = useState({ views: 12, calls: 8, reviews: 3, rating: 4.9 });
   const [activeJobs, setActiveJobs] = useState<JobRequest[]>([]);
   const [jobActionLoading, setJobActionLoading] = useState<string | null>(null);
 
@@ -177,140 +177,229 @@ export default function WorkerDashboard() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
-        {/* Greeting */}
-        <View style={styles.greeting}>
-          <View>
-            <Text style={styles.greetingText}>{getGreeting()}, {firstName} 👋</Text>
-            <Text style={styles.greetingSub}>Here is what's happening with your business today.</Text>
-          </View>
-        </View>
+        {/* ════════════════════════════════════════════
+            ONLINE LAYOUT — shown only when worker is LIVE
+            ════════════════════════════════════════════ */}
+        {isLive ? (
+          <>
+            {/* Job requests (urgent — stays at top) */}
+            {activeJobs.length > 0 && (
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>
+                    {activeJobs.some((j) => j.status === 'pending' || j.status === 'call_pending')
+                      ? '🔔 Incoming Requests' : 'Active Job'}
+                  </Text>
+                  <View style={styles.jobsBadge}>
+                    <Text style={styles.jobsBadgeText}>{activeJobs.length}</Text>
+                  </View>
+                </View>
+                {activeJobs.map((job) => (
+                  <JobCard key={job.id} job={job} loading={jobActionLoading} onAction={handleJobAction} />
+                ))}
+              </View>
+            )}
 
-        {/* Incoming job requests */}
-        {activeJobs.length > 0 && (
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>
-                {activeJobs.some((j) => j.status === 'pending' || j.status === 'call_pending')
-                  ? '🔔 Incoming Requests'
-                  : 'Active Job'}
-              </Text>
-              <View style={styles.jobsBadge}>
-                <Text style={styles.jobsBadgeText}>{activeJobs.length}</Text>
+            {/* Live card */}
+            <View style={styles.liveCard}>
+              <BroadcastIcon />
+              <Text style={styles.liveTitle}>You're LIVE</Text>
+              <Text style={styles.liveSub}>Customers can find and book you in real-time.</Text>
+              <AvailabilityToggle variant="dark" />
+            </View>
+
+            {/* Profile views notification */}
+            <View style={styles.viewsRow}>
+              <View style={styles.viewsIconWrap}>
+                <Ionicons name="eye-outline" size={18} color={colors.primary} />
+              </View>
+              <View style={styles.viewsText}>
+                <Text style={styles.viewsTitle}>
+                  <Text style={styles.viewsHighlight}>{stats.views} customers</Text>
+                  {' '}have viewed your profile
+                </Text>
+                <Text style={styles.viewsSub}>In the last hour</Text>
               </View>
             </View>
-            {activeJobs.map((job) => (
-              <JobCard
-                key={job.id}
-                job={job}
-                loading={jobActionLoading}
-                onAction={handleJobAction}
-              />
-            ))}
-          </View>
-        )}
 
-        {/* ── LIVE card ─────────────────────────────────────── */}
-        {isLive ? (
-          <View style={styles.liveCard}>
-            <BroadcastIcon />
-            <Text style={styles.liveTitle}>You're LIVE</Text>
-            <Text style={styles.liveSub}>Customers can find and book you in real-time.</Text>
-            <AvailabilityToggle variant="dark" />
-          </View>
-        ) : (
-          /* ── OFFLINE card ─────────────────────────────────── */
-          <View style={styles.offlineCard}>
-            <View style={styles.offlineIconWrap}>
-              <Ionicons name="eye-off-outline" size={28} color={colors.textSecondary} />
+            {/* Live broadcast area */}
+            <View style={styles.broadcastCard}>
+              <View style={styles.broadcastHeader}>
+                <Text style={styles.broadcastTitle}>Live Broadcast Area</Text>
+                <Text style={styles.broadcastRadius}>
+                  {profile?.serviceAreaMiles ?? 10} miles radius
+                </Text>
+              </View>
+              {/* Simulated map area */}
+              <View style={styles.broadcastMap}>
+                <Ionicons name="location" size={52} color={colors.primary} />
+              </View>
+              <View style={styles.broadcastFooter}>
+                <Ionicons name="location-outline" size={14} color={colors.textSecondary} />
+                <Text style={styles.broadcastAddress} numberOfLines={1}>
+                  {profile?.latitude != null
+                    ? `${profile.latitude.toFixed(4)}°N, ${Math.abs(profile.longitude ?? 0).toFixed(4)}°W`
+                    : 'Current location'}
+                </Text>
+                <Pressable onPress={() => router.push('/(worker)/edit-profile')}>
+                  <Text style={styles.broadcastEdit}>Edit</Text>
+                </Pressable>
+              </View>
             </View>
-            <Text style={styles.offlineTitle}>You're currently invisible to customers</Text>
-            <Text style={styles.offlineSub}>Go available to start receiving new service inquiries.</Text>
-            <AvailabilityToggle variant="dark" />
-          </View>
-        )}
 
-        {/* Stats grid */}
-        <View style={styles.statsGrid}>
-          <View style={styles.statCard}>
-            <View style={styles.statTop}>
-              <Ionicons name="eye-outline" size={16} color={colors.textSecondary} />
-              <Text style={styles.statLabel}>PROFILE VIEWS</Text>
-            </View>
-            <Text style={styles.statValue}>{stats.views}</Text>
-            <Text style={styles.statDelta}>+12% vs yest.</Text>
-          </View>
-          <View style={styles.statCard}>
-            <View style={styles.statTop}>
-              <Ionicons name="call-outline" size={16} color={colors.textSecondary} />
-              <Text style={styles.statLabel}>CALLS RECEIVED</Text>
-            </View>
-            <Text style={styles.statValue}>{stats.calls}</Text>
-            <Text style={[styles.statDelta, { color: colors.textDisabled }]}>Steady</Text>
-          </View>
-        </View>
-
-        {/* Reviews highlight */}
-        <View style={styles.reviewsRow}>
-          <Ionicons name="star" size={18} color="#FBBF24" />
-          <Text style={styles.reviewsLabel}>NEW REVIEWS</Text>
-          <Text style={styles.reviewsCount}>{stats.reviews}</Text>
-          <Text style={styles.reviewsStars}>★★</Text>
-          <Text style={styles.reviewsAll}>All 5-star</Text>
-        </View>
-
-        {/* Recent activity */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Recent activity</Text>
-            <Pressable hitSlop={8} onPress={() => router.push('/(worker)/notifications')}>
-              <Text style={styles.viewAll}>View all</Text>
-            </Pressable>
-          </View>
-          <View style={styles.activityCard}>
-            {MOCK_ACTIVITY.map((item, i) => {
-              const cfg =
-                item.type === 'save'   ? { icon: 'bookmark'  as const, bg: '#FFF7ED', color: colors.primary } :
-                item.type === 'review' ? { icon: 'star'       as const, bg: '#FFFBEB', color: '#FBBF24' } :
-                                         { icon: 'call'        as const, bg: '#FFF1F2', color: colors.error };
-              return (
-                <View key={item.id}>
-                  {i > 0 && <View style={styles.divider} />}
-                  <Pressable style={styles.activityRow}>
-                    <View style={[styles.activityIconWrap, { backgroundColor: cfg.bg }]}>
-                      <Ionicons name={cfg.icon} size={18} color={cfg.color} />
-                    </View>
-                    <View style={styles.activityText}>
-                      <Text style={styles.activityTitle}>{item.title}</Text>
-                      <Text style={styles.activitySub}>{item.subtitle}</Text>
-                    </View>
-                    {item.type === 'call' ? (
-                      <Ionicons name="chevron-forward" size={16} color={colors.textDisabled} />
-                    ) : (
-                      <Ionicons name={cfg.icon} size={16} color={cfg.color} />
-                    )}
-                  </Pressable>
+            {/* Stats: New Leads + Rating */}
+            <View style={styles.statsGrid}>
+              <View style={styles.statCard}>
+                <View style={styles.statTop}>
+                  <Ionicons name="flash" size={16} color={colors.warning} />
+                  <Text style={styles.statLabel}>NEW LEADS</Text>
                 </View>
-              );
-            })}
-          </View>
-        </View>
+                <Text style={styles.statValue}>{stats.views}</Text>
+                <Text style={styles.statDelta}>Today</Text>
+              </View>
+              <View style={styles.statCard}>
+                <View style={styles.statTop}>
+                  <Ionicons name="star" size={16} color="#FBBF24" />
+                  <Text style={styles.statLabel}>RATING</Text>
+                </View>
+                <Text style={styles.statValue}>{(profile?.rating ?? stats.rating).toFixed(1)}</Text>
+                <Text style={styles.statDelta}>Overall</Text>
+              </View>
+            </View>
 
-        {/* Quick actions */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick actions</Text>
-          <View style={styles.actionsRow}>
-            {[
-              { icon: 'create-outline'  as const, label: 'Edit Profile',  onPress: () => router.push('/(worker)/edit-profile') },
-              { icon: 'star-outline'    as const, label: 'View Reviews',  onPress: () => router.push('/(worker)/reviews') },
-              { icon: 'share-outline'   as const, label: 'Share Profile', onPress: handleShare },
-            ].map((a) => (
-              <Pressable key={a.label} style={({ pressed }) => [styles.actionBtn, pressed && { opacity: 0.8 }]} onPress={a.onPress}>
-                <Ionicons name={a.icon} size={22} color={colors.primary} />
-                <Text style={styles.actionLabel}>{a.label}</Text>
-              </Pressable>
-            ))}
-          </View>
-        </View>
+            {/* Schedule for tomorrow */}
+            <Pressable style={styles.scheduleBanner}>
+              <View style={styles.scheduleLeft}>
+                <Ionicons name="time-outline" size={20} color="#fff" />
+                <View>
+                  <Text style={styles.scheduleTitle}>Schedule for tomorrow</Text>
+                  <Text style={styles.scheduleSub}>4 jobs confirmed</Text>
+                </View>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="rgba(255,255,255,0.7)" />
+            </Pressable>
+          </>
+        ) : (
+          /* ════════════════════════════════════════════
+             OFFLINE LAYOUT — shown only when worker is OFFLINE
+             ════════════════════════════════════════════ */
+          <>
+            {/* Greeting */}
+            <View style={styles.greeting}>
+              <Text style={styles.greetingText}>{getGreeting()}, {firstName} 👋</Text>
+              <Text style={styles.greetingSub}>Here is what's happening with your business today.</Text>
+            </View>
+
+            {/* Job requests */}
+            {activeJobs.length > 0 && (
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>
+                    {activeJobs.some((j) => j.status === 'pending' || j.status === 'call_pending')
+                      ? '🔔 Incoming Requests' : 'Active Job'}
+                  </Text>
+                  <View style={styles.jobsBadge}>
+                    <Text style={styles.jobsBadgeText}>{activeJobs.length}</Text>
+                  </View>
+                </View>
+                {activeJobs.map((job) => (
+                  <JobCard key={job.id} job={job} loading={jobActionLoading} onAction={handleJobAction} />
+                ))}
+              </View>
+            )}
+
+            {/* Offline card */}
+            <View style={styles.offlineCard}>
+              <View style={styles.offlineIconWrap}>
+                <Ionicons name="eye-off-outline" size={28} color={colors.textSecondary} />
+              </View>
+              <Text style={styles.offlineTitle}>You're currently invisible to customers</Text>
+              <Text style={styles.offlineSub}>Go available to start receiving new service inquiries.</Text>
+              <AvailabilityToggle variant="dark" />
+            </View>
+
+            {/* Stats: Profile Views + Calls */}
+            <View style={styles.statsGrid}>
+              <View style={styles.statCard}>
+                <View style={styles.statTop}>
+                  <Ionicons name="eye-outline" size={16} color={colors.textSecondary} />
+                  <Text style={styles.statLabel}>PROFILE VIEWS</Text>
+                </View>
+                <Text style={styles.statValue}>{stats.views}</Text>
+                <Text style={styles.statDelta}>+12% vs yest.</Text>
+              </View>
+              <View style={styles.statCard}>
+                <View style={styles.statTop}>
+                  <Ionicons name="call-outline" size={16} color={colors.textSecondary} />
+                  <Text style={styles.statLabel}>CALLS RECEIVED</Text>
+                </View>
+                <Text style={styles.statValue}>{stats.calls}</Text>
+                <Text style={[styles.statDelta, { color: colors.textDisabled }]}>Steady</Text>
+              </View>
+            </View>
+
+            {/* Reviews highlight */}
+            <View style={styles.reviewsRow}>
+              <Ionicons name="star" size={18} color="#FBBF24" />
+              <Text style={styles.reviewsLabel}>NEW REVIEWS</Text>
+              <Text style={styles.reviewsCount}>{stats.reviews}</Text>
+              <Text style={styles.reviewsStars}>★★</Text>
+              <Text style={styles.reviewsAll}>All 5-star</Text>
+            </View>
+
+            {/* Recent activity */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Recent activity</Text>
+                <Pressable hitSlop={8} onPress={() => router.push('/(worker)/notifications')}>
+                  <Text style={styles.viewAll}>View all</Text>
+                </Pressable>
+              </View>
+              <View style={styles.activityCard}>
+                {MOCK_ACTIVITY.map((item, i) => {
+                  const cfg =
+                    item.type === 'save'   ? { icon: 'bookmark' as const, bg: '#FFF7ED', color: colors.primary } :
+                    item.type === 'review' ? { icon: 'star'      as const, bg: '#FFFBEB', color: '#FBBF24' } :
+                                             { icon: 'call'       as const, bg: '#FFF1F2', color: colors.error };
+                  return (
+                    <View key={item.id}>
+                      {i > 0 && <View style={styles.divider} />}
+                      <Pressable style={styles.activityRow}>
+                        <View style={[styles.activityIconWrap, { backgroundColor: cfg.bg }]}>
+                          <Ionicons name={cfg.icon} size={18} color={cfg.color} />
+                        </View>
+                        <View style={styles.activityText}>
+                          <Text style={styles.activityTitle}>{item.title}</Text>
+                          <Text style={styles.activitySub}>{item.subtitle}</Text>
+                        </View>
+                        {item.type === 'call'
+                          ? <Ionicons name="chevron-forward" size={16} color={colors.textDisabled} />
+                          : <Ionicons name={cfg.icon} size={16} color={cfg.color} />}
+                      </Pressable>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* Quick actions */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Quick actions</Text>
+              <View style={styles.actionsRow}>
+                {[
+                  { icon: 'create-outline' as const, label: 'Edit Profile',  onPress: () => router.push('/(worker)/edit-profile') },
+                  { icon: 'star-outline'   as const, label: 'View Reviews',  onPress: () => router.push('/(worker)/reviews') },
+                  { icon: 'share-outline'  as const, label: 'Share Profile', onPress: handleShare },
+                ].map((a) => (
+                  <Pressable key={a.label} style={({ pressed }) => [styles.actionBtn, pressed && { opacity: 0.8 }]} onPress={a.onPress}>
+                    <Ionicons name={a.icon} size={22} color={colors.primary} />
+                    <Text style={styles.actionLabel}>{a.label}</Text>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+          </>
+        )}
 
       </ScrollView>
     </SafeAreaView>
@@ -496,6 +585,81 @@ const styles = StyleSheet.create({
   statLabel: { ...typography.label, color: colors.textSecondary, fontSize: 10 },
   statValue: { ...typography.h2, color: colors.textPrimary },
   statDelta: { ...typography.caption, color: colors.success },
+
+  /* Profile views notification row (online only) */
+  viewsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.md,
+    ...shadows.sm,
+  },
+  viewsIconWrap: {
+    width: 40, height: 40, borderRadius: 20,
+    backgroundColor: colors.primaryLight,
+    alignItems: 'center', justifyContent: 'center',
+    flexShrink: 0,
+  },
+  viewsText: { flex: 1 },
+  viewsTitle: { ...typography.bodyMd, color: colors.textPrimary },
+  viewsHighlight: { color: colors.primary, fontWeight: '700' },
+  viewsSub: { ...typography.caption, color: colors.textSecondary, marginTop: 2 },
+
+  /* Live broadcast area card (online only) */
+  broadcastCard: {
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: radius.xl,
+    overflow: 'hidden',
+    ...shadows.sm,
+  },
+  broadcastHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sm,
+  },
+  broadcastTitle: { ...typography.bodyMd, color: colors.textPrimary, fontWeight: '700' },
+  broadcastRadius: { ...typography.small, color: colors.success, fontWeight: '600' },
+  broadcastMap: {
+    height: 130,
+    backgroundColor: '#5eaaa8',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  broadcastFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: colors.borderLight,
+  },
+  broadcastAddress: { ...typography.small, color: colors.textSecondary, flex: 1 },
+  broadcastEdit: { ...typography.small, color: colors.primary, fontWeight: '700' },
+
+  /* Schedule for tomorrow banner (online only) */
+  scheduleBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.lg,
+    backgroundColor: '#1F2937',
+    borderRadius: radius.lg,
+    padding: spacing.md,
+  },
+  scheduleLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  scheduleTitle: { ...typography.bodyMd, color: '#fff', fontWeight: '700' },
+  scheduleSub: { ...typography.caption, color: 'rgba(255,255,255,0.65)', marginTop: 2 },
 
   /* Reviews highlight */
   reviewsRow: {
