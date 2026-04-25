@@ -87,6 +87,23 @@ export function connectSocket(accessToken: string, workerProfileId?: string): vo
   connect();
 }
 
+/**
+ * Called by the API interceptor after a token refresh.
+ * Re-connects the socket with the new token so tracking never breaks
+ * after the 15-minute JWT expiry.
+ */
+export function refreshSocketToken(newToken: string): void {
+  if (!currentToken) return; // socket was never connected
+  currentToken = newToken;
+  // Force reconnect with new token
+  if (ws) {
+    ws.close();
+    ws = null;
+  }
+  reconnectAttempts = 0;
+  connect();
+}
+
 export function disconnectSocket(): void {
   currentToken = null;
   currentWorkerId = null;

@@ -1,6 +1,7 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { API_URL } from '../constants/config';
 import { getTokens, saveTokens, clearTokens } from '../utils/storage';
+import { refreshSocketToken } from './socket';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -57,6 +58,7 @@ api.interceptors.response.use(
       const newRefresh: string = data.data.refreshToken;
 
       await saveTokens(newAccess, newRefresh);
+      refreshSocketToken(newAccess); // keep WebSocket alive after token refresh
       drainQueue(newAccess);
 
       original.headers.Authorization = `Bearer ${newAccess}`;

@@ -24,7 +24,9 @@ import { typography } from '../../../constants/typography';
 import { getJobById, cancelJob } from '../../../services/jobs';
 import { JobRequest, JobStatus } from '../../../types/job';
 
-const POLL_INTERVAL = 5000;
+const POLL_BASE = 5000;
+// Jitter: ±1s so 10k users don't all hit the DB at exactly the same moment
+function pollInterval() { return POLL_BASE + Math.random() * 1000 - 500; }
 
 interface StatusConfig {
   icon: keyof typeof Ionicons.glyphMap;
@@ -150,8 +152,12 @@ export default function WaitingScreen() {
     }
 
     poll();
-    const interval = setInterval(poll, POLL_INTERVAL);
-    return () => clearInterval(interval);
+    let timer: ReturnType<typeof setTimeout>;
+    function schedule() {
+      timer = setTimeout(async () => { await poll(); schedule(); }, pollInterval());
+    }
+    schedule();
+    return () => clearTimeout(timer);
   }, [jobId]);
 
   async function handleCancel() {

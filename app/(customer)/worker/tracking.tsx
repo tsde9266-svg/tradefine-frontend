@@ -137,13 +137,16 @@ export default function TrackingScreen() {
         clearInterval(timer);
         Alert.alert(
           `${worker?.name?.split(' ')[0] ?? 'Worker'} has gone offline`,
-          'The worker is no longer being tracked.',
-          [{ text: 'Go Back', onPress: () => router.back() }],
+          'The job may be complete. Would you like to leave a review?',
+          [
+            { text: 'Leave a Review', onPress: () => router.replace(`/(customer)/worker/review?workerId=${workerId}`) },
+            { text: 'Go Back', style: 'cancel', onPress: () => router.back() },
+          ],
         );
       }
     }, 15_000);
     return () => clearInterval(timer);
-  }, [isLive, worker]);
+  }, [isLive, worker, workerId]);
 
   const initialRegion: Region | undefined = currentLocation
     ? { ...currentLocation, latitudeDelta: 0.02, longitudeDelta: 0.02 } : undefined;

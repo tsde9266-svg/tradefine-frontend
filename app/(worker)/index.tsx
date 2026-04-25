@@ -27,24 +27,14 @@ import { typography } from '../../constants/typography';
 import { getWorkerById } from '../../services/workers';
 import { connectSocket } from '../../services/socket';
 import { getActiveJobs, respondToJob, startJob, completeJob } from '../../services/jobs';
+import { getNotifications } from '../../services/notifications';
+import { Notification } from '../../types/notification';
 import { useAuth } from '../../hooks/useAuth';
 import { useWorkerProfileStore } from '../../stores/workerProfileStore';
 import { useAuthStore } from '../../stores/authStore';
 import { getGreeting } from '../../utils/formatters';
 import { JobRequest } from '../../types/job';
 
-interface ActivityItem {
-  id: string;
-  type: 'save' | 'review' | 'call';
-  title: string;
-  subtitle: string;
-}
-
-const MOCK_ACTIVITY: ActivityItem[] = [
-  { id: '1', type: 'save',   title: 'Sarah Miller saved your profile',  subtitle: '2 hours ago' },
-  { id: '2', type: 'review', title: 'John David left a review',         subtitle: '5 hours ago · "Great work on the plumbing!"' },
-  { id: '3', type: 'call',   title: 'Missed Call from 078 9920 331',    subtitle: 'Yesterday at 6:45 PM' },
-];
 
 // ── Broadcast animation for the LIVE card ────────────────────────────────────
 function BroadcastIcon() {
@@ -108,6 +98,7 @@ export default function WorkerDashboard() {
   const [stats] = useState({ views: 12, calls: 8, reviews: 3, rating: 4.9 });
   const [activeJobs, setActiveJobs] = useState<JobRequest[]>([]);
   const [jobActionLoading, setJobActionLoading] = useState<string | null>(null);
+  const [recentActivity, setRecentActivity] = useState<Notification[]>([]);
 
   const firstName = user?.name?.split(' ')[0] ?? 'there';
   const isLive = profile?.isAvailable ?? false;
@@ -120,8 +111,9 @@ export default function WorkerDashboard() {
         setProfile(w);
         if (accessToken) connectSocket(accessToken, w.id);
         try {
-          const jobs = await getActiveJobs();
+          const [jobs, notifs] = await Promise.all([getActiveJobs(), getNotifications()]);
           setActiveJobs(jobs);
+          setRecentActivity(notifs.slice(0, 3));
         } catch {}
       } catch {
         if (accessToken) connectSocket(accessToken);
@@ -387,25 +379,29 @@ export default function WorkerDashboard() {
                 </Pressable>
               </View>
               <View style={styles.activityCard}>
-                {MOCK_ACTIVITY.map((item, i) => {
+                {recentActivity.length === 0 ? (
+                  <View style={styles.activityRow}>
+                    <Text style={styles.activitySub}>No recent activity yet</Text>
+                  </View>
+                ) : recentActivity.map((notif, i) => {
                   const cfg =
-                    item.type === 'save'   ? { icon: 'bookmark' as const, bg: '#FFF7ED', color: colors.primary } :
-                    item.type === 'review' ? { icon: 'star'      as const, bg: '#FFFBEB', color: '#FBBF24' } :
-                                             { icon: 'call'       as const, bg: '#FFF1F2', color: colors.error };
+                    notif.type === 'profile_saved' ? { icon: 'bookmark' as const, bg: '#FFF7ED', color: colors.primary } :
+                    notif.type === 'new_review'    ? { icon: 'star'      as const, bg: '#FFFBEB', color: '#FBBF24' } :
+                    notif.type === 'job_request'   ? { icon: 'send'      as const, bg: '#EFF6FF', color: colors.primary } :
+                    notif.type === 'job_accepted'  ? { icon: 'checkmark-circle' as const, bg: '#F0FDF4', color: colors.success } :
+                                                     { icon: 'notifications-outline' as const, bg: colors.surfaceElevated, color: colors.textSecondary };
                   return (
-                    <View key={item.id}>
+                    <View key={notif.id}>
                       {i > 0 && <View style={styles.divider} />}
-                      <Pressable style={styles.activityRow}>
+                      <Pressable style={styles.activityRow} onPress={() => router.push('/(worker)/notifications')}>
                         <View style={[styles.activityIconWrap, { backgroundColor: cfg.bg }]}>
                           <Ionicons name={cfg.icon} size={18} color={cfg.color} />
                         </View>
                         <View style={styles.activityText}>
-                          <Text style={styles.activityTitle}>{item.title}</Text>
-                          <Text style={styles.activitySub}>{item.subtitle}</Text>
+                          <Text style={styles.activityTitle}>{notif.title}</Text>
+                          <Text style={styles.activitySub}>{notif.body}</Text>
                         </View>
-                        {item.type === 'call'
-                          ? <Ionicons name="chevron-forward" size={16} color={colors.textDisabled} />
-                          : <Ionicons name={cfg.icon} size={16} color={cfg.color} />}
+                        <Ionicons name="chevron-forward" size={16} color={colors.textDisabled} />
                       </Pressable>
                     </View>
                   );
