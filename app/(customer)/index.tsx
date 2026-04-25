@@ -110,7 +110,7 @@ export default function CustomerHomeScreen() {
           </Pressable>
         </View>
         <View style={styles.headerRight}>
-          <Pressable style={styles.iconBtn}>
+          <Pressable style={styles.iconBtn} onPress={() => router.push('/(customer)/notifications')}>
             <Ionicons name="notifications-outline" size={22} color={colors.textPrimary} />
           </Pressable>
           <Pressable onPress={() => router.push('/(customer)/profile')}>

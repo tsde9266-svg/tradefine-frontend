@@ -317,12 +317,29 @@ export default function TrackingScreen() {
 
           <View style={styles.chipsRow}>
             {QUICK_ACTIONS.map((a) => (
-              <Pressable key={a} style={styles.chip}><Text style={styles.chipText}>{a}</Text></Pressable>
+              <Pressable
+                key={a}
+                style={styles.chip}
+                onPress={() => {
+                  if (worker?.phone) {
+                    Linking.openURL(`sms:${worker.phone}${Platform.OS === 'ios' ? '&' : '?'}body=${encodeURIComponent(a)}`);
+                  }
+                }}
+              >
+                <Text style={styles.chipText}>{a}</Text>
+              </Pressable>
             ))}
           </View>
 
           <View style={styles.btnRow}>
-            <Pressable style={styles.msgBtn}>
+            <Pressable
+              style={styles.msgBtn}
+              onPress={() => {
+                if (worker?.phone) {
+                  Linking.openURL(`sms:${worker.phone}`);
+                }
+              }}
+            >
               <Ionicons name="chatbubble" size={18} color="#fff" />
               <Text style={styles.msgBtnText}>Message</Text>
             </Pressable>

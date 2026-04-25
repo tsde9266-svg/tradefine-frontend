@@ -171,6 +171,27 @@ export default function WorkerDashboard() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
 
+        {/* Pending approval banner — shown when account not yet approved */}
+        {profile?.status === 'pending' && (
+          <View style={styles.pendingBanner}>
+            <Ionicons name="time-outline" size={20} color="#92400E" />
+            <View style={styles.pendingText}>
+              <Text style={styles.pendingTitle}>Account under review</Text>
+              <Text style={styles.pendingSub}>We're verifying your details. You'll be notified once approved — usually within 24 hours.</Text>
+            </View>
+          </View>
+        )}
+
+        {profile?.status === 'blocked' && (
+          <View style={[styles.pendingBanner, { backgroundColor: '#FEF2F2', borderLeftColor: colors.error }]}>
+            <Ionicons name="ban-outline" size={20} color={colors.error} />
+            <View style={styles.pendingText}>
+              <Text style={[styles.pendingTitle, { color: colors.error }]}>Account suspended</Text>
+              <Text style={styles.pendingSub}>Contact support@tradefind.app for assistance.</Text>
+            </View>
+          </View>
+        )}
+
         {/* ════════════════════════════════════════════
             ONLINE LAYOUT — shown only when worker is LIVE
             ════════════════════════════════════════════ */}
@@ -551,6 +572,24 @@ const jc = StyleSheet.create({
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
   scroll: { paddingBottom: 40 },
+
+  /* Pending / blocked banner */
+  pendingBanner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: spacing.md,
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.md,
+    marginBottom: spacing.xs,
+    backgroundColor: '#FFFBEB',
+    borderRadius: radius.lg,
+    padding: spacing.md,
+    borderLeftWidth: 4,
+    borderLeftColor: '#F59E0B',
+  },
+  pendingText: { flex: 1, gap: 3 },
+  pendingTitle: { ...typography.bodyMd, color: '#92400E', fontWeight: '700' },
+  pendingSub: { ...typography.small, color: '#B45309', lineHeight: 18 },
 
   /* Greeting */
   greeting: {

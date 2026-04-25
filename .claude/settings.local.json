@@ -79,7 +79,8 @@
       "Bash(git add *)",
       "Bash(ssh-keygen *)",
       "Bash(git -C D:/tradefind checkout origin/main -- \"app/\\(customer\\)/worker/tracking.tsx\")",
-      "Bash(git -C D:/tradefind show origin/main:app/\\\\\\(customer\\\\\\)/worker/tracking.tsx)"
+      "Bash(git -C D:/tradefind show origin/main:app/\\\\\\(customer\\\\\\)/worker/tracking.tsx)",
+      "WebFetch(domain:docs.expo.dev)"
     ]
   }
 }
