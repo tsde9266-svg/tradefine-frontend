@@ -16,7 +16,6 @@
       "env": {
         "APP_ENV": "development",
         "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "1041618545321-8t6a4gvvhtke96bjkc8pu6gs7nt4mgj8.apps.googleusercontent.com",
-        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "",
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "1041618545321-8549s0ur0sbp1mc1r19avabjho11q00j.apps.googleusercontent.com"
       }
     },
@@ -30,7 +29,6 @@
         "EXPO_PUBLIC_API_URL": "http://178.104.119.210:3001",
         "EXPO_PUBLIC_SOCKET_URL": "ws://178.104.119.210:4000",
         "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "1041618545321-8t6a4gvvhtke96bjkc8pu6gs7nt4mgj8.apps.googleusercontent.com",
-        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "",
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "1041618545321-8549s0ur0sbp1mc1r19avabjho11q00j.apps.googleusercontent.com"
       }
     },
@@ -41,7 +39,6 @@
         "EXPO_PUBLIC_API_URL": "http://178.104.119.210:3001",
         "EXPO_PUBLIC_SOCKET_URL": "ws://178.104.119.210:4000",
         "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "1041618545321-8t6a4gvvhtke96bjkc8pu6gs7nt4mgj8.apps.googleusercontent.com",
-        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "",
         "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "1041618545321-8549s0ur0sbp1mc1r19avabjho11q00j.apps.googleusercontent.com"
       }
     }
