@@ -9,7 +9,7 @@ import { spacing } from '../../constants/spacing';
 import { radius } from '../../constants/radius';
 import { typography } from '../../constants/typography';
 
-const BG = require('../../assets/illustrations/onboarding_illustration_for_a_construction_app_a_friendly_tradesperson_holding.png');
+const BG = require('../../assets/illustrations/splash_bg.png');
 const APP_ICON = require('../../assets/icons/app_icon_app_icon_for_tradefi.png');
 
 export default function WelcomeScreen() {
@@ -18,7 +18,12 @@ export default function WelcomeScreen() {
   return (
     <View style={styles.screen}>
       {/* Full-screen background photo */}
-      <ImageBackground source={BG} style={StyleSheet.absoluteFillObject} resizeMode="cover" />
+      <ImageBackground
+        source={BG}
+        style={StyleSheet.absoluteFillObject}
+        resizeMode="cover"
+        imageStyle={{ objectFit: 'cover' }}
+      />
 
       {/* White gradient — transparent at top, solid white at ~55% so text is readable */}
       <LinearGradient
