@@ -274,7 +274,15 @@ export default function WorkerDashboard() {
                     anchor={{ x: 0.5, y: 1.0 }}
                     tracksViewChanges={false}
                   >
-                    <Ionicons name="location" size={44} color={colors.primary} />
+                    {/* Large decorative teardrop pin matching design */}
+                    <View style={pinS.wrap}>
+                      <View style={pinS.outer}>
+                        <View style={pinS.inner}>
+                          <Ionicons name="construct" size={18} color={colors.primary} />
+                        </View>
+                      </View>
+                      <View style={pinS.tail} />
+                    </View>
                   </Marker>
                 )}
               </MapView>
@@ -453,6 +461,27 @@ export default function WorkerDashboard() {
     </SafeAreaView>
   );
 }
+
+// ── Broadcast map pin styles ─────────────────────────────────────────────────
+const pinS = StyleSheet.create({
+  wrap: { alignItems: 'center' },
+  outer: {
+    width: 56, height: 56, borderRadius: 28,
+    backgroundColor: colors.primary,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  inner: {
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: '#fff',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  tail: {
+    width: 0, height: 0,
+    borderLeftWidth: 10, borderRightWidth: 10, borderTopWidth: 14,
+    borderLeftColor: 'transparent', borderRightColor: 'transparent',
+    borderTopColor: colors.primary,
+  },
+});
 
 // ── JobCard component ─────────────────────────────────────────────────────────
 interface JobCardProps {
