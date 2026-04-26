@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   FlatList,
   Image,
   Linking,
@@ -13,6 +14,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
 
 import SkeletonLoader from '../../components/ui/SkeletonLoader';
 import EmptyState from '../../components/ui/EmptyState';
@@ -118,7 +121,7 @@ export default function SearchScreen() {
             <Text style={styles.toggleLabel}>Available Now</Text>
             <Switch
               value={availableOnly}
-              onValueChange={setAvailableOnly}
+              onValueChange={(v) => { Haptics.selectionAsync(); setAvailableOnly(v); }}
               trackColor={{ false: colors.border, true: colors.primary }}
               thumbColor={colors.surface}
               style={{ transform: [{ scaleX: 0.82 }, { scaleY: 0.82 }] }}
@@ -151,19 +154,27 @@ export default function SearchScreen() {
           subtitle={`No tradespeople found for "${query}"`}
         />
       ) : (
-        <FlatList
-          data={workers}
-          keyExtractor={(w) => w.id}
-          renderItem={({ item }) => (
-            <WorkerCard
-              worker={item}
-              onPress={() => router.push(`/(customer)/worker/${item.id}`)}
-            />
-          )}
-          contentContainerStyle={styles.list}
-          removeClippedSubviews
-          showsVerticalScrollIndicator={false}
-        />
+        <View style={{ flex: 1 }}>
+          <FlatList
+            data={workers}
+            keyExtractor={(w) => w.id}
+            renderItem={({ item }) => (
+              <WorkerCard
+                worker={item}
+                onPress={() => router.push(`/(customer)/worker/${item.id}`)}
+              />
+            )}
+            contentContainerStyle={styles.list}
+            removeClippedSubviews
+            showsVerticalScrollIndicator={false}
+          />
+          {/* Gradient fade signals more content below */}
+          <LinearGradient
+            colors={['transparent', colors.background]}
+            style={styles.listFade}
+            pointerEvents="none"
+          />
+        </View>
       )}
     </SafeAreaView>
   );
@@ -173,15 +184,30 @@ export default function SearchScreen() {
 
 function SortPill({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
   return (
-    <Pressable style={[styles.pill, active && styles.pillActive]} onPress={onPress}>
+    <Pressable
+      style={[styles.pill, active && styles.pillActive]}
+      onPress={() => { Haptics.selectionAsync(); onPress(); }}
+    >
       <Text style={[styles.pillText, active && styles.pillTextActive]}>{label}</Text>
-      <Ionicons
-        name="chevron-down"
-        size={12}
-        color={active ? colors.textInverse : colors.textSecondary}
-      />
+      <Ionicons name="chevron-down" size={12} color={active ? colors.textInverse : colors.textSecondary} />
     </Pressable>
   );
+}
+
+function AvailabilityPulseDot({ active }: { active: boolean }) {
+  const pulse = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    if (!active) return;
+    const anim = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, { toValue: 0.35, duration: 900, useNativeDriver: true }),
+        Animated.timing(pulse, { toValue: 1,    duration: 900, useNativeDriver: true }),
+      ]),
+    );
+    anim.start();
+    return () => anim.stop();
+  }, [active]);
+  return <Animated.View style={[styles.badgeDot, active ? styles.dotGreen : styles.dotOrange, active && { opacity: pulse }]} />;
 }
 
 function WorkerCard({ worker, onPress }: { worker: Worker; onPress: () => void }) {
@@ -220,7 +246,7 @@ function WorkerCard({ worker, onPress }: { worker: Worker; onPress: () => void }
           <View style={styles.nameRow}>
             <Text style={styles.name} numberOfLines={1}>{worker.name}</Text>
             <View style={[styles.badge, isAvailable ? styles.badgeAvail : styles.badgeBusy]}>
-              <View style={[styles.badgeDot, isAvailable ? styles.dotGreen : styles.dotOrange]} />
+              <AvailabilityPulseDot active={isAvailable} />
               <Text style={[styles.badgeText, isAvailable ? styles.badgeTextAvail : styles.badgeTextBusy]}>
                 {isAvailable ? 'AVAILABLE' : 'BUSY'}
               </Text>
@@ -352,8 +378,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
   },
-  list: { paddingHorizontal: spacing.lg, paddingBottom: 32 },
+  list: { paddingHorizontal: spacing.lg, paddingBottom: 80 },
   skeletons: { paddingHorizontal: spacing.lg, marginTop: spacing.md },
+  listFade: {
+    position: 'absolute', bottom: 0, left: 0, right: 0, height: 64,
+    pointerEvents: 'none',
+  },
 
   /* Card */
   card: {

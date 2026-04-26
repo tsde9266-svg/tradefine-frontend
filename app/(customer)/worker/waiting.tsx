@@ -384,6 +384,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     borderWidth: 1.5,
     borderColor: colors.error,
+    backgroundColor: 'rgba(220,38,38,0.06)',
   },
   cancelBtnText: { ...typography.bodyMd, color: colors.error, fontWeight: '600' },
   primaryBtn: {

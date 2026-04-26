@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Platform,
   Pressable,
   StyleSheet,
@@ -221,7 +222,10 @@ export default function RegisterScreen() {
               disabled={isSocialLoading}
             >
               {socialLoading === 'google' ? (
-                <Text style={styles.socialBtnText}>Signing in…</Text>
+                <>
+                  <ActivityIndicator size="small" color={colors.textSecondary} />
+                  <Text style={styles.socialBtnText}>Signing in…</Text>
+                </>
               ) : (
                 <>
                   <Ionicons name="logo-google" size={18} color="#4285F4" />
@@ -266,7 +270,11 @@ export default function RegisterScreen() {
                 onIconRightPress={() => setShowPassword((p) => !p)} />
 
               <Pressable style={styles.termsRow} onPress={() => setAgreedToTerms((p) => !p)}>
-                <View style={[styles.checkbox, agreedToTerms && styles.checkboxChecked]}>
+                <View style={[
+                  styles.checkbox,
+                  agreedToTerms && styles.checkboxChecked,
+                  signupErrors.agreedToTerms && !agreedToTerms && styles.checkboxError,
+                ]}>
                   {agreedToTerms && <Text style={styles.checkmark}>✓</Text>}
                 </View>
                 <Text style={styles.termsText}>
@@ -359,6 +367,7 @@ const styles = StyleSheet.create({
     marginTop: 1, flexShrink: 0,
   },
   checkboxChecked: { backgroundColor: colors.primary, borderColor: colors.primary },
+  checkboxError: { borderColor: colors.error, borderWidth: 2 },
   checkmark: { color: '#fff', fontSize: 12, fontWeight: '700' },
   termsText: { ...typography.small, color: colors.textSecondary, flex: 1 },
   termsLink: { color: colors.primary, fontWeight: '600' },

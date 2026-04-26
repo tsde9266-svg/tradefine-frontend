@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, ViewStyle } from 'react-native';
+import { Animated, StyleSheet, View, ViewStyle } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface SkeletonLoaderProps {
   width: number | string;
@@ -14,35 +15,53 @@ export default function SkeletonLoader({
   borderRadius = 8,
   style,
 }: SkeletonLoaderProps) {
-  const shimmer = useRef(new Animated.Value(0)).current;
+  const translateX = useRef(new Animated.Value(-1)).current;
 
   useEffect(() => {
     Animated.loop(
-      Animated.sequence([
-        Animated.timing(shimmer, { toValue: 1, duration: 800, useNativeDriver: false }),
-        Animated.timing(shimmer, { toValue: 0, duration: 800, useNativeDriver: false }),
-      ]),
+      Animated.timing(translateX, {
+        toValue: 1,
+        duration: 1100,
+        useNativeDriver: true,
+      }),
     ).start();
-  }, [shimmer]);
+    return () => translateX.setValue(-1);
+  }, []);
 
-  const backgroundColor = shimmer.interpolate({
-    inputRange:  [0, 1],
-    outputRange: ['#F3F4F6', '#E5E7EB'],
+  // Shimmer travels from left to right — translateX mapped to actual pixel offset
+  const shimmerTranslate = translateX.interpolate({
+    inputRange: [-1, 1],
+    outputRange: ['-100%', '200%'],
   });
 
   return (
-    <Animated.View
+    <View
       style={[
-        styles.skeleton,
-        { width: width as any, height, borderRadius, backgroundColor },
+        styles.base,
+        { width: width as any, height, borderRadius },
         style,
       ]}
-    />
+    >
+      <Animated.View
+        style={[
+          StyleSheet.absoluteFillObject,
+          { transform: [{ translateX: shimmerTranslate as any }] },
+        ]}
+      >
+        <LinearGradient
+          colors={['transparent', 'rgba(255,255,255,0.55)', 'transparent']}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          style={StyleSheet.absoluteFillObject}
+        />
+      </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  skeleton: {
+  base: {
+    backgroundColor: '#E9EAEC',
     overflow: 'hidden',
   },
 });

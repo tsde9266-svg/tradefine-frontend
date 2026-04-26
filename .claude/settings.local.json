@@ -80,7 +80,13 @@
       "Bash(ssh-keygen *)",
       "Bash(git -C D:/tradefind checkout origin/main -- \"app/\\(customer\\)/worker/tracking.tsx\")",
       "Bash(git -C D:/tradefind show origin/main:app/\\\\\\(customer\\\\\\)/worker/tracking.tsx)",
-      "WebFetch(domain:docs.expo.dev)"
+      "WebFetch(domain:docs.expo.dev)",
+      "Bash(git commit -m 'fix: move Google client ID to ANDROID var \\(was incorrectly set as WEB\\) *)",
+      "Bash(git commit -m 'fix: Google sign-in guard — only block if ALL client IDs missing *)",
+      "Bash(git commit -m 'feat: add Google Web OAuth client ID for Expo Go support *)",
+      "Bash(copy \"c:\\\\Users\\\\Lenovo T460\\\\Desktop\\\\bgsplashscreen.png\" \"D:\\\\tradefind\\\\assets\\\\illustrations\\\\splash_bg.png\")",
+      "Bash(git commit -m 'feat: update splash screen background with new construction worker photo *)",
+      "Bash(git commit *)"
     ]
   }
 }

@@ -162,7 +162,13 @@ export default function RequestWorkerScreen() {
                   textAlignVertical="top"
                   autoFocus
                 />
-                <Text style={styles.charCount}>{description.length}/500</Text>
+                <Text style={[
+                styles.charCount,
+                description.length > 450 && { color: colors.error },
+                description.length > 375 && description.length <= 450 && { color: colors.warning },
+              ]}>
+                {description.length}/500
+              </Text>
               </View>
 
               <View style={styles.infoRow}>
