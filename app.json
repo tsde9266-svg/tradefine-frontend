@@ -67,7 +67,8 @@
         }
       ],
       "expo-secure-store",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-font"
     ],
     "extra": {
       "apiUrl": "http://178.104.119.210:3001",
