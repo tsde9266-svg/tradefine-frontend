@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Linking,
@@ -35,6 +35,16 @@ export default function RequestWorkerScreen() {
   const [showCallFlow, setShowCallFlow] = useState(false);
   const [called, setCalled] = useState(false);
   const [confirmingCall, setConfirmingCall] = useState(false);
+
+  // Reset all state when navigating to a different worker's request screen
+  // (Expo Router reuses the component when only params change)
+  useEffect(() => {
+    setDescription('');
+    setShowCallFlow(false);
+    setCalled(false);
+    setSubmitting(false);
+    setConfirmingCall(false);
+  }, [workerId]);
 
   const firstName = workerName?.split(' ')[0] ?? 'Worker';
 
