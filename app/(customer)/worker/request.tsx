@@ -49,10 +49,15 @@ export default function RequestWorkerScreen() {
       router.replace(`/(customer)/worker/waiting?jobId=${job.id}`);
     } catch (e: any) {
       const msg = e?.response?.data?.error;
-      if (!msg && e?.response?.status === 404) {
-        show('Booking feature coming soon — call the worker directly for now', 'info');
+      const status = e?.response?.status;
+      if (status === 404) {
+        show('Worker not found. Please try again.', 'error');
+      } else if (status === 403) {
+        show(msg ?? 'This worker is not available for booking right now.', 'error');
+      } else if (status === 409) {
+        show('You already have an active request with this worker.', 'info');
       } else {
-        show(msg ?? 'Could not send request', 'error');
+        show(msg ?? 'Could not send request. Please try again.', 'error');
       }
     } finally {
       setSubmitting(false);
@@ -66,10 +71,13 @@ export default function RequestWorkerScreen() {
       router.replace(`/(customer)/worker/waiting?jobId=${job.id}`);
     } catch (e: any) {
       const msg = e?.response?.data?.error;
-      if (!msg && e?.response?.status === 404) {
-        show('Booking feature coming soon — call the worker directly for now', 'info');
+      const status = e?.response?.status;
+      if (status === 404) {
+        show('Worker not found. Please try again.', 'error');
+      } else if (status === 409) {
+        show('You already have an active request with this worker.', 'info');
       } else {
-        show(msg ?? 'Could not confirm agreement', 'error');
+        show(msg ?? 'Could not confirm agreement. Please try again.', 'error');
       }
     } finally {
       setSubmitting(false);
