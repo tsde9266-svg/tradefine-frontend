@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 
 import { useToast } from '../../../components/ui/Toast';
 import { StackHeader } from '../../../components/layout/AppHeader';
@@ -23,252 +24,193 @@ import { shadows } from '../../../constants/shadows';
 import { typography } from '../../../constants/typography';
 import { createJobRequest } from '../../../services/jobs';
 
-type Mode = 'choose' | 'in_app' | 'call';
-
 export default function RequestWorkerScreen() {
   const { workerId, workerName, workerPhone } =
     useLocalSearchParams<{ workerId: string; workerName: string; workerPhone: string }>();
   const router = useRouter();
   const { show } = useToast();
 
-  const [mode, setMode] = useState<Mode>('choose');
   const [description, setDescription] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [showCallFlow, setShowCallFlow] = useState(false);
   const [called, setCalled] = useState(false);
+  const [confirmingCall, setConfirmingCall] = useState(false);
 
   const firstName = workerName?.split(' ')[0] ?? 'Worker';
 
-  // Guard: workerId must exist — if not, user navigated here incorrectly
   if (!workerId) {
     return (
       <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-        <StackHeader title="Request Worker" />
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-          <Text style={{ color: colors.error, textAlign: 'center', fontSize: 16 }}>
-            Something went wrong. Please go back and try again.
-          </Text>
+        <StackHeader title={`Request ${firstName}`} />
+        <View style={styles.errorWrap}>
+          <Text style={styles.errorText}>Something went wrong. Please go back and try again.</Text>
         </View>
       </SafeAreaView>
     );
   }
 
-  async function submitInApp() {
+  async function handleSendRequest() {
     if (description.trim().length < 10) {
-      show('Please describe your job (at least 10 characters)', 'error');
+      show('Describe your job in at least 10 characters', 'error');
       return;
     }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setSubmitting(true);
     try {
       const job = await createJobRequest({ workerId, type: 'in_app', description: description.trim() });
       router.replace(`/(customer)/worker/waiting?jobId=${job.id}`);
     } catch (e: any) {
-      const msg = e?.response?.data?.error;
       const status = e?.response?.status;
-      if (status === 404) {
-        show('Worker not found. Please try again.', 'error');
-      } else if (status === 403) {
-        show(msg ?? 'This worker is not available for booking right now.', 'error');
-      } else if (status === 409) {
-        show('You already have an active request with this worker.', 'info');
-      } else {
-        show(msg ?? 'Could not send request. Please try again.', 'error');
-      }
+      const msg = e?.response?.data?.error;
+      if (status === 409) show('You already have an active request with this worker.', 'info');
+      else if (status === 403) show(msg ?? 'This worker is not available for booking right now.', 'error');
+      else if (status === 404) show('Worker not found. Please go back and try again.', 'error');
+      else show(msg ?? 'Could not send request. Please try again.', 'error');
     } finally {
       setSubmitting(false);
     }
   }
 
-  async function confirmCallAgreement() {
-    setSubmitting(true);
+  async function handleConfirmCall() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setConfirmingCall(true);
     try {
       const job = await createJobRequest({ workerId, type: 'call' });
       router.replace(`/(customer)/worker/waiting?jobId=${job.id}`);
     } catch (e: any) {
-      const msg = e?.response?.data?.error;
       const status = e?.response?.status;
-      if (status === 404) {
-        show('Worker not found. Please try again.', 'error');
-      } else if (status === 409) {
-        show('You already have an active request with this worker.', 'info');
-      } else {
-        show(msg ?? 'Could not confirm agreement. Please try again.', 'error');
-      }
+      const msg = e?.response?.data?.error;
+      if (status === 409) show('You already have an active request with this worker.', 'info');
+      else show(msg ?? 'Could not confirm. Please try again.', 'error');
     } finally {
-      setSubmitting(false);
+      setConfirmingCall(false);
     }
   }
 
   function handleCall() {
-    if (workerPhone) {
-      Linking.openURL(`tel:${workerPhone}`);
-    }
-    // Mark as called regardless — worker may have called customer instead
+    if (workerPhone) Linking.openURL(`tel:${workerPhone}`);
     setCalled(true);
   }
 
+  // ── Call & Confirm sub-flow ─────────────────────────────────
+  if (showCallFlow) {
+    return (
+      <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+        <StackHeader title="Call & Confirm" onBack={() => setShowCallFlow(false)} />
+        <ScrollView contentContainerStyle={styles.content}>
+          <Text style={styles.callFlowTitle}>Agree with {firstName} on the phone first</Text>
+          <Text style={styles.callFlowSub}>
+            Call {firstName}, discuss the job, price and timing. When you're both happy, confirm below — you'll be able to track his journey live.
+          </Text>
+
+          <Pressable style={styles.callPrimaryBtn} onPress={handleCall}>
+            <Ionicons name="call" size={20} color="#fff" />
+            <Text style={styles.callPrimaryText}>Call {firstName}</Text>
+          </Pressable>
+
+          {called ? (
+            <View style={styles.confirmedSection}>
+              <View style={styles.dividerRow}>
+                <View style={styles.dividerLine} />
+                <Text style={styles.dividerText}>You spoke — great!</Text>
+                <View style={styles.dividerLine} />
+              </View>
+
+              <View style={styles.confirmInfo}>
+                <Ionicons name="shield-checkmark-outline" size={16} color={colors.success} />
+                <Text style={styles.confirmInfoText}>
+                  {firstName} will receive a notification to confirm he's on his way.
+                  Tracking starts the moment he confirms.
+                </Text>
+              </View>
+
+              <Pressable
+                style={[styles.confirmBtn, confirmingCall && { opacity: 0.7 }]}
+                onPress={handleConfirmCall}
+                disabled={confirmingCall}
+              >
+                <Ionicons name="checkmark-circle" size={18} color="#fff" />
+                <Text style={styles.confirmBtnText}>
+                  {confirmingCall ? 'Confirming…' : `We agreed — ${firstName} is coming`}
+                </Text>
+              </Pressable>
+            </View>
+          ) : (
+            <Text style={styles.callHint}>Call {firstName} first, then you can confirm the agreement.</Text>
+          )}
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+
+  // ── Main request screen (default) ──────────────────────────
+  const charColor = description.length > 450
+    ? colors.error
+    : description.length > 375
+    ? colors.warning
+    : colors.textDisabled;
+
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <StackHeader
-          title={mode === 'choose' ? `Request ${firstName}` : mode === 'in_app' ? 'Describe the Job' : 'Call & Confirm'}
-          onBack={() => mode === 'choose' ? router.back() : setMode('choose')}
-        />
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <StackHeader title={`Request ${firstName}`} />
 
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          {/* Worker context */}
+          <Text style={styles.heading}>What do you need help with?</Text>
+          <Text style={styles.sub}>
+            Tell {firstName} about the job — the more detail you give, the better he can prepare.
+          </Text>
 
-          {/* ── CHOOSE MODE ────────────────────────────────────── */}
-          {mode === 'choose' && (
-            <>
-              <Text style={styles.subtitle}>
-                How would you like to proceed with {firstName}?
-              </Text>
+          {/* Description input */}
+          <View style={styles.textAreaCard}>
+            <TextInput
+              style={styles.textArea}
+              value={description}
+              onChangeText={setDescription}
+              placeholder={`e.g. "My boiler is making a knocking noise and the heating keeps cutting out. I need it looked at as soon as possible..."`}
+              placeholderTextColor={colors.textDisabled}
+              multiline
+              maxLength={500}
+              textAlignVertical="top"
+              autoFocus
+            />
+            <Text style={[styles.charCount, { color: charColor }]}>{description.length}/500</Text>
+          </View>
 
-              {/* In-app request option */}
-              <Pressable
-                style={({ pressed }) => [styles.optionCard, pressed && styles.optionCardPressed]}
-                onPress={() => setMode('in_app')}
-              >
-                <View style={[styles.optionIconWrap, { backgroundColor: colors.primaryLight }]}>
-                  <Ionicons name="document-text-outline" size={26} color={colors.primary} />
-                </View>
-                <View style={styles.optionText}>
-                  <Text style={styles.optionTitle}>Send a Request</Text>
-                  <Text style={styles.optionDesc}>
-                    Describe your job in-app. {firstName} will accept or decline and you can track his journey.
-                  </Text>
-                </View>
-                <Ionicons name="chevron-forward" size={20} color={colors.textDisabled} />
-              </Pressable>
-
-              {/* Call & confirm option */}
-              <Pressable
-                style={({ pressed }) => [styles.optionCard, pressed && styles.optionCardPressed]}
-                onPress={() => setMode('call')}
-              >
-                <View style={[styles.optionIconWrap, { backgroundColor: '#FFF7ED' }]}>
-                  <Ionicons name="call-outline" size={26} color={colors.warning} />
-                </View>
-                <View style={styles.optionText}>
-                  <Text style={styles.optionTitle}>Call & Confirm</Text>
-                  <Text style={styles.optionDesc}>
-                    Call {firstName} directly, agree on terms verbally, then both confirm in-app to start tracking.
-                  </Text>
-                </View>
-                <Ionicons name="chevron-forward" size={20} color={colors.textDisabled} />
-              </Pressable>
-
-              <Text style={styles.hint}>
-                Either way, once {firstName} confirms he's on his way, you'll see his live location.
-              </Text>
-            </>
-          )}
-
-          {/* ── IN-APP REQUEST ─────────────────────────────────── */}
-          {mode === 'in_app' && (
-            <>
-              <Text style={styles.subtitle}>
-                Tell {firstName} what you need. Be as specific as possible so he can prepare.
-              </Text>
-
-              <View style={styles.textAreaWrap}>
-                <TextInput
-                  style={styles.textArea}
-                  value={description}
-                  onChangeText={setDescription}
-                  placeholder={`e.g. "My boiler has been making a banging noise and the heating isn't working. I think it needs a service or repair..."`}
-                  placeholderTextColor={colors.textDisabled}
-                  multiline
-                  maxLength={500}
-                  textAlignVertical="top"
-                  autoFocus
-                />
-                <Text style={[
-                styles.charCount,
-                description.length > 450 && { color: colors.error },
-                description.length > 375 && description.length <= 450 && { color: colors.warning },
-              ]}>
-                {description.length}/500
-              </Text>
+          {/* What happens next */}
+          <View style={styles.nextStepsCard}>
+            <Text style={styles.nextTitle}>What happens next</Text>
+            {[
+              { icon: 'notifications-outline' as const, text: `${firstName} gets notified and can accept or decline` },
+              { icon: 'checkmark-circle-outline' as const, text: 'You\'ll be notified the moment he responds' },
+              { icon: 'navigate-outline' as const, text: 'Once he starts, track his live location here' },
+            ].map((step, i) => (
+              <View key={i} style={styles.nextStep}>
+                <Ionicons name={step.icon} size={16} color={colors.primary} />
+                <Text style={styles.nextText}>{step.text}</Text>
               </View>
+            ))}
+          </View>
 
-              <View style={styles.infoRow}>
-                <Ionicons name="information-circle-outline" size={15} color={colors.textSecondary} />
-                <Text style={styles.infoText}>
-                  {firstName} will receive a notification and can accept or decline. You'll be notified instantly.
-                </Text>
-              </View>
+          {/* Send button */}
+          <Pressable
+            style={[styles.sendBtn, (submitting || description.trim().length < 10) && styles.sendBtnDisabled]}
+            onPress={handleSendRequest}
+            disabled={submitting || description.trim().length < 10}
+          >
+            <Ionicons name="send" size={17} color="#fff" />
+            <Text style={styles.sendBtnText}>
+              {submitting ? 'Sending request…' : `Send Request to ${firstName}`}
+            </Text>
+          </Pressable>
 
-              <Pressable
-                style={[styles.primaryBtn, (submitting || description.trim().length < 10) && styles.primaryBtnDisabled]}
-                onPress={submitInApp}
-                disabled={submitting || description.trim().length < 10}
-              >
-                <Ionicons name="send" size={17} color="#fff" />
-                <Text style={styles.primaryBtnText}>
-                  {submitting ? 'Sending…' : `Send Request to ${firstName}`}
-                </Text>
-              </Pressable>
-            </>
-          )}
-
-          {/* ── CALL & CONFIRM ─────────────────────────────────── */}
-          {mode === 'call' && (
-            <>
-              {/* Step 1 */}
-              <View style={styles.stepCard}>
-                <View style={styles.stepNumWrap}>
-                  <Text style={styles.stepNum}>1</Text>
-                </View>
-                <View style={styles.stepBody}>
-                  <Text style={styles.stepTitle}>Call {firstName}</Text>
-                  <Text style={styles.stepDesc}>
-                    Discuss the job, agree on price and timing. Once you've agreed, come back here.
-                  </Text>
-                  <Pressable style={styles.callBtn} onPress={handleCall}>
-                    <Ionicons name="call" size={17} color="#fff" />
-                    <Text style={styles.callBtnText}>Call {firstName} now</Text>
-                  </Pressable>
-                </View>
-              </View>
-
-              {/* Step 2 */}
-              <View style={[styles.stepCard, !called && styles.stepCardLocked]}>
-                <View style={[styles.stepNumWrap, called && styles.stepNumDone]}>
-                  <Text style={[styles.stepNum, called && styles.stepNumTextDone]}>2</Text>
-                </View>
-                <View style={styles.stepBody}>
-                  <Text style={styles.stepTitle}>Confirm your agreement</Text>
-                  <Text style={styles.stepDesc}>
-                    Tap below once you've both agreed. {firstName} will receive a notification to confirm he's on his way, and you'll be able to track him live.
-                  </Text>
-                  <Pressable
-                    style={[styles.confirmBtn, (!called || submitting) && styles.primaryBtnDisabled]}
-                    onPress={confirmCallAgreement}
-                    disabled={!called || submitting}
-                  >
-                    <Ionicons name="checkmark-circle" size={17} color={called ? '#fff' : colors.textDisabled} />
-                    <Text style={[styles.confirmBtnText, !called && { color: colors.textDisabled }]}>
-                      {submitting ? 'Confirming…' : `We agreed — ${firstName} is coming`}
-                    </Text>
-                  </Pressable>
-
-                  {!called && (
-                    <Text style={styles.lockedNote}>Call {firstName} first to unlock this step.</Text>
-                  )}
-                </View>
-              </View>
-
-              <View style={styles.infoRow}>
-                <Ionicons name="shield-checkmark-outline" size={15} color={colors.textSecondary} />
-                <Text style={styles.infoText}>
-                  {firstName} must confirm on his end too. Tracking starts only once he taps "I'm on my way".
-                </Text>
-              </View>
-            </>
-          )}
+          {/* Secondary: already called */}
+          <Pressable style={styles.callInsteadBtn} onPress={() => setShowCallFlow(true)}>
+            <Ionicons name="call-outline" size={15} color={colors.textSecondary} />
+            <Text style={styles.callInsteadText}>Already spoken with {firstName}? Confirm a verbal agreement</Text>
+            <Ionicons name="chevron-forward" size={14} color={colors.textDisabled} />
+          </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -277,72 +219,17 @@ export default function RequestWorkerScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
+  errorWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xxl },
+  errorText: { ...typography.body, color: colors.error, textAlign: 'center' },
+  content: { padding: spacing.lg, gap: spacing.lg, paddingBottom: 40 },
 
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-    ...shadows.sm,
-  },
-  backBtn: {
-    width: 36, height: 36, borderRadius: 18,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    ...typography.h4,
-    color: colors.textPrimary,
-    fontWeight: '700',
-  },
-
-  content: { padding: spacing.lg, gap: spacing.lg },
-
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    lineHeight: 22,
-  },
-
-  /* Option cards */
-  optionCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    backgroundColor: colors.surface,
-    borderRadius: radius.xl,
-    padding: spacing.lg,
-    borderWidth: 1.5,
-    borderColor: colors.borderLight,
-    ...shadows.sm,
-  },
-  optionCardPressed: { opacity: 0.9, transform: [{ scale: 0.99 }] },
-  optionIconWrap: {
-    width: 52, height: 52, borderRadius: 26,
-    alignItems: 'center', justifyContent: 'center',
-    flexShrink: 0,
-  },
-  optionText: { flex: 1, gap: 4 },
-  optionTitle: { ...typography.bodyMd, color: colors.textPrimary, fontWeight: '700' },
-  optionDesc: { ...typography.small, color: colors.textSecondary, lineHeight: 18 },
-
-  hint: {
-    ...typography.small,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: 18,
-    paddingHorizontal: spacing.md,
-  },
+  heading: { ...typography.h2, color: colors.textPrimary },
+  sub: { ...typography.body, color: colors.textSecondary, lineHeight: 22, marginTop: -spacing.sm },
 
   /* Text area */
-  textAreaWrap: {
+  textAreaCard: {
     backgroundColor: colors.surface,
-    borderRadius: radius.lg,
+    borderRadius: radius.xl,
     borderWidth: 1.5,
     borderColor: colors.borderLight,
     padding: spacing.md,
@@ -354,90 +241,60 @@ const styles = StyleSheet.create({
     minHeight: 140,
     lineHeight: 22,
   },
-  charCount: {
-    ...typography.caption,
-    color: colors.textDisabled,
-    textAlign: 'right',
-    marginTop: spacing.xs,
-  },
+  charCount: { ...typography.caption, textAlign: 'right', marginTop: spacing.xs },
 
-  /* Info row */
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.sm,
-    backgroundColor: colors.surfaceElevated,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  infoText: { ...typography.small, color: colors.textSecondary, flex: 1, lineHeight: 18 },
-
-  /* Step cards */
-  stepCard: {
-    flexDirection: 'row',
-    gap: spacing.md,
+  /* Next steps */
+  nextStepsCard: {
     backgroundColor: colors.surface,
     borderRadius: radius.xl,
     padding: spacing.lg,
-    borderWidth: 1.5,
-    borderColor: colors.borderLight,
+    gap: spacing.md,
     ...shadows.sm,
   },
-  stepCardLocked: { opacity: 0.7 },
-  stepNumWrap: {
-    width: 32, height: 32, borderRadius: 16,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: 'center', justifyContent: 'center',
-    flexShrink: 0,
-    borderWidth: 1.5,
-    borderColor: colors.borderLight,
-  },
-  stepNumDone: { backgroundColor: colors.primary, borderColor: colors.primary },
-  stepNum: { ...typography.bodyMd, color: colors.textSecondary, fontWeight: '700' },
-  stepNumTextDone: { color: '#fff' },
-  stepBody: { flex: 1, gap: spacing.sm },
-  stepTitle: { ...typography.bodyMd, color: colors.textPrimary, fontWeight: '700' },
-  stepDesc: { ...typography.small, color: colors.textSecondary, lineHeight: 18 },
+  nextTitle: { ...typography.bodyMd, color: colors.textPrimary, fontWeight: '700' },
+  nextStep: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm },
+  nextText: { ...typography.small, color: colors.textSecondary, flex: 1, lineHeight: 18 },
 
-  /* Buttons */
-  primaryBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.primary,
-    borderRadius: radius.lg,
+  /* Send button */
+  sendBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: spacing.sm, backgroundColor: colors.primary,
+    borderRadius: radius.full, paddingVertical: 16,
+  },
+  sendBtnDisabled: { backgroundColor: colors.surfaceElevated },
+  sendBtnText: { ...typography.bodyMd, color: '#fff', fontWeight: '700' },
+
+  /* Secondary call option */
+  callInsteadBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
     paddingVertical: spacing.md,
+    borderTopWidth: 1, borderTopColor: colors.borderLight,
   },
-  primaryBtnDisabled: { backgroundColor: colors.surfaceElevated },
-  primaryBtnText: { ...typography.bodyMd, color: '#fff', fontWeight: '700' },
+  callInsteadText: { ...typography.small, color: colors.textSecondary, flex: 1, lineHeight: 18 },
 
-  callBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.primary,
-    borderRadius: radius.md,
-    paddingVertical: 10,
+  /* Call flow */
+  callFlowTitle: { ...typography.h3, color: colors.textPrimary },
+  callFlowSub: { ...typography.body, color: colors.textSecondary, lineHeight: 22 },
+  callPrimaryBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: spacing.md, backgroundColor: colors.primary,
+    borderRadius: radius.full, paddingVertical: 16,
   },
-  callBtnText: { ...typography.bodyMd, color: '#fff', fontWeight: '700' },
-
+  callPrimaryText: { ...typography.bodyMd, color: '#fff', fontWeight: '700' },
+  callHint: { ...typography.small, color: colors.textDisabled, textAlign: 'center' },
+  confirmedSection: { gap: spacing.lg },
+  dividerRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  dividerLine: { flex: 1, height: 1, backgroundColor: colors.borderLight },
+  dividerText: { ...typography.caption, color: colors.textSecondary, fontWeight: '600' },
+  confirmInfo: {
+    flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm,
+    backgroundColor: '#F0FDF4', borderRadius: radius.lg, padding: spacing.md,
+  },
+  confirmInfoText: { ...typography.small, color: colors.success, flex: 1, lineHeight: 18 },
   confirmBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.success,
-    borderRadius: radius.md,
-    paddingVertical: 10,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: spacing.sm, backgroundColor: colors.success,
+    borderRadius: radius.full, paddingVertical: 16,
   },
   confirmBtnText: { ...typography.bodyMd, color: '#fff', fontWeight: '700' },
-
-  lockedNote: {
-    ...typography.caption,
-    color: colors.textDisabled,
-    textAlign: 'center',
-    marginTop: 2,
-  },
 });
