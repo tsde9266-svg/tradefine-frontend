@@ -107,8 +107,10 @@ export default function WaitingScreen() {
 
   const [job, setJob] = useState<JobRequest | null>(null);
   const [cancelling, setCancelling] = useState(false);
+  const [networkError, setNetworkError] = useState(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const handledTransition = useRef(false);
+  const failCount = useRef(0);
 
   // Pulse animation for spinner states
   useEffect(() => {
@@ -147,7 +149,10 @@ export default function WaitingScreen() {
           handledTransition.current = true;
         }
       } catch {
-        // Network error — keep polling
+        failCount.current += 1;
+        if (failCount.current >= 3) {
+          setNetworkError(true);
+        }
       }
     }
 
@@ -196,7 +201,17 @@ export default function WaitingScreen() {
       <StackHeader title="Job Status" onBack={isTerminal ? undefined : () => {}} />
 
       <View style={styles.content}>
-        {!job ? (
+        {networkError && !job ? (
+          <View style={{ alignItems: 'center', gap: 16 }}>
+            <Ionicons name="wifi-outline" size={48} color={colors.textDisabled} />
+            <Text style={{ color: colors.textSecondary, textAlign: 'center' }}>
+              Cannot reach the server. Check your connection and try again.
+            </Text>
+            <Pressable style={styles.primaryBtn} onPress={() => router.back()}>
+              <Text style={styles.primaryBtnText}>Go Back</Text>
+            </Pressable>
+          </View>
+        ) : !job ? (
           <ActivityIndicator size="large" color={colors.primary} />
         ) : (
           <>

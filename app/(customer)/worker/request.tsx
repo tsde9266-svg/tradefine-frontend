@@ -38,6 +38,20 @@ export default function RequestWorkerScreen() {
 
   const firstName = workerName?.split(' ')[0] ?? 'Worker';
 
+  // Guard: workerId must exist — if not, user navigated here incorrectly
+  if (!workerId) {
+    return (
+      <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
+        <StackHeader title="Request Worker" />
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+          <Text style={{ color: colors.error, textAlign: 'center', fontSize: 16 }}>
+            Something went wrong. Please go back and try again.
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   async function submitInApp() {
     if (description.trim().length < 10) {
       show('Please describe your job (at least 10 characters)', 'error');
@@ -87,8 +101,9 @@ export default function RequestWorkerScreen() {
   function handleCall() {
     if (workerPhone) {
       Linking.openURL(`tel:${workerPhone}`);
-      setCalled(true);
     }
+    // Mark as called regardless — worker may have called customer instead
+    setCalled(true);
   }
 
   return (
