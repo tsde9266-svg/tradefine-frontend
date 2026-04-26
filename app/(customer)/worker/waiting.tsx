@@ -124,45 +124,56 @@ export default function WaitingScreen() {
     return () => pulse.stop();
   }, []);
 
-  // Poll for job status
+  // Poll for job status — cleans up properly on unmount
   useEffect(() => {
     if (!jobId) return;
+    let active = true;
+    let timer: ReturnType<typeof setTimeout>;
 
     async function poll() {
+      if (!active) return;
       try {
         const updated = await getJobById(jobId);
+        if (!active) return;
+        failCount.current = 0; // reset on success
+        setNetworkError(false);
         setJob(updated);
 
         if (handledTransition.current) return;
 
         if (updated.status === 'started') {
           handledTransition.current = true;
-          setTimeout(() => {
-            router.replace(`/(customer)/worker/tracking?workerId=${updated.workerId}`);
-          }, 800);
+          router.replace(`/(customer)/worker/tracking?workerId=${updated.workerId}`);
         } else if (updated.status === 'completed') {
           handledTransition.current = true;
           setTimeout(() => {
-            router.replace(`/(customer)/worker/review?workerId=${updated.workerId}`);
-          }, 1500);
-        } else if (updated.status === 'declined' || updated.status === 'cancelled') {
+            if (active) router.replace(`/(customer)/worker/review?workerId=${updated.workerId}`);
+          }, 1200);
+        } else if (['declined', 'cancelled'].includes(updated.status)) {
           handledTransition.current = true;
         }
       } catch {
+        if (!active) return;
         failCount.current += 1;
-        if (failCount.current >= 3) {
-          setNetworkError(true);
-        }
+        if (failCount.current >= 3) setNetworkError(true);
+        if (failCount.current >= 10) return; // stop polling after 10 failures
       }
     }
 
     poll();
-    let timer: ReturnType<typeof setTimeout>;
     function schedule() {
-      timer = setTimeout(async () => { await poll(); schedule(); }, pollInterval());
+      timer = setTimeout(async () => {
+        await poll();
+        if (active) schedule();
+      }, pollInterval());
     }
     schedule();
-    return () => clearTimeout(timer);
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+      handledTransition.current = true; // prevent any in-flight navigation
+    };
   }, [jobId]);
 
   async function handleCancel() {
@@ -192,7 +203,7 @@ export default function WaitingScreen() {
   }
 
   const canCancel = job && ['pending', 'call_pending', 'accepted'].includes(job.status);
-  const isTerminal = job && ['declined', 'cancelled'].includes(job.status);
+  const isTerminal = job && ['declined', 'cancelled', 'completed'].includes(job.status);
   const config = job ? getStatusConfig(job) : null;
   const firstName = job?.worker?.name?.split(' ')[0] ?? 'Worker';
 

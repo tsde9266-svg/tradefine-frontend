@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import Avatar from '../../../components/ui/Avatar';
@@ -73,6 +73,17 @@ export default function WorkerProfileScreen() {
       }
     })();
   }, [id]);
+
+  // Refresh activeJob every time screen gains focus — ensures CTA
+  // reflects real state (e.g. after job accepted/declined/completed)
+  useFocusEffect(
+    useCallback(() => {
+      if (!worker) return;
+      getActiveJobs()
+        .then((jobs) => setActiveJob(jobs.find((j) => j.workerId === worker.id) ?? null))
+        .catch(() => {});
+    }, [worker]),
+  );
 
   const handleSaveToggle = useCallback(async () => {
     if (!worker || savingToggle) return;

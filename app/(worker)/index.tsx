@@ -145,7 +145,7 @@ export default function WorkerDashboard() {
     jobId: string,
     action: 'accept' | 'decline' | 'confirm_call' | 'start' | 'complete',
   ) => {
-    setJobActionLoading(jobId + action);
+    setJobActionLoading(`${jobId}::${action}`);
     try {
       let updated: JobRequest;
       if (action === 'accept' || action === 'decline' || action === 'confirm_call') {
@@ -528,7 +528,7 @@ interface JobCardProps {
 
 function JobCard({ job, loading, onAction }: JobCardProps) {
   const customerName = job.customer?.name ?? 'A customer';
-  const isLoading = (action: string) => loading === job.id + action;
+  const isLoading = (action: string) => loading === `${job.id}::${action}`;
 
   const stripColor: Record<string, string> = {
     pending: colors.primary, call_pending: colors.warning,
