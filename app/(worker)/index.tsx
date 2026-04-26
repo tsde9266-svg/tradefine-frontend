@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
@@ -103,6 +103,7 @@ export default function WorkerDashboard() {
   const firstName = user?.name?.split(' ')[0] ?? 'there';
   const isLive = profile?.isAvailable ?? false;
 
+  // Load profile + socket once on mount
   useEffect(() => {
     if (!user?.id) return;
     (async () => {
@@ -110,16 +111,35 @@ export default function WorkerDashboard() {
         const w = await getWorkerById(user.id);
         setProfile(w);
         if (accessToken) connectSocket(accessToken, w.id);
-        try {
-          const [jobs, notifs] = await Promise.all([getActiveJobs(), getNotifications()]);
-          setActiveJobs(jobs);
-          setRecentActivity(notifs.slice(0, 3));
-        } catch {}
       } catch {
         if (accessToken) connectSocket(accessToken);
       }
     })();
   }, [user?.id, accessToken]);
+
+  // Refresh jobs + notifications every time screen is focused
+  // Critical: worker must see new requests without leaving the screen
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      const load = async () => {
+        try {
+          const [jobs, notifs] = await Promise.all([getActiveJobs(), getNotifications()]);
+          if (active) {
+            setActiveJobs(jobs);
+            setRecentActivity(notifs.slice(0, 3));
+          }
+        } catch {}
+      };
+
+      load();
+
+      // Poll every 8 seconds while screen is focused
+      // so worker sees incoming requests without push notifications
+      const interval = setInterval(load, 8000);
+      return () => { active = false; clearInterval(interval); };
+    }, []),
+  );
 
   const handleJobAction = useCallback(async (
     jobId: string,
