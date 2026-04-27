@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Notification Centre - TradeFind</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-fixed-dim": "#ffb690",
+                        "on-primary-fixed-variant": "#783200",
+                        "surface-bright": "#f9f9ff",
+                        "on-secondary-container": "#5c6274",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container": "#e7eefe",
+                        "primary": "#9d4300",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#ffb690",
+                        "error": "#ba1a1a",
+                        "outline": "#8c7164",
+                        "surface-variant": "#dce2f3",
+                        "surface-dim": "#d3daea",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#141b2b",
+                        "background": "#f9f9ff",
+                        "tertiary-fixed-dim": "#93ccff",
+                        "secondary-container": "#d9dff5",
+                        "secondary-fixed": "#dce2f7",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e2e8f8",
+                        "secondary": "#575e70",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#151c27",
+                        "on-primary-container": "#582200",
+                        "on-primary-fixed": "#341100",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#f97316",
+                        "secondary-fixed-dim": "#c0c6db",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-surface-variant": "#584237",
+                        "inverse-surface": "#2a313d",
+                        "primary-fixed": "#ffdbca",
+                        "surface-tint": "#9d4300",
+                        "tertiary-container": "#00a2f4",
+                        "tertiary": "#006398",
+                        "outline-variant": "#e0c0b1",
+                        "on-secondary-fixed-variant": "#404758",
+                        "on-tertiary-fixed-variant": "#004b74",
+                        "on-background": "#151c27",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#cde5ff",
+                        "surface-container-highest": "#dce2f3",
+                        "on-tertiary-fixed": "#001d32",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#003554",
+                        "surface": "#f9f9ff"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        "component-padding": "16px",
+                        "section-gap": "32px",
+                        "grid-column-3": "1fr 1fr 1fr",
+                        "container-margin": "20px",
+                        "gutter": "12px"
+                    },
+                    fontFamily: {
+                        h4: ["Inter"],
+                        "label-caps": ["Inter"],
+                        h2: ["Inter"],
+                        h1: ["Inter"],
+                        h3: ["Inter"],
+                        display: ["Inter"],
+                        body: ["Inter"]
+                    },
+                    fontSize: {
+                        h4: ["16px", { lineHeight: "1.4", fontWeight: "600" }],
+                        "label-caps": ["12px", { lineHeight: "1", letterSpacing: "0.05em", fontWeight: "700" }],
+                        h2: ["22px", { lineHeight: "1.3", fontWeight: "700" }],
+                        h1: ["28px", { lineHeight: "1.2", letterSpacing: "-0.01em", fontWeight: "700" }],
+                        h3: ["18px", { lineHeight: "1.4", fontWeight: "600" }],
+                        display: ["42px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "800" }],
+                        body: ["15px", { lineHeight: "1.5", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        .shadow-level-1 {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body text-body min-h-screen pt-[100px] pb-[120px]">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 bg-white/95 dark:bg-gray-900/95 font-sans antialiased text-gray-900 dark:text-gray-50 rounded-xl mt-3 mx-4 h-[56px] shadow-[0_8px_24px_rgba(0,0,0,0.1)] backdrop-blur-md">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors active:scale-95 duration-150 text-orange-500 dark:text-orange-400">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<span class="text-lg font-bold tracking-tight text-gray-900 dark:text-gray-50">TradeFind</span>
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors active:scale-95 duration-150 overflow-hidden">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="Close up portrait of a smiling professional tradesman in his 30s with short beard, warm natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCINp2oRY_dsdh7VG3r0b746ZYPZJL_Wn_BewrDYulMGftGaDoasrrYLN3LZn7tLuzdbVcvFkHyN5T2DkaXv1MxHC1kyAcfwsqNKu3EBul6SFZoWO6p1vAYBbHFnnG7nLMwe92xVhIFne9d85PnIQ227VpyEHc466eMylx1RtKcohKinLhrV0w861rneo2mEtTqVSEAXaly8ADnJHnSawdGZ5ABcvabnFjB7KOuk87_YRgdFgAoGDMxA7sOosxX-o1UQXRsB6YdVa4"/>
+</button>
+</header>
+<main class="px-container-margin max-w-2xl mx-auto flex flex-col gap-section-gap">
+<!-- Page Title -->
+<section>
+<h1 class="font-h1 text-h1 text-on-surface mb-2">Notifications</h1>
+<p class="font-body text-body text-secondary">You have 2 new updates.</p>
+</section>
+<!-- Today Section -->
+<section class="flex flex-col gap-4">
+<h2 class="font-h3 text-h3 text-on-surface ml-1">Today</h2>
+<!-- Notification Card 1 (Unread, Actionable, Blue/Tertiary) -->
+<article class="bg-surface-container-lowest rounded-xl p-component-padding shadow-level-1 relative overflow-hidden flex gap-4 items-start active:scale-[0.98] transition-transform cursor-pointer">
+<!-- Unread Indicator -->
+<div class="absolute top-4 right-4 w-2.5 h-2.5 rounded-full bg-primary-container shadow-[0_0_8px_rgba(249,115,22,0.6)]"></div>
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-tertiary-container/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined icon-fill" data-icon="local_shipping" data-weight="fill">local_shipping</span>
+</div>
+<div class="flex-1 flex flex-col gap-1">
+<div class="flex justify-between items-start mr-6">
+<h3 class="font-h4 text-h4 text-on-surface">Materials Dispatched</h3>
+</div>
+<p class="font-body text-body text-on-surface-variant line-clamp-2 mb-2">Your order #TRD-8924 for premium oak flooring is on the way to the site.</p>
+<div class="flex items-center justify-between mt-1">
+<span class="font-label-caps text-label-caps text-secondary uppercase">10:42 AM</span>
+<button class="bg-primary hover:bg-primary-container text-on-primary font-label-caps text-label-caps px-4 py-2 rounded-full transition-colors active:scale-95">
+                            Track Now
+                        </button>
+</div>
+</div>
+</article>
+<!-- Notification Card 2 (Unread, Orange/Primary) -->
+<article class="bg-surface-container-lowest rounded-xl p-component-padding shadow-level-1 relative overflow-hidden flex gap-4 items-start active:scale-[0.98] transition-transform cursor-pointer">
+<!-- Unread Indicator -->
+<div class="absolute top-4 right-4 w-2.5 h-2.5 rounded-full bg-primary-container shadow-[0_0_8px_rgba(249,115,22,0.6)]"></div>
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-primary-container/10 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined icon-fill" data-icon="assignment_turned_in" data-weight="fill">assignment_turned_in</span>
+</div>
+<div class="flex-1 flex flex-col gap-1">
+<h3 class="font-h4 text-h4 text-on-surface mr-6">Quote Approved</h3>
+<p class="font-body text-body text-on-surface-variant">The client has accepted your estimate for the kitchen remodel.</p>
+<span class="font-label-caps text-label-caps text-secondary uppercase mt-2">08:15 AM</span>
+</div>
+</article>
+</section>
+<!-- Yesterday Section -->
+<section class="flex flex-col gap-4">
+<h2 class="font-h3 text-h3 text-on-surface ml-1 mt-4">Yesterday</h2>
+<!-- Notification Card 3 (Read, Amber/Secondary focus) -->
+<article class="bg-surface-container-lowest rounded-xl p-component-padding shadow-level-1 opacity-80 flex gap-4 items-start active:scale-[0.98] transition-transform cursor-pointer">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-outline-variant/30 flex items-center justify-center text-outline">
+<span class="material-symbols-outlined icon-fill" data-icon="event_note" data-weight="fill">event_note</span>
+</div>
+<div class="flex-1 flex flex-col gap-1">
+<h3 class="font-h4 text-h4 text-on-surface">Schedule Updated</h3>
+<p class="font-body text-body text-on-surface-variant">Tomorrow's plumbing inspection has been moved to 2:00 PM.</p>
+<span class="font-label-caps text-label-caps text-secondary uppercase mt-2">Yesterday, 4:30 PM</span>
+</div>
+</article>
+<!-- Notification Card 4 (Read, Payment) -->
+<article class="bg-surface-container-lowest rounded-xl p-component-padding shadow-level-1 opacity-80 flex gap-4 items-start active:scale-[0.98] transition-transform cursor-pointer">
+<div class="flex-shrink-0 w-12 h-12 rounded-full bg-surface-variant flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined icon-fill" data-icon="payments" data-weight="fill">payments</span>
+</div>
+<div class="flex-1 flex flex-col gap-1">
+<h3 class="font-h4 text-h4 text-on-surface">Payment Received</h3>
+<p class="font-body text-body text-on-surface-variant">Invoice #INV-204 has been paid in full.</p>
+<span class="font-label-caps text-label-caps text-secondary uppercase mt-2">Yesterday, 11:10 AM</span>
+</div>
+</article>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-6 pb-safe bg-white/80 dark:bg-gray-900/80 backdrop-blur-md docked full-width h-[83px] border-t border-gray-200/50 dark:border-gray-800 shadow-[0_-1px_3px_rgba(0,0,0,0.05)]">
+<!-- Active Tab: Home (with badge) -->
+<button class="flex flex-col items-center justify-center bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-full px-4 py-1 transition-all duration-200 ease-in-out relative group">
+<div class="absolute top-0 right-3 w-2.5 h-2.5 bg-primary-container rounded-full border-2 border-white"></div>
+<span class="material-symbols-outlined mb-1 text-[24px]" data-icon="home">home</span>
+<span class="font-sans text-[11px] font-medium uppercase tracking-wider">Home</span>
+</button>
+<!-- Inactive Tab: Map -->
+<button class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:text-orange-500 dark:hover:text-orange-300 transition-all duration-200 ease-in-out px-4 py-1">
+<span class="material-symbols-outlined mb-1 text-[24px]" data-icon="distance">distance</span>
+<span class="font-sans text-[11px] font-medium uppercase tracking-wider">Map</span>
+</button>
+<!-- Inactive Tab: Jobs -->
+<button class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:text-orange-500 dark:hover:text-orange-300 transition-all duration-200 ease-in-out px-4 py-1">
+<span class="material-symbols-outlined mb-1 text-[24px]" data-icon="work">work</span>
+<span class="font-sans text-[11px] font-medium uppercase tracking-wider">Jobs</span>
+</button>
+<!-- Inactive Tab: Profile -->
+<button class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:text-orange-500 dark:hover:text-orange-300 transition-all duration-200 ease-in-out px-4 py-1">
+<span class="material-symbols-outlined mb-1 text-[24px]" data-icon="person">person</span>
+<span class="font-sans text-[11px] font-medium uppercase tracking-wider">Profile</span>
+</button>
+</nav>
+</body></html>

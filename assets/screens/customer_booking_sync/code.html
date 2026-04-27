@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradeFind - Job Request</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-fixed": "#cde5ff",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-surface": "#151c27",
+                        "outline": "#8c7164",
+                        "on-secondary-fixed-variant": "#404758",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#dce2f3",
+                        "primary": "#9d4300",
+                        "surface-container-high": "#e2e8f8",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#d9dff5",
+                        "tertiary": "#006398",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#93ccff",
+                        "on-primary-fixed": "#341100",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#ffb690",
+                        "surface-dim": "#d3daea",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2a313d",
+                        "surface-bright": "#f9f9ff",
+                        "surface": "#f9f9ff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#004b74",
+                        "on-secondary-container": "#5c6274",
+                        "tertiary-container": "#00a2f4",
+                        "on-primary-fixed-variant": "#783200",
+                        "on-background": "#151c27",
+                        "on-error": "#ffffff",
+                        "background": "#f9f9ff",
+                        "surface-container": "#e7eefe",
+                        "on-tertiary-fixed": "#001d32",
+                        "on-surface-variant": "#584237",
+                        "primary-fixed-dim": "#ffb690",
+                        "secondary": "#575e70",
+                        "surface-container-highest": "#dce2f3",
+                        "secondary-fixed-dim": "#c0c6db",
+                        "surface-tint": "#9d4300",
+                        "on-tertiary-container": "#003554",
+                        "on-primary-container": "#582200",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#e0c0b1",
+                        "secondary-fixed": "#dce2f7",
+                        "primary-container": "#f97316",
+                        "surface-container-low": "#f0f3ff",
+                        "primary-fixed": "#ffdbca",
+                        "on-secondary-fixed": "#141b2b"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        "section-gap": "32px",
+                        "grid-column-3": "1fr 1fr 1fr",
+                        "component-padding": "16px",
+                        "gutter": "12px",
+                        "container-margin": "20px"
+                    },
+                    fontFamily: {
+                        "label-caps": ["Inter"],
+                        "body": ["Inter"],
+                        "h3": ["Inter"],
+                        "display": ["Inter"],
+                        "h4": ["Inter"],
+                        "h1": ["Inter"],
+                        "h2": ["Inter"]
+                    },
+                    fontSize: {
+                        "label-caps": ["12px", { lineHeight: "1", letterSpacing: "0.05em", fontWeight: "700" }],
+                        "body": ["15px", { lineHeight: "1.5", fontWeight: "400" }],
+                        "h3": ["18px", { lineHeight: "1.4", fontWeight: "600" }],
+                        "display": ["42px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "800" }],
+                        "h4": ["16px", { lineHeight: "1.4", fontWeight: "600" }],
+                        "h1": ["28px", { lineHeight: "1.2", letterSpacing: "-0.01em", fontWeight: "700" }],
+                        "h2": ["22px", { lineHeight: "1.3", fontWeight: "700" }]
+                    }
+                }
+            }
+        };
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { background-color: #F9FAFB; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body text-body text-on-background min-h-screen pb-32 pt-28 px-container-margin md:max-w-2xl md:mx-auto">
+<!-- Top Nav -->
+<header class="fixed top-4 left-4 right-4 z-50 bg-white rounded-[12px] flex items-center justify-between px-4 h-[60px] shadow-[0_8px_32px_rgba(0,0,0,0.08)] md:max-w-2xl md:mx-auto">
+<button class="w-10 h-10 flex items-center justify-center rounded-[10px] bg-zinc-50 text-zinc-900 hover:bg-zinc-100 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<div class="flex flex-col items-center">
+<h1 class="font-['Inter'] font-bold tracking-tight text-zinc-900 text-h4 font-h4">Request a Tradesperson</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-[10px] bg-zinc-50 text-zinc-900 hover:bg-zinc-100 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">more_vert</span>
+</button>
+</header>
+<main class="space-y-section-gap">
+<!-- Worker Confirmation Card -->
+<section class="bg-surface-container-lowest rounded-xl p-component-padding shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex items-center gap-4">
+<div class="relative w-16 h-16 rounded-full overflow-hidden shrink-0">
+<img alt="Professional tradesperson portrait, clean modern uniform, natural lighting" class="w-full h-full object-cover" data-alt="Professional tradesperson portrait, clean modern uniform, natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSVwSG84tUu7TqJ1qqO_FtTpUb8Dr7o1Ft2TMC1pIHCmdSsepz1_dxSfynx5wSlAnuiL-JS7fOxb5RUFmBGMiFygCWuOhz4JFe14jxyu3s3gJ0pFsUjKgzKI11e2Uqh4hyMNr0Z2b3zDFYHbTyzNhrkhsFjZDYrnRfgw4C5H-8PfMPNV4GiuAdcovCEy_c9g3epks1I_fVsGyx7pQMo28mhDq58vnTnKrBRmW27Cul4J6egwKCCTJWNaPotOdQ1_1f4e5VFtO4uzg"/>
+<div class="absolute bottom-0 right-0 w-4 h-4 bg-primary-container rounded-full border-2 border-surface-container-lowest flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-on-primary font-bold" data-weight="fill">check</span>
+</div>
+</div>
+<div class="flex-1">
+<p class="font-label-caps text-label-caps text-secondary mb-1 uppercase tracking-widest">Selected Professional</p>
+<h2 class="font-h2 text-h2 text-on-surface">James O'Brien</h2>
+<div class="flex items-center gap-1 mt-1 text-secondary font-body text-sm">
+<span class="material-symbols-outlined text-sm">star</span>
+<span>4.9 (124 reviews)</span>
+</div>
+</div>
+</section>
+<!-- Job Type Selector -->
+<section>
+<h3 class="font-h3 text-h3 text-on-surface mb-gutter">Type of Request</h3>
+<div class="grid grid-cols-2 gap-gutter">
+<label class="cursor-pointer">
+<input checked="" class="peer sr-only" name="job_type" type="radio"/>
+<div class="bg-surface-container-lowest rounded-lg p-component-padding border-2 border-transparent peer-checked:border-primary-container peer-checked:bg-surface-container-lowest shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all flex flex-col items-center text-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-3xl">warning</span>
+<span class="font-h4 text-h4 text-on-surface">Emergency repair</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="job_type" type="radio"/>
+<div class="bg-surface-container-lowest rounded-lg p-component-padding border-2 border-transparent peer-checked:border-primary-container shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all flex flex-col items-center text-center gap-2">
+<span class="material-symbols-outlined text-secondary text-3xl">build</span>
+<span class="font-h4 text-h4 text-on-surface">Routine work</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="job_type" type="radio"/>
+<div class="bg-surface-container-lowest rounded-lg p-component-padding border-2 border-transparent peer-checked:border-primary-container shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all flex flex-col items-center text-center gap-2">
+<span class="material-symbols-outlined text-secondary text-3xl">request_quote</span>
+<span class="font-h4 text-h4 text-on-surface">Quote only</span>
+</div>
+</label>
+<label class="cursor-pointer">
+<input class="peer sr-only" name="job_type" type="radio"/>
+<div class="bg-surface-container-lowest rounded-lg p-component-padding border-2 border-transparent peer-checked:border-primary-container shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all flex flex-col items-center text-center gap-2">
+<span class="material-symbols-outlined text-secondary text-3xl">search_check</span>
+<span class="font-h4 text-h4 text-on-surface">Inspection</span>
+</div>
+</label>
+</div>
+</section>
+<!-- When Selector -->
+<section>
+<h3 class="font-h3 text-h3 text-on-surface mb-gutter">When do you need it?</h3>
+<div class="flex gap-gutter overflow-x-auto pb-2 -mx-container-margin px-container-margin snap-x hide-scrollbar">
+<label class="snap-start shrink-0 cursor-pointer">
+<input checked="" class="peer sr-only" name="when" type="radio"/>
+<div class="px-6 py-3 rounded-full bg-surface-container-lowest text-secondary font-h4 text-h4 shadow-[0_4px_20px_rgba(0,0,0,0.05)] peer-checked:bg-[#f97316] peer-checked:text-white transition-colors whitespace-nowrap border-2 border-transparent peer-checked:border-[#f97316]">
+                        Right now
+                    </div>
+</label>
+<label class="snap-start shrink-0 cursor-pointer">
+<input class="peer sr-only" name="when" type="radio"/>
+<div class="px-6 py-3 rounded-full bg-surface-container-lowest text-secondary font-h4 text-h4 shadow-[0_4px_20px_rgba(0,0,0,0.05)] peer-checked:bg-[#f97316] peer-checked:text-white transition-colors whitespace-nowrap border-2 border-transparent peer-checked:border-[#f97316]">
+                        Today
+                    </div>
+</label>
+<label class="snap-start shrink-0 cursor-pointer">
+<input class="peer sr-only" name="when" type="radio"/>
+<div class="px-6 py-3 rounded-full bg-surface-container-lowest text-secondary font-h4 text-h4 shadow-[0_4px_20px_rgba(0,0,0,0.05)] peer-checked:bg-[#f97316] peer-checked:text-white transition-colors whitespace-nowrap border-2 border-transparent peer-checked:border-[#f97316]">
+                        This week
+                    </div>
+</label>
+</div>
+</section>
+<!-- Description -->
+<section>
+<h3 class="font-h3 text-h3 text-on-surface mb-gutter">Job Details</h3>
+<textarea class="w-full bg-surface-container-highest border-none rounded-lg p-component-padding font-body text-body text-on-surface placeholder-secondary focus:ring-2 focus:ring-[#f97316] resize-none h-32" placeholder="Briefly describe what needs to be done..."></textarea>
+</section>
+<!-- Address -->
+<section class="bg-surface-container-lowest rounded-xl p-component-padding shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary">location_on</span>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-secondary uppercase tracking-widest mb-1">Service Address</p>
+<p class="font-h4 text-h4 text-on-surface">124 Maple Street</p>
+</div>
+</div>
+<button class="font-h4 text-h4 text-[#f97316] hover:opacity-80 transition-opacity">Change</button>
+</section>
+</main>
+<!-- Fixed Bottom Button -->
+<div class="fixed bottom-0 left-0 right-0 p-container-margin bg-gradient-to-t from-[#F9FAFB] via-[#F9FAFB]/90 to-transparent z-40 md:max-w-2xl md:mx-auto">
+<button class="w-full bg-[#f97316] text-white font-h3 text-h3 py-4 rounded-full shadow-[0_8px_24px_rgba(249,115,22,0.3)] hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">send</span>
+            Send Request
+        </button>
+</div>
+<style>
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</body></html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Worker Onboarding Setup</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-dim": "#d3daea",
+                      "surface-variant": "#dce2f3",
+                      "outline": "#8c7164",
+                      "error": "#ba1a1a",
+                      "surface-bright": "#f9f9ff",
+                      "on-secondary-container": "#5c6274",
+                      "on-primary-fixed-variant": "#783200",
+                      "primary-fixed-dim": "#ffb690",
+                      "inverse-primary": "#ffb690",
+                      "primary": "#9d4300",
+                      "on-error": "#ffffff",
+                      "surface-container-low": "#f0f3ff",
+                      "surface-container": "#e7eefe",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-high": "#e2e8f8",
+                      "secondary": "#575e70",
+                      "secondary-fixed": "#dce2f7",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "tertiary-fixed-dim": "#93ccff",
+                      "secondary-container": "#d9dff5",
+                      "background": "#f9f9ff",
+                      "on-secondary-fixed": "#141b2b",
+                      "primary-fixed": "#ffdbca",
+                      "on-surface-variant": "#584237",
+                      "inverse-on-surface": "#ebf1ff",
+                      "secondary-fixed-dim": "#c0c6db",
+                      "inverse-surface": "#2a313d",
+                      "on-primary-fixed": "#341100",
+                      "primary-container": "#f97316",
+                      "on-error-container": "#93000a",
+                      "on-surface": "#151c27",
+                      "on-primary-container": "#582200",
+                      "on-tertiary-container": "#003554",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-fixed": "#001d32",
+                      "surface": "#f9f9ff",
+                      "error-container": "#ffdad6",
+                      "surface-container-highest": "#dce2f3",
+                      "tertiary-fixed": "#cde5ff",
+                      "on-secondary-fixed-variant": "#404758",
+                      "on-tertiary-fixed-variant": "#004b74",
+                      "on-background": "#151c27",
+                      "surface-tint": "#9d4300",
+                      "outline-variant": "#e0c0b1",
+                      "tertiary": "#006398",
+                      "tertiary-container": "#00a2f4"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "12px",
+                      "component-padding": "16px",
+                      "section-gap": "32px",
+                      "grid-column-3": "1fr 1fr 1fr",
+                      "container-margin": "20px"
+              },
+              "fontFamily": {
+                      "h2": [
+                              "Inter"
+                      ],
+                      "h1": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "h4": [
+                              "Inter"
+                      ],
+                      "h3": [
+                              "Inter"
+                      ],
+                      "display": [
+                              "Inter"
+                      ],
+                      "body": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "h2": [
+                              "22px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "h1": [
+                              "28px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "h4": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "h3": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display": [
+                              "42px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "body": [
+                              "15px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body min-h-screen relative pb-[120px] antialiased">
+<div class="fixed top-0 left-0 right-0 z-50 pt-[20px] px-[20px]">
+<div class="h-[56px] bg-surface-container-lowest rounded-[12px] shadow-[0_8px_24px_rgba(0,0,0,0.1)] flex items-center justify-between px-component-padding">
+<button class="text-on-background flex items-center justify-center">
+<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<polyline points="15 18 9 12 15 6"></polyline>
+</svg>
+</button>
+<div class="font-h4 text-h4 text-on-background">Set up your profile</div>
+<button class="font-body text-body text-on-surface-variant hover:text-on-background transition-colors">Skip</button>
+</div>
+</div>
+<main class="pt-[110px] px-container-margin max-w-2xl mx-auto">
+<div class="w-full h-[4px] bg-surface-variant rounded-full overflow-hidden mb-section-gap">
+<div class="w-[25%] h-full bg-primary rounded-full"></div>
+</div>
+<div class="mb-section-gap">
+<h1 class="font-h1 text-h1 text-on-background mb-[8px]">What do you do?</h1>
+<p class="font-body text-body text-on-surface-variant">Select all that apply...</p>
+</div>
+<div class="grid grid-cols-2 gap-gutter">
+<button class="relative flex flex-col items-center justify-center p-component-padding rounded-xl bg-surface-container-lowest border-2 border-primary text-primary shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-transform active:scale-[0.98]">
+<div class="absolute top-[12px] right-[12px]">
+<svg fill="currentColor" height="20" viewbox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path>
+</svg>
+</div>
+<div class="mb-[12px]">
+<svg fill="none" height="32" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" width="32" xmlns="http://www.w3.org/2000/svg">
+<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+</svg>
+</div>
+<span class="font-h4 text-h4">Electrician</span>
+</button>
+<button class="flex flex-col items-center justify-center p-component-padding rounded-xl bg-surface-container border border-transparent text-on-surface-variant shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all hover:bg-surface-container-high active:scale-[0.98]">
+<div class="mb-[12px]">
+<svg fill="none" height="32" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" width="32" xmlns="http://www.w3.org/2000/svg">
+<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+</svg>
+</div>
+<span class="font-h4 text-h4">Plumber</span>
+</button>
+<button class="flex flex-col items-center justify-center p-component-padding rounded-xl bg-surface-container border border-transparent text-on-surface-variant shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all hover:bg-surface-container-high active:scale-[0.98]">
+<div class="mb-[12px]">
+<svg fill="none" height="32" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" width="32" xmlns="http://www.w3.org/2000/svg">
+<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+</svg>
+</div>
+<span class="font-h4 text-h4">Gas Engineer</span>
+</button>
+<button class="flex flex-col items-center justify-center p-component-padding rounded-xl bg-surface-container border border-transparent text-on-surface-variant shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all hover:bg-surface-container-high active:scale-[0.98]">
+<div class="mb-[12px]">
+<svg fill="none" height="32" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" width="32" xmlns="http://www.w3.org/2000/svg">
+<path d="M2 18h20"></path>
+<path d="M12 2a6 6 0 0 0-6 6v10h12V8a6 6 0 0 0-6-6Z"></path>
+<path d="M12 2v16"></path>
+</svg>
+</div>
+<span class="font-h4 text-h4">Builder</span>
+</button>
+<button class="flex flex-col items-center justify-center p-component-padding rounded-xl bg-surface-container border border-transparent text-on-surface-variant shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all hover:bg-surface-container-high active:scale-[0.98]">
+<div class="mb-[12px]">
+<svg fill="none" height="32" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" width="32" xmlns="http://www.w3.org/2000/svg">
+<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+<polyline points="14 2 14 8 20 8"></polyline>
+<line x1="16" x2="8" y1="13" y2="13"></line>
+<line x1="16" x2="8" y1="17" y2="17"></line>
+<polyline points="10 9 9 9 8 9"></polyline>
+</svg>
+</div>
+<span class="font-h4 text-h4">Carpenter</span>
+</button>
+<button class="flex flex-col items-center justify-center p-component-padding rounded-xl bg-surface-container border border-transparent text-on-surface-variant shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all hover:bg-surface-container-high active:scale-[0.98]">
+<div class="mb-[12px]">
+<svg fill="none" height="32" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" width="32" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 20V8a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v12"></path>
+<rect height="4" rx="1" width="16" x="4" y="2"></rect>
+<path d="M12 20v4"></path>
+</svg>
+</div>
+<span class="font-h4 text-h4">Painter</span>
+</button>
+<button class="flex flex-col items-center justify-center p-component-padding rounded-xl bg-surface-container border border-transparent text-on-surface-variant shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all hover:bg-surface-container-high active:scale-[0.98]">
+<div class="mb-[12px]">
+<svg fill="none" height="32" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" width="32" xmlns="http://www.w3.org/2000/svg">
+<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+<polyline points="9 22 9 12 15 12 15 22"></polyline>
+</svg>
+</div>
+<span class="font-h4 text-h4">Roofer</span>
+</button>
+<button class="flex flex-col items-center justify-center p-component-padding rounded-xl bg-surface-container border border-transparent text-on-surface-variant shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all hover:bg-surface-container-high active:scale-[0.98]">
+<div class="mb-[12px]">
+<svg fill="none" height="32" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" width="32" xmlns="http://www.w3.org/2000/svg">
+<path d="m14.7 6.3-1.4 1.4"></path>
+<path d="m20.3 11.9-4.2-4.2"></path>
+<path d="m12.6 13.4 4.2-4.2"></path>
+<path d="m7.7 18.3 4.2-4.2"></path>
+<path d="M3.7 22.3a2.12 2.12 0 0 1 0-3l7-7 3 3-7 7a2.12 2.12 0 0 1-3 0Z"></path>
+<path d="m11.2 5.6 1.4-1.4a2.12 2.12 0 0 1 3 0l4.2 4.2a2.12 2.12 0 0 1 0 3l-1.4 1.4"></path>
+<path d="m16.8 11.2-1.4 1.4"></path>
+</svg>
+</div>
+<span class="font-h4 text-h4">Handyman</span>
+</button>
+<button class="flex flex-col items-center justify-center p-component-padding rounded-xl bg-surface-container border border-transparent text-on-surface-variant shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-all hover:bg-surface-container-high active:scale-[0.98] col-span-2 sm:col-span-1">
+<div class="mb-[12px]">
+<svg fill="none" height="32" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" width="32" xmlns="http://www.w3.org/2000/svg">
+<rect height="18" rx="2" ry="2" width="18" x="3" y="3"></rect>
+<line x1="3" x2="21" y1="9" y2="9"></line>
+<line x1="3" x2="21" y1="15" y2="15"></line>
+<line x1="9" x2="9" y1="3" y2="21"></line>
+<line x1="15" x2="15" y1="3" y2="21"></line>
+</svg>
+</div>
+<span class="font-h4 text-h4">Tiler</span>
+</button>
+</div>
+</main>
+<div class="fixed bottom-0 left-0 right-0 p-container-margin bg-gradient-to-t from-background via-background to-transparent z-40 max-w-2xl mx-auto">
+<button class="w-full bg-primary text-on-primary py-[16px] rounded-full font-h3 text-h3 flex justify-center items-center shadow-[0_4px_20px_rgba(0,0,0,0.15)] transition-transform active:scale-[0.98]">
+            Continue
+        </button>
+</div>
+</body></html>

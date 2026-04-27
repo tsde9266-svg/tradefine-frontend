@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradeFind - Available Now</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#ffb690",
+                        "on-primary-fixed-variant": "#783200",
+                        "surface-bright": "#f9f9ff",
+                        "on-secondary-container": "#5c6274",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container": "#e7eefe",
+                        "primary": "#9d4300",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#ffb690",
+                        "error": "#ba1a1a",
+                        "outline": "#8c7164",
+                        "surface-variant": "#dce2f3",
+                        "surface-dim": "#d3daea",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#141b2b",
+                        "background": "#f9f9ff",
+                        "tertiary-fixed-dim": "#93ccff",
+                        "secondary-container": "#d9dff5",
+                        "secondary-fixed": "#dce2f7",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e2e8f8",
+                        "secondary": "#575e70",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#151c27",
+                        "on-primary-container": "#582200",
+                        "on-primary-fixed": "#341100",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#f97316",
+                        "secondary-fixed-dim": "#c0c6db",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-surface-variant": "#584237",
+                        "inverse-surface": "#2a313d",
+                        "primary-fixed": "#ffdbca",
+                        "surface-tint": "#9d4300",
+                        "tertiary-container": "#00a2f4",
+                        "tertiary": "#006398",
+                        "outline-variant": "#e0c0b1",
+                        "on-secondary-fixed-variant": "#404758",
+                        "on-tertiary-fixed-variant": "#004b74",
+                        "on-background": "#151c27",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#cde5ff",
+                        "surface-container-highest": "#dce2f3",
+                        "on-tertiary-fixed": "#001d32",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#003554",
+                        "surface": "#f9f9ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "component-padding": "16px",
+                        "section-gap": "32px",
+                        "container-margin": "20px",
+                        "gutter": "12px"
+                    },
+                    "fontFamily": {
+                        "h4": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "h2": ["Inter"],
+                        "h1": ["Inter"],
+                        "h3": ["Inter"],
+                        "display": ["Inter"],
+                        "body": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h4": ["16px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "h2": ["22px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "h1": ["28px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "h3": ["18px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display": ["42px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body": ["15px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding utility */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body text-body antialiased min-h-screen flex flex-col">
+<!-- TopAppBar (Generated from Shared Components JSON) -->
+<header class="bg-white/95 dark:bg-gray-900/95 font-sans antialiased text-gray-900 dark:text-gray-50 rounded-xl mt-3 mx-4 h-[56px] none shadow-[0_8px_24px_rgba(0,0,0,0.1)] hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors active:scale-95 duration-150 fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4">
+<button class="text-orange-500 dark:text-orange-400 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="text-lg font-bold tracking-tight text-gray-900 dark:text-gray-50">
+            TradeFind
+        </div>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-80 transition-opacity">
+<img alt="User profile avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBASkvkQ9kn6_zfBawkifNd_xsVTGhIUFG_-JzpGOarQQkxO9ui6m5dcNIURuzHji9C3ulx1_Pk_WN1pMspDYkWC516FvsBx090dI-89H8hrV1PDy2HSGJStOa1oVcrniGNyvE8mAV8qdeack1iwhA1QL1VHCx1BOL4BoYe8hYH_v9_FkyzRWa7s51Eux-v4d7rZ3bnT_SRTyZ1u9dYwb6J4RJIhq9p4LyYySCQNlGWlZjrVeoxRkArP581WcHMdbjKtp5o-Gne_uE"/>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 pt-[100px] pb-[120px] px-container-margin w-full max-w-3xl mx-auto">
+<!-- Header Section -->
+<section class="mb-section-gap">
+<h1 class="font-h1 text-h1 text-on-surface mb-2">Available Now</h1>
+<p class="font-body text-body text-secondary">24 professionals ready in your area</p>
+</section>
+<!-- Sort/Filter Bar -->
+<section class="mb-section-gap flex items-center gap-3 overflow-x-auto no-scrollbar pb-2">
+<!-- Active Primary Chip -->
+<button class="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full bg-primary text-on-primary shadow-[0_4px_12px_rgba(157,67,0,0.2)] flex-shrink-0 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">near_me</span>
+<span class="font-label-caps text-label-caps uppercase">Nearest</span>
+</button>
+<!-- Inactive Chips -->
+<button class="flex items-center justify-center px-4 py-2.5 rounded-full bg-surface-container text-on-surface-variant flex-shrink-0 transition-colors hover:bg-surface-container-high active:scale-95">
+<span class="font-label-caps text-label-caps uppercase">Top Rated</span>
+</button>
+<button class="flex items-center justify-center px-4 py-2.5 rounded-full bg-surface-container text-on-surface-variant flex-shrink-0 transition-colors hover:bg-surface-container-high active:scale-95">
+<span class="font-label-caps text-label-caps uppercase">Plumbers</span>
+</button>
+<button class="flex items-center justify-center px-4 py-2.5 rounded-full bg-surface-container text-on-surface-variant flex-shrink-0 transition-colors hover:bg-surface-container-high active:scale-95">
+<span class="font-label-caps text-label-caps uppercase">Electricians</span>
+</button>
+<button class="flex items-center justify-center px-4 py-2.5 rounded-full bg-surface-container text-on-surface-variant flex-shrink-0 transition-colors hover:bg-surface-container-high active:scale-95">
+<span class="font-label-caps text-label-caps uppercase">HVAC</span>
+</button>
+</section>
+<!-- Vertical List of Worker Cards -->
+<section class="flex flex-col gap-6">
+<!-- Card 1 -->
+<article class="bg-surface-container-lowest rounded-2xl p-component-padding shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-5 border border-surface-container-low/50">
+<!-- Header: Avatar, Info, Badge -->
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-full overflow-hidden shadow-sm flex-shrink-0 bg-surface-variant">
+<img alt="Avatar of James Wilson" class="w-full h-full object-cover" data-alt="portrait of a friendly male plumber in a blue uniform smiling confidently in a brightly lit modern home setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYA_etcG2CUmChoHI225muw3V5uHCqBJnmHB95tF2kSenoPZ9K8Ki5xKUfOeLV_afHVHXeDe-wlwgmDoyUit0adyyBNNWinK0qVjbiwGt88gCVXOuyVGDYPCmEzyb-9IJa_ntrpKQdUGjqD3Z0PTnIxwLtaxpJNoRKXIYB0dSAZwN90m05g3ML5uDKQ_owzjgYfNB1sT91n6F4yfeEtkLlYXU9p_8OyVRqMyHysM8_06bmKKANAakwdNRqQSn5qdCEQU2J7SaKbkE"/>
+</div>
+<div class="flex flex-col justify-center">
+<h2 class="font-h3 text-h3 text-on-surface">James Wilson</h2>
+<p class="font-body text-body text-secondary mt-0.5">Master Plumber</p>
+</div>
+</div>
+<div class="bg-surface-container text-primary font-label-caps text-label-caps uppercase px-3 py-1.5 rounded-full flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                        Available
+                    </div>
+</div>
+<!-- Metrics Grid -->
+<div class="grid grid-cols-2 gap-4 bg-surface-container-low rounded-xl p-4">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-secondary mb-1 uppercase">Rating</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-h4 text-h4 text-on-surface">4.9 <span class="text-secondary font-body text-[13px] font-normal">(128 reviews)</span></span>
+</div>
+</div>
+<div class="flex flex-col pl-4 relative before:content-[''] before:absolute before:left-0 before:top-[10%] before:h-[80%] before:w-px before:bg-surface-variant">
+<span class="font-label-caps text-label-caps text-secondary mb-1 uppercase">Hourly Rate</span>
+<span class="font-h4 text-h4 text-on-surface">$85<span class="text-secondary font-body text-[13px] font-normal">/hr</span></span>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-primary text-on-primary font-h4 text-h4 py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(157,67,0,0.15)] transition-all hover:bg-on-primary-fixed-variant active:scale-[0.98]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">call</span>
+                    Call Now
+                </button>
+</article>
+<!-- Card 2 -->
+<article class="bg-surface-container-lowest rounded-2xl p-component-padding shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-5 border border-surface-container-low/50">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-full overflow-hidden shadow-sm flex-shrink-0 bg-surface-variant">
+<img alt="Avatar of Sarah Jenkins" class="w-full h-full object-cover" data-alt="portrait of a professional female electrician wearing safety gear and a yellow hardhat in a modern industrial setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALMb6KAcI02Y1ebFjBAt9aWnvNX1QsEzKreokDQu3oudFSfuShsMy38hXM0UmuwAw0vSAhfTczcd9YB6f_a-Gv05c5GpZWXKx-V7qWkYQlptJZjefZ7rg35JjCne9pBL5FURNv4h6PUhFq_CukD2DuZvr5XBrnSEaWYYK-7H44yHIk9J9fyVJyDPkEIh_6KkGLGgBE9s96_KNyk67zS6fbMfMgWNCPM0XerjB_2doQkC4OfhlnU_KVG0DjHYUGAmKR27u1NixFxTw"/>
+</div>
+<div class="flex flex-col justify-center">
+<h2 class="font-h3 text-h3 text-on-surface">Sarah Jenkins</h2>
+<p class="font-body text-body text-secondary mt-0.5">Certified Electrician</p>
+</div>
+</div>
+<div class="bg-surface-container text-primary font-label-caps text-label-caps uppercase px-3 py-1.5 rounded-full flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                        Available
+                    </div>
+</div>
+<div class="grid grid-cols-2 gap-4 bg-surface-container-low rounded-xl p-4">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-secondary mb-1 uppercase">Rating</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-h4 text-h4 text-on-surface">4.8 <span class="text-secondary font-body text-[13px] font-normal">(95 reviews)</span></span>
+</div>
+</div>
+<div class="flex flex-col pl-4 relative before:content-[''] before:absolute before:left-0 before:top-[10%] before:h-[80%] before:w-px before:bg-surface-variant">
+<span class="font-label-caps text-label-caps text-secondary mb-1 uppercase">Hourly Rate</span>
+<span class="font-h4 text-h4 text-on-surface">$95<span class="text-secondary font-body text-[13px] font-normal">/hr</span></span>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary font-h4 text-h4 py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(157,67,0,0.15)] transition-all hover:bg-on-primary-fixed-variant active:scale-[0.98]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">call</span>
+                    Call Now
+                </button>
+</article>
+<!-- Card 3 -->
+<article class="bg-surface-container-lowest rounded-2xl p-component-padding shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-5 border border-surface-container-low/50">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-full overflow-hidden shadow-sm flex-shrink-0 bg-surface-variant">
+<img alt="Avatar of Michael Chang" class="w-full h-full object-cover" data-alt="portrait of a serious male HVAC technician in a grey polo shirt with tools blurred in the background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZ_cqrrx_B7T05VooyFqvSVV4ATYDaM4Ctt_l9P2kHSYp9XLQTfyFLWmI624AjB9ULF1M1cGa7_KmbhXt1lTCxCORcnfqPFR6RWEJpECaF2orNiZF3JXr2sQ6IYqPmyecUl-m_QybzXq7kB04p6cvHz9M-3mCLSARQnCyn1rMHKQ1BZuo8JLOswerZf7nc507jcDCcnmjwPc1YxPo5UEeVXQ-dE5luLMxM392T7yxynZlQDVAUy3i-UTzAjdWAP0wmrCdT34ztN2s"/>
+</div>
+<div class="flex flex-col justify-center">
+<h2 class="font-h3 text-h3 text-on-surface">Michael Chang</h2>
+<p class="font-body text-body text-secondary mt-0.5">HVAC Specialist</p>
+</div>
+</div>
+<div class="bg-surface-container text-primary font-label-caps text-label-caps uppercase px-3 py-1.5 rounded-full flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                        Available
+                    </div>
+</div>
+<div class="grid grid-cols-2 gap-4 bg-surface-container-low rounded-xl p-4">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-secondary mb-1 uppercase">Rating</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-h4 text-h4 text-on-surface">5.0 <span class="text-secondary font-body text-[13px] font-normal">(210 reviews)</span></span>
+</div>
+</div>
+<div class="flex flex-col pl-4 relative before:content-[''] before:absolute before:left-0 before:top-[10%] before:h-[80%] before:w-px before:bg-surface-variant">
+<span class="font-label-caps text-label-caps text-secondary mb-1 uppercase">Hourly Rate</span>
+<span class="font-h4 text-h4 text-on-surface">$110<span class="text-secondary font-body text-[13px] font-normal">/hr</span></span>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary font-h4 text-h4 py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(157,67,0,0.15)] transition-all hover:bg-on-primary-fixed-variant active:scale-[0.98]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">call</span>
+                    Call Now
+                </button>
+</article>
+</section>
+</main>
+<!-- BottomNavBar (Generated from Shared Components JSON) -->
+<nav class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md font-sans text-[11px] font-medium uppercase tracking-wider docked full-width bottom-0 h-[83px] border-t border-gray-100 dark:border-gray-800 border-t border-gray-200/50 dark:border-gray-800 shadow-[0_-1px_3px_rgba(0,0,0,0.05)] hover:text-orange-500 dark:hover:text-orange-300 transition-all duration-200 ease-in-out fixed bottom-0 w-full z-50 flex justify-around items-center px-6 pb-safe">
+<!-- Active Nav Item (Home) -->
+<button class="flex flex-col items-center justify-center bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-full px-4 py-1 flex-1 max-w-[80px]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="mt-1">Home</span>
+</button>
+<!-- Inactive Nav Items -->
+<button class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 flex-1 max-w-[80px] transition-colors hover:text-orange-500">
+<span class="material-symbols-outlined">distance</span>
+<span class="mt-1">Map</span>
+</button>
+<button class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 flex-1 max-w-[80px] transition-colors hover:text-orange-500">
+<span class="material-symbols-outlined">work</span>
+<span class="mt-1">Jobs</span>
+</button>
+<button class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 flex-1 max-w-[80px] transition-colors hover:text-orange-500">
+<span class="material-symbols-outlined">person</span>
+<span class="mt-1">Profile</span>
+</button>
+</nav>
+</body></html>

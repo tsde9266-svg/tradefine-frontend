@@ -1,62 +1,57 @@
 import React from 'react';
-import { Image, ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../constants/colors';
-import { spacing } from '../../constants/spacing';
 import { radius } from '../../constants/radius';
-import { typography } from '../../constants/typography';
 
-const BG = require('../../assets/illustrations/splash_bg.png');
-const APP_ICON = require('../../assets/icons/app_icon_app_icon_for_tradefi.png');
+const BG_URI =
+  'https://lh3.googleusercontent.com/aida-public/AB6AXuD9gF6n0x_AJV6XkfLduKtLaNCQRqFQfB8Qg0qlvXk4Gpsd6-USXtkOvnIEv-X-Jp7F7tY0ssOegEZKl0hRV0uMZ3l1vREepkFdtNxK5MC02ny7Ux533cz_-1yec58VrFxhGki6dOJHEtWgNlftwWZGrLJmQPL0MSjR8qjiZsMgQbXFJmo_EjJ8CXm_3PauaIyxNvbpz2IAHjWT3AMcEQ1ThJ1EncWaSj4FQE7g1zWsBD7J79_Id5CK_8JEjijVJt8DIo0twQ8Opdo';
 
 export default function WelcomeScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   return (
     <View style={styles.screen}>
-      {/* Full-screen background photo */}
+      {/* Exact Stitch background image */}
       <ImageBackground
-        source={BG}
+        source={{ uri: BG_URI }}
         style={StyleSheet.absoluteFillObject}
         resizeMode="cover"
-        imageStyle={{ objectFit: 'cover' }}
       />
 
-      {/* White gradient — transparent at top, solid white at ~55% so text is readable */}
+      {/* Top dark fade */}
       <LinearGradient
-        colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.6)', 'rgba(255,255,255,1)', '#ffffff']}
-        locations={[0, 0.35, 0.55, 1]}
-        style={StyleSheet.absoluteFillObject}
+        colors={['rgba(21,28,39,0.50)', 'transparent']}
+        style={styles.gradTop}
       />
 
-      <SafeAreaView style={styles.safe} edges={['top', 'bottom']}>
-        {/* Top spacer — keeps content in lower portion of screen */}
-        <View style={{ flex: 1 }} />
+      {/* Bottom vignette */}
+      <LinearGradient
+        colors={['transparent', 'rgba(21,28,39,0.82)', 'rgba(21,28,39,0.97)']}
+        locations={[0, 0.45, 1]}
+        style={styles.gradBottom}
+      />
 
-        {/* ── Content ── */}
-        <View style={styles.content}>
-          {/* App icon */}
-          <View style={styles.iconWrap}>
-            <Image source={APP_ICON} style={styles.iconImg} resizeMode="contain" />
+      {/* TradeFind — top left */}
+      <View style={[styles.brandWrap, { top: insets.top + 12 }]}>
+        <Text style={styles.brand}>TradeFind</Text>
+      </View>
+
+      {/* Glass card — pinned to bottom */}
+      <View style={[styles.cardWrap, { paddingBottom: insets.bottom + 20 }]}>
+        <BlurView intensity={18} tint="dark" style={styles.card}>
+          {/* Headline + subtitle */}
+          <View style={styles.textBlock}>
+            <Text style={styles.headline}>Find a trusted tradesperson, instantly.</Text>
+            <Text style={styles.subtitle}>50,000+ verified professionals across the UK</Text>
           </View>
 
-          {/* Brand */}
-          <Text style={styles.brand}>TradeFind</Text>
-
-          {/* Headline */}
-          <Text style={styles.headline}>
-            Find trusted{'\n'}tradespeople near you{'\n'}— instantly
-          </Text>
-
-          {/* Subtitle */}
-          <Text style={styles.sub}>
-            Your direct link to local professionals{'\n'}for every job, big or small.
-          </Text>
-
-          {/* CTA buttons */}
+          {/* Buttons */}
           <View style={styles.btns}>
             <Pressable
               style={({ pressed }) => [styles.btnPrimary, pressed && { opacity: 0.88 }]}
@@ -67,113 +62,142 @@ export default function WelcomeScreen() {
             </Pressable>
 
             <Pressable
-              style={({ pressed }) => [styles.btnOutline, pressed && { opacity: 0.88 }]}
+              style={({ pressed }) => [styles.btnOutline, pressed && { opacity: 0.85 }]}
               onPress={() => router.push('/(auth)/register?role=worker')}
             >
-              <Ionicons name="people-outline" size={18} color={colors.textPrimary} />
               <Text style={styles.btnOutlineText}>I'm a tradesperson</Text>
             </Pressable>
           </View>
 
-          {/* Footer */}
-          <Text style={styles.footer}>Join 50k+ professionals and homeowners today</Text>
-        </View>
-      </SafeAreaView>
+          {/* Sign in — orange underline via border-bottom View */}
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>Already have an account? </Text>
+            <Pressable onPress={() => router.push('/(auth)/register')}>
+              <Text style={styles.signInText}>Sign in</Text>
+              <View style={styles.signInUnderline} />
+            </Pressable>
+          </View>
+        </BlurView>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#fff' },
+  screen: { flex: 1, backgroundColor: '#0f1520' },
 
-  safe: { flex: 1 },
-
-  content: {
-    paddingHorizontal: spacing.xxl,
-    paddingBottom: spacing.xxl,
-    gap: spacing.md,
-    alignItems: 'center',
+  gradTop: {
+    position: 'absolute',
+    top: 0, left: 0, right: 0,
+    height: '45%',
+  },
+  gradBottom: {
+    position: 'absolute',
+    bottom: 0, left: 0, right: 0,
+    height: '65%',
   },
 
-  /* App icon */
-  iconWrap: {
-    width: 72, height: 72,
-    borderRadius: 18,
-    overflow: 'hidden',
-    marginBottom: spacing.xs,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 6,
+  brandWrap: {
+    position: 'absolute',
+    left: 20,
   },
-  iconImg: { width: 72, height: 72 },
-
-  /* Brand */
   brand: {
-    ...typography.h2,
-    color: colors.primary,
-    fontWeight: '800',
+    fontFamily: 'Inter_800ExtraBold',
+    fontSize: 32,
+    color: '#ffffff',
     letterSpacing: -0.5,
   },
 
-  /* Headline — dark text, large */
+  cardWrap: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+  },
+
+  // BlurView acts as the glass card
+  card: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.10)',
+    padding: 24,
+    gap: 20,
+  },
+
+  textBlock: { gap: 6 },
   headline: {
-    fontSize: 30,
-    fontWeight: '800',
-    color: colors.textPrimary,
-    textAlign: 'center',
-    lineHeight: 38,
+    fontFamily: 'Inter_700Bold',
+    fontSize: 28,
+    color: '#ffffff',
+    lineHeight: 36,
     letterSpacing: -0.5,
   },
-
-  /* Subtitle */
-  sub: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
+  subtitle: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.75)',
     lineHeight: 22,
   },
 
-  /* Buttons */
-  btns: { width: '100%', gap: spacing.sm, marginTop: spacing.sm },
+  btns: { gap: 12 },
 
   btnPrimary: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.sm,
+    gap: 8,
     backgroundColor: colors.primary,
     borderRadius: radius.full,
-    paddingVertical: 16,
+    height: 56,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.30,
+    shadowRadius: 12,
+    elevation: 4,
   },
   btnPrimaryText: {
-    ...typography.bodyMd,
-    color: '#fff',
-    fontWeight: '700',
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 16,
+    color: '#ffffff',
   },
 
   btnOutline: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.sm,
-    backgroundColor: '#fff',
     borderRadius: radius.full,
-    paddingVertical: 14,
-    borderWidth: 1.5,
-    borderColor: colors.borderLight,
+    height: 56,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.65)',
   },
   btnOutlineText: {
-    ...typography.bodyMd,
-    color: colors.textPrimary,
-    fontWeight: '600',
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 16,
+    color: '#ffffff',
   },
 
   footer: {
-    ...typography.caption,
-    color: colors.textDisabled,
-    textAlign: 'center',
-    marginTop: spacing.xs,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  footerText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 15,
+    color: 'rgba(255,255,255,0.75)',
+  },
+  signInText: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 15,
+    color: '#ffffff',
+  },
+  // Orange underline — 2px, offset 3px below text, matching Stitch's decoration-2
+  signInUnderline: {
+    height: 2,
+    backgroundColor: colors.primary,
+    marginTop: 3,
+    borderRadius: 1,
   },
 });

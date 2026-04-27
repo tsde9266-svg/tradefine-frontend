@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradeFind - Register</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#d3daea",
+                        "surface-variant": "#dce2f3",
+                        "outline": "#8c7164",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f9f9ff",
+                        "on-secondary-container": "#5c6274",
+                        "on-primary-fixed-variant": "#783200",
+                        "primary-fixed-dim": "#ffb690",
+                        "inverse-primary": "#ffb690",
+                        "primary": "#9d4300",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container": "#e7eefe",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e2e8f8",
+                        "secondary": "#575e70",
+                        "secondary-fixed": "#dce2f7",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#93ccff",
+                        "secondary-container": "#d9dff5",
+                        "background": "#f9f9ff",
+                        "on-secondary-fixed": "#141b2b",
+                        "primary-fixed": "#ffdbca",
+                        "on-surface-variant": "#584237",
+                        "inverse-on-surface": "#ebf1ff",
+                        "secondary-fixed-dim": "#c0c6db",
+                        "inverse-surface": "#2a313d",
+                        "on-primary-fixed": "#341100",
+                        "primary-container": "#f97316",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#151c27",
+                        "on-primary-container": "#582200",
+                        "on-tertiary-container": "#003554",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#001d32",
+                        "surface": "#f9f9ff",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#dce2f3",
+                        "tertiary-fixed": "#cde5ff",
+                        "on-secondary-fixed-variant": "#404758",
+                        "on-tertiary-fixed-variant": "#004b74",
+                        "on-background": "#151c27",
+                        "surface-tint": "#9d4300",
+                        "outline-variant": "#e0c0b1",
+                        "tertiary": "#006398",
+                        "tertiary-container": "#00a2f4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "12px",
+                        "component-padding": "16px",
+                        "section-gap": "32px",
+                        "grid-column-3": "1fr 1fr 1fr",
+                        "container-margin": "20px"
+                    },
+                    "fontFamily": {
+                        "h2": ["Inter"],
+                        "h1": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "h4": ["Inter"],
+                        "h3": ["Inter"],
+                        "display": ["Inter"],
+                        "body": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h2": ["22px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "h1": ["28px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "h4": ["16px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "h3": ["18px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display": ["42px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body": ["15px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-body text-on-background antialiased min-h-screen flex flex-col items-center">
+<!-- Top Navigation Area (Transactional Layout) -->
+<header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 bg-white/95 backdrop-blur-sm rounded-xl mt-3 mx-4 h-[56px] shadow-[0_8px_24px_rgba(0,0,0,0.1)]">
+<button aria-label="Close" class="p-2 text-on-surface flex items-center justify-center rounded-full hover:bg-surface-dim transition-colors" type="button">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">close</span>
+</button>
+<div class="text-primary-container font-h4 text-h4 font-bold tracking-tight">TradeFind</div>
+<div class="w-10"></div> <!-- Spacer to center the wordmark -->
+</header>
+<!-- Main Content Canvas -->
+<main class="w-full max-w-md px-container-margin pt-[100px] pb-section-gap flex-grow flex flex-col">
+<!-- Segmented Control -->
+<div class="flex bg-surface-container-high rounded-full p-1 mb-8 w-full shadow-sm">
+<button class="flex-1 text-center py-2 px-4 rounded-full bg-white text-on-surface font-h4 text-h4 shadow-sm transition-all">Sign Up</button>
+<button class="flex-1 text-center py-2 px-4 rounded-full text-secondary font-h4 text-h4 hover:text-on-surface transition-all">Log In</button>
+</div>
+<!-- Header -->
+<div class="mb-section-gap text-center">
+<h1 class="font-h1 text-h1 text-on-background mb-2">Create your account</h1>
+<p class="font-body text-body text-secondary">Join thousands of professionals and homeowners.</p>
+</div>
+<!-- Role Toggle Pills -->
+<div class="flex gap-4 mb-6">
+<button class="flex-1 py-3 px-4 rounded-xl border border-primary-container bg-primary-container/10 text-primary-container font-h4 text-h4 text-center transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">handshake</span>
+                I need help
+            </button>
+<button class="flex-1 py-3 px-4 rounded-xl border border-surface-variant bg-surface-container-low text-secondary font-h4 text-h4 text-center hover:bg-surface-container transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">construction</span>
+                I'm a tradesperson
+            </button>
+</div>
+<!-- Registration Form -->
+<form class="space-y-4">
+<!-- Full Name -->
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 0;">person</span>
+</div>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-low border-none rounded-lg font-body text-body text-on-surface placeholder-secondary focus:ring-2 focus:ring-primary-container shadow-[0_4px_20px_rgba(0,0,0,0.02)]" placeholder="Full Name" required="" type="text"/>
+</div>
+<!-- Email -->
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 0;">mail</span>
+</div>
+<input class="w-full pl-10 pr-4 py-3 bg-surface-container-low border-none rounded-lg font-body text-body text-on-surface placeholder-secondary focus:ring-2 focus:ring-primary-container shadow-[0_4px_20px_rgba(0,0,0,0.02)]" placeholder="Email Address" required="" type="email"/>
+</div>
+<!-- Phone -->
+<div class="relative flex bg-surface-container-low rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.02)] focus-within:ring-2 focus-within:ring-primary-container">
+<div class="flex items-center pl-4 pr-2 border-r border-surface-variant bg-transparent text-secondary font-body text-body">
+                    +44
+                </div>
+<input class="w-full pl-3 pr-4 py-3 bg-transparent border-none rounded-r-lg font-body text-body text-on-surface placeholder-secondary focus:ring-0" placeholder="Phone Number" required="" type="tel"/>
+</div>
+<!-- Password -->
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 0;">lock</span>
+</div>
+<input class="w-full pl-10 pr-10 py-3 bg-surface-container-low border-none rounded-lg font-body text-body text-on-surface placeholder-secondary focus:ring-2 focus:ring-primary-container shadow-[0_4px_20px_rgba(0,0,0,0.02)]" placeholder="Password" required="" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-3 flex items-center text-secondary hover:text-on-surface" type="button">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">visibility_off</span>
+</button>
+</div>
+<!-- Terms Checkbox -->
+<div class="flex items-start mt-2 pb-2">
+<div class="flex items-center h-5">
+<input class="w-4 h-4 text-primary-container bg-surface-container border-surface-variant rounded focus:ring-primary-container focus:ring-2" id="terms" type="checkbox"/>
+</div>
+<label class="ml-2 font-body text-body text-secondary text-sm" for="terms">
+                    I agree to the <a class="text-primary-container hover:underline" href="#">Terms of Service</a> and <a class="text-primary-container hover:underline" href="#">Privacy Policy</a>.
+                </label>
+</div>
+<!-- Submit Button -->
+<button class="w-full py-3.5 px-4 bg-primary-container text-white font-h4 text-h4 rounded-full shadow-[0_4px_12px_rgba(249,115,22,0.2)] hover:bg-primary-container/90 transition-all active:scale-[0.98]" type="submit">
+                Create Account
+            </button>
+</form>
+<!-- Divider -->
+<div class="flex items-center my-6">
+<div class="flex-grow border-t border-surface-variant"></div>
+<span class="flex-shrink-0 mx-4 font-body text-body text-secondary text-sm">or continue with</span>
+<div class="flex-grow border-t border-surface-variant"></div>
+</div>
+<!-- Social Login -->
+<button class="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white border border-surface-variant rounded-full text-on-surface font-h4 text-h4 shadow-[0_2px_8px_rgba(0,0,0,0.05)] hover:bg-surface-container-lowest transition-all" type="button">
+<svg class="w-5 h-5" fill="none" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+</svg>
+            Google
+        </button>
+</main>
+</body></html>

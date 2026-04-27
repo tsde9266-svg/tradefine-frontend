@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Customer Reviews</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed-dim": "#ffb690",
+                      "on-primary-fixed-variant": "#783200",
+                      "surface-bright": "#f9f9ff",
+                      "on-secondary-container": "#5c6274",
+                      "surface-container-low": "#f0f3ff",
+                      "surface-container": "#e7eefe",
+                      "primary": "#9d4300",
+                      "on-error": "#ffffff",
+                      "inverse-primary": "#ffb690",
+                      "error": "#ba1a1a",
+                      "outline": "#8c7164",
+                      "surface-variant": "#dce2f3",
+                      "surface-dim": "#d3daea",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed": "#141b2b",
+                      "background": "#f9f9ff",
+                      "tertiary-fixed-dim": "#93ccff",
+                      "secondary-container": "#d9dff5",
+                      "secondary-fixed": "#dce2f7",
+                      "on-secondary": "#ffffff",
+                      "surface-container-high": "#e2e8f8",
+                      "secondary": "#575e70",
+                      "surface-container-lowest": "#ffffff",
+                      "on-surface": "#151c27",
+                      "on-primary-container": "#582200",
+                      "on-primary-fixed": "#341100",
+                      "on-error-container": "#93000a",
+                      "primary-container": "#f97316",
+                      "secondary-fixed-dim": "#c0c6db",
+                      "inverse-on-surface": "#ebf1ff",
+                      "on-surface-variant": "#584237",
+                      "inverse-surface": "#2a313d",
+                      "primary-fixed": "#ffdbca",
+                      "surface-tint": "#9d4300",
+                      "tertiary-container": "#00a2f4",
+                      "tertiary": "#006398",
+                      "outline-variant": "#e0c0b1",
+                      "on-secondary-fixed-variant": "#404758",
+                      "on-tertiary-fixed-variant": "#004b74",
+                      "on-background": "#151c27",
+                      "error-container": "#ffdad6",
+                      "tertiary-fixed": "#cde5ff",
+                      "surface-container-highest": "#dce2f3",
+                      "on-tertiary-fixed": "#001d32",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-container": "#003554",
+                      "surface": "#f9f9ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "component-padding": "16px",
+                      "section-gap": "32px",
+                      "grid-column-3": "1fr 1fr 1fr",
+                      "container-margin": "20px",
+                      "gutter": "12px"
+              },
+              "fontFamily": {
+                      "h4": ["Inter"],
+                      "label-caps": ["Inter"],
+                      "h2": ["Inter"],
+                      "h1": ["Inter"],
+                      "h3": ["Inter"],
+                      "display": ["Inter"],
+                      "body": ["Inter"]
+              },
+              "fontSize": {
+                      "h4": ["16px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "h2": ["22px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                      "h1": ["28px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "h3": ["18px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "display": ["42px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "body": ["15px", {"lineHeight": "1.5", "fontWeight": "400"}]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased font-body min-h-screen relative pb-safe md:pb-0">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 bg-white/95 dark:bg-gray-900/95 rounded-xl mt-3 mx-4 h-[56px] shadow-[0_8px_24px_rgba(0,0,0,0.1)] hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors active:scale-95 duration-150">
+<button class="text-orange-500 dark:text-orange-400 p-2 flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="text-lg font-bold tracking-tight text-gray-900 dark:text-gray-50 font-sans antialiased text-gray-900 dark:text-gray-50">TradeFind</h1>
+<div class="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="professional headshot of a smiling man in a modern office setting, bright lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEK9u3yNQHqGIOAe00zmy1dt-0d1bt0-7KfucmxC6jwcrhaEn3Yc7Dclh3ZgHO5N_cuf2fS91bexk39sesRKIf59wB4HvfKFRo_Y3GAo7QWV05UAeu9SVjgudq81EwLHr1lfKwySjVDItucQQZ77xRIriEEGOrZX_ZMKt0H_PU3thdNUz8KXwudZYNG_8Gw6aZGD5b21qRvmnCp5oGj4sT4WAfpJ898ONiFOQ81fZrMuBFlFSzp6eJTuhkq0i65hXB8iEUCLbTvhQ"/>
+</div>
+</header>
+<!-- Main Content -->
+<main class="pt-[90px] px-container-margin pb-[100px] md:pb-container-margin max-w-3xl mx-auto space-y-section-gap">
+<!-- Page Title & Summary -->
+<section class="flex flex-col gap-4">
+<h2 class="font-h1 text-h1 text-on-surface">Given Reviews</h2>
+<div class="bg-surface-container-lowest rounded-xl p-component-padding shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex items-center justify-between">
+<div>
+<p class="font-label-caps text-label-caps text-secondary mb-1">TOTAL GIVEN</p>
+<p class="font-h2 text-h2 text-on-surface">12 Reviews</p>
+</div>
+<div class="text-right">
+<p class="font-label-caps text-label-caps text-secondary mb-1">AVERAGE RATING</p>
+<div class="flex items-center gap-1 justify-end">
+<span class="font-h2 text-h2 text-on-surface">4.8</span>
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Filters -->
+<section class="flex gap-2 overflow-x-auto pb-2 -mx-container-margin px-container-margin scrollbar-hide">
+<button class="px-4 py-2 rounded-full bg-primary-container text-on-primary whitespace-nowrap font-body text-body font-semibold">All Reviews</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant whitespace-nowrap font-body text-body">5 Stars</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant whitespace-nowrap font-body text-body">4 Stars</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant whitespace-nowrap font-body text-body">Plumbers</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-high text-on-surface-variant whitespace-nowrap font-body text-body">Electricians</button>
+</section>
+<!-- Reviews List -->
+<section class="space-y-4">
+<!-- Review Card 1 (With Reply) -->
+<article class="bg-surface-container-lowest rounded-xl p-component-padding shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-high">
+<img alt="Worker Avatar" class="w-full h-full object-cover" data-alt="portrait of a male tradesperson in uniform, outdoors, natural daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpJr2HAq_rwpmhqoTmfz-zQ7wjS6EIrYxzpvKoMWzaF7X_0eSCqFd08nEX41b4p3cwHVTjDrJsBB1Ozbli_JRgZKcFh7cAcAX2y7NXqjcfjd17CoDrE6pwA-7npc21SnysDQoqgPKX8E3UdKDK-yg0KZ--VNAo4wpjxgI5dE8JVtlch5lpnKY8k42QX0FtCyWp81PlnmTT8-vGkvW1UNCbEBep4owEiXdAa2_6IKjG5FyIQCTxXQmgt2tr8yQWCZOByjGrhWPFHBg"/>
+</div>
+<div>
+<h3 class="font-h4 text-h4 text-on-surface">David Miller</h3>
+<p class="font-body text-[13px] text-secondary">Master Plumber</p>
+</div>
+</div>
+<p class="font-body text-[12px] text-secondary">Oct 24, 2023</p>
+</div>
+<div class="flex gap-1 text-primary-container">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body text-body text-on-surface-variant">David did an excellent job fixing the leak under our kitchen sink. He arrived on time, was very professional, and explained exactly what needed to be done before starting. Highly recommend his services!</p>
+<!-- Worker Reply -->
+<div class="mt-2 ml-6 pl-4 border-l-2 border-primary-container">
+<p class="font-h4 text-[13px] text-on-surface mb-1">Reply from David M.</p>
+<p class="font-body text-[14px] text-on-surface-variant">Thank you so much for the kind words! It was a pleasure working with you. Don't hesitate to reach out if you need anything else.</p>
+</div>
+</article>
+<!-- Review Card 2 -->
+<article class="bg-surface-container-lowest rounded-xl p-component-padding shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-high">
+<img alt="Worker Avatar" class="w-full h-full object-cover" data-alt="portrait of a female tradesperson with a toolbelt, indoor setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPAuIk-DJDbyl8-VmNz6hBgLTvYji1rIoJYQ6ZmKCcKkYUYF6X1Ca_DcvwlesYqfhD_EMU5kZ3b5TBClQhtKuSyHxkjtYOdeOhXHE0l-YveDoJ-PtdeVoF3we---ILsFys2tJc6gIa2CakltcZ57rRxDKD_shIqvqTN6Bu2XS087IL4XA5vzbBjlArct0GLgXGLJqGwoKx5RZRWhXbBpI_j-VjIQ_wGO7v3g9pK6ouX_qqsx-eVilmAwcghizp7TLRgUTr1-LoUiA"/>
+</div>
+<div>
+<h3 class="font-h4 text-h4 text-on-surface">Sarah Jenkins</h3>
+<p class="font-body text-[13px] text-secondary">Certified Electrician</p>
+</div>
+</div>
+<p class="font-body text-[12px] text-secondary">Sep 12, 2023</p>
+</div>
+<div class="flex gap-1 text-primary-container">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px] text-surface-container-high" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body text-body text-on-surface-variant">Sarah installed several new outlets in our home office. The work was clean and fast, though she was a little bit late due to traffic. Overall very satisfied with the electrical work.</p>
+</article>
+<!-- Review Card 3 -->
+<article class="bg-surface-container-lowest rounded-xl p-component-padding shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-4">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container-high">
+<div class="w-full h-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-h3">MR</div>
+</div>
+<div>
+<h3 class="font-h4 text-h4 text-on-surface">Mike's Roofing</h3>
+<p class="font-body text-[13px] text-secondary">Roofing Specialists</p>
+</div>
+</div>
+<p class="font-body text-[12px] text-secondary">Aug 05, 2023</p>
+</div>
+<div class="flex gap-1 text-primary-container">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="font-body text-body text-on-surface-variant">Fantastic team! They replaced our entire roof in just two days. The cleanup was thorough, not a single nail left in the yard. Pricing was fair and transparent.</p>
+</article>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center px-6 pb-safe bg-white/80 dark:bg-gray-900/80 backdrop-blur-md docked full-width bottom-0 h-[83px] border-t border-gray-100 dark:border-gray-800 shadow-[0_-1px_3px_rgba(0,0,0,0.05)] border-t border-gray-200/50 dark:border-gray-800">
+<a class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:text-orange-500 dark:hover:text-orange-300 transition-all duration-200 ease-in-out gap-1" href="#">
+<span class="material-symbols-outlined text-[24px]">home</span>
+<span class="font-sans text-[11px] font-medium uppercase tracking-wider">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:text-orange-500 dark:hover:text-orange-300 transition-all duration-200 ease-in-out gap-1" href="#">
+<span class="material-symbols-outlined text-[24px]">distance</span>
+<span class="font-sans text-[11px] font-medium uppercase tracking-wider">Map</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:text-orange-500 dark:hover:text-orange-300 transition-all duration-200 ease-in-out gap-1" href="#">
+<span class="material-symbols-outlined text-[24px]">work</span>
+<span class="font-sans text-[11px] font-medium uppercase tracking-wider">Jobs</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-full px-4 py-1 hover:text-orange-500 dark:hover:text-orange-300 transition-all duration-200 ease-in-out gap-1" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-sans text-[11px] font-medium uppercase tracking-wider">Profile</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradeFind - Worker Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#d3daea",
+                        "surface-variant": "#dce2f3",
+                        "outline": "#8c7164",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f9f9ff",
+                        "on-secondary-container": "#5c6274",
+                        "on-primary-fixed-variant": "#783200",
+                        "primary-fixed-dim": "#ffb690",
+                        "inverse-primary": "#ffb690",
+                        "primary": "#9d4300",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container": "#e7eefe",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e2e8f8",
+                        "secondary": "#575e70",
+                        "secondary-fixed": "#dce2f7",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#93ccff",
+                        "secondary-container": "#d9dff5",
+                        "background": "#f9f9ff",
+                        "on-secondary-fixed": "#141b2b",
+                        "primary-fixed": "#ffdbca",
+                        "on-surface-variant": "#584237",
+                        "inverse-on-surface": "#ebf1ff",
+                        "secondary-fixed-dim": "#c0c6db",
+                        "inverse-surface": "#2a313d",
+                        "on-primary-fixed": "#341100",
+                        "primary-container": "#f97316",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#151c27",
+                        "on-primary-container": "#582200",
+                        "on-tertiary-container": "#003554",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#001d32",
+                        "surface": "#f9f9ff",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#dce2f3",
+                        "tertiary-fixed": "#cde5ff",
+                        "on-secondary-fixed-variant": "#404758",
+                        "on-tertiary-fixed-variant": "#004b74",
+                        "on-background": "#151c27",
+                        "surface-tint": "#9d4300",
+                        "outline-variant": "#e0c0b1",
+                        "tertiary": "#006398",
+                        "tertiary-container": "#00a2f4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "12px",
+                        "component-padding": "16px",
+                        "section-gap": "32px",
+                        "grid-column-3": "1fr 1fr 1fr",
+                        "container-margin": "20px"
+                    },
+                    "fontFamily": {
+                        "h2": ["Inter"],
+                        "h1": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "h4": ["Inter"],
+                        "h3": ["Inter"],
+                        "display": ["Inter"],
+                        "body": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h2": ["22px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "h1": ["28px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "h4": ["16px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "h3": ["18px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display": ["42px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body": ["15px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: theme('colors.background'); color: theme('colors.on-background'); }
+        /* Prevent scroll behind sticky bottom bar */
+        main { padding-bottom: 100px; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="antialiased font-body relative min-h-screen">
+<!-- Floating Nav Bar (TopAppBar adapted for transactional page context) -->
+<header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 rounded-xl mt-3 mx-4 h-[56px] bg-white/95 shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-colors duration-150 backdrop-blur-md">
+<button aria-label="Go back" class="flex items-center justify-center w-10 h-10 text-on-surface hover:bg-surface-dim rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<div class="flex items-center space-x-2">
+<button aria-label="Share profile" class="flex items-center justify-center w-10 h-10 text-on-surface hover:bg-surface-dim rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</button>
+<button aria-label="Bookmark profile" class="flex items-center justify-center w-10 h-10 text-primary-container hover:bg-surface-dim rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="bookmark" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+</button>
+</div>
+</header>
+<main>
+<!-- Banner Image -->
+<div class="h-[200px] w-full bg-surface-container relative">
+<img alt="Electrical work" class="w-full h-full object-cover" data-alt="neatly installed electrical consumer unit with colour-coded wiring, professional tradesperson work quality photo, clean modern installation, no people visible" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo39jBLxUQ6VTrbhuwm2DptZ7CMNQHWTEhUtDiMaG8-REeIvzLROOf_Wi4vHVkzWj_kcbfrk9U3e5hKvLdmCUGZ5Ga_rBAST17925yLZT4ZcpxbilMpRh5b6AFFXnxnkYWbBU7a9yJZBXTxSCNIt3hBGu-co82D5ix6BtmOhkaCWJUW5lmqSeVXrZABmTBuyqPf2Jyf5n4Dko-ERv2oteXra5Jdql5-lI3uQTdFKLHY3gDTcmIoQQJgPTfG1y8VBqk69t63dfTF1k"/>
+<!-- Gradient Overlay for visual weight -->
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/40 to-transparent"></div>
+</div>
+<!-- Profile Header Area -->
+<div class="px-container-margin relative -mt-[42px]">
+<!-- Profile Photo Overlapping -->
+<div class="w-[84px] h-[84px] rounded-full border-4 border-surface-container-lowest bg-surface-container-low shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden relative z-10">
+<img alt="James" class="w-full h-full object-cover" data-alt="professional male electrician named James, confident friendly headshot, dark hair, late 30s, clean white background, natural studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDA_IaUbx3pw7v0HGRHdK0iN3dTCYuX1nTH4yId02PBwhiQjwL9IkrQvMf4mAQhyR8Op8AnfnrA_aHecM-Aupcp_zyoA-lLpRZEE0M90GhU3ByeJEH8CkIhyc0MxzyRPZkHnNX0Lq-rFVPe4Rs0lvjGYwGqk5e6aaF-y-4O5Ix0Pbnpqb5xXVIeJ1iIx3jAl99BhNbcLwsSTKX6wJYAH9ORq5S8qHrbpyDoNd9fI6APOZhZekwz-TwduxwcfDJTtC7-MHGDyXrdSr8"/>
+</div>
+<!-- Header Content -->
+<div class="mt-4 flex flex-col space-y-2">
+<div class="flex items-center space-x-2">
+<h1 class="font-h1 text-h1 text-on-surface">James T.</h1>
+<span class="material-symbols-outlined text-primary-container" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="font-body text-body text-on-surface-variant">Plumber &amp; Gas Engineer • 12 yrs exp</p>
+<div class="flex items-center space-x-4 mt-1">
+<div class="flex items-center text-on-surface font-h4 text-h4">
+<span class="material-symbols-outlined text-yellow-500 mr-1 text-[20px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+                        4.9 <span class="font-body text-body text-on-surface-variant ml-1 font-normal">(47 reviews)</span>
+</div>
+<div class="flex items-center font-body text-body text-on-surface-variant">
+<span class="material-symbols-outlined mr-1 text-[18px]" data-icon="location_on">location_on</span>
+                        0.4 mi
+                    </div>
+</div>
+<!-- Status Pill -->
+<div class="mt-3 inline-flex items-center bg-[#e6f4ea] text-[#137333] px-3 py-1 rounded-full w-fit">
+<div class="w-2 h-2 rounded-full bg-[#137333] mr-2"></div>
+<span class="font-label-caps text-label-caps">Available Now</span>
+</div>
+</div>
+</div>
+<div class="px-container-margin mt-section-gap space-y-section-gap">
+<!-- Certifications -->
+<section>
+<h3 class="font-h3 text-h3 text-on-surface mb-component-padding">Certifications &amp; Badges</h3>
+<div class="flex overflow-x-auto space-x-3 pb-2 scrollbar-hide">
+<div class="flex-shrink-0 flex items-center bg-surface-container px-4 py-2 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+<span class="material-symbols-outlined text-primary-container mr-2" data-icon="local_fire_department">local_fire_department</span>
+<span class="font-h4 text-h4 text-on-surface text-[14px]">Gas Safe Registered</span>
+</div>
+<div class="flex-shrink-0 flex items-center bg-surface-container px-4 py-2 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+<span class="material-symbols-outlined text-primary-container mr-2" data-icon="shield">shield</span>
+<span class="font-h4 text-h4 text-on-surface text-[14px]">Fully Insured</span>
+</div>
+<div class="flex-shrink-0 flex items-center bg-surface-container px-4 py-2 rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+<span class="material-symbols-outlined text-primary-container mr-2" data-icon="award_star">award_star</span>
+<span class="font-h4 text-h4 text-on-surface text-[14px]">Master Plumber</span>
+</div>
+</div>
+</section>
+<!-- Bio Card -->
+<section class="bg-surface-container-lowest p-component-padding rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+<h3 class="font-h3 text-h3 text-on-surface mb-2">About James</h3>
+<p class="font-body text-body text-on-surface-variant">
+                    Professional and reliable plumber and gas engineer with over a decade of experience serving the local community. I specialize in boiler installations, emergency repairs, and full bathroom refits. Dedicated to high-quality workmanship and transparent pricing.
+                </p>
+</section>
+<!-- Services Grid -->
+<section>
+<h3 class="font-h3 text-h3 text-on-surface mb-component-padding">Popular Services</h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest p-component-padding rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col justify-between h-full">
+<span class="material-symbols-outlined text-primary-container mb-2 text-[28px]" data-icon="plumbing">plumbing</span>
+<h4 class="font-h4 text-h4 text-on-surface mb-1">Leak Repair</h4>
+<p class="font-body text-body text-on-surface-variant mt-auto">From £80</p>
+</div>
+<div class="bg-surface-container-lowest p-component-padding rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col justify-between h-full">
+<span class="material-symbols-outlined text-primary-container mb-2 text-[28px]" data-icon="hvac">hvac</span>
+<h4 class="font-h4 text-h4 text-on-surface mb-1">Boiler Service</h4>
+<p class="font-body text-body text-on-surface-variant mt-auto">From £120</p>
+</div>
+<div class="bg-surface-container-lowest p-component-padding rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col justify-between h-full">
+<span class="material-symbols-outlined text-primary-container mb-2 text-[28px]" data-icon="bathtub">bathtub</span>
+<h4 class="font-h4 text-h4 text-on-surface mb-1">Bathroom Install</h4>
+<p class="font-body text-body text-on-surface-variant mt-auto">Quote</p>
+</div>
+<div class="bg-surface-container-lowest p-component-padding rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col justify-between h-full">
+<span class="material-symbols-outlined text-primary-container mb-2 text-[28px]" data-icon="water_damage">water_damage</span>
+<h4 class="font-h4 text-h4 text-on-surface mb-1">Emergency Callout</h4>
+<p class="font-body text-body text-on-surface-variant mt-auto">From £150</p>
+</div>
+</div>
+</section>
+<!-- Reviews Preview -->
+<section class="mb-section-gap">
+<div class="flex justify-between items-center mb-component-padding">
+<h3 class="font-h3 text-h3 text-on-surface">Recent Reviews</h3>
+<button class="font-h4 text-h4 text-primary-container flex items-center">
+                        See all <span class="material-symbols-outlined ml-1 text-[18px]" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<div class="space-y-4">
+<div class="bg-surface-container-lowest p-component-padding rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+<div class="flex justify-between items-start mb-2">
+<div>
+<p class="font-h4 text-h4 text-on-surface">Sarah M.</p>
+<p class="font-body text-[13px] text-on-surface-variant">2 weeks ago</p>
+</div>
+<div class="flex text-yellow-500">
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<p class="font-body text-body text-on-surface-variant">"James was fantastic. Arrived on time, fixed the leak under the sink quickly, and was very tidy. Highly recommend!"</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Sticky Action Bar -->
+<div class="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md p-4 border-t border-surface-variant shadow-[0_-8px_24px_rgba(0,0,0,0.05)] pb-safe">
+<div class="flex space-x-4 max-w-3xl mx-auto">
+<button aria-label="Bookmark" class="flex items-center justify-center w-14 h-14 bg-surface-container rounded-xl text-on-surface hover:bg-surface-dim transition-colors">
+<span class="material-symbols-outlined" data-icon="bookmark">bookmark</span>
+</button>
+<button class="flex-1 bg-primary-container text-on-primary font-h3 text-h3 py-4 rounded-xl shadow-[0_8px_24px_rgba(249,115,22,0.2)] hover:bg-primary transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined mr-2" data-icon="call">call</span>
+                Call James
+            </button>
+</div>
+</div>
+</body></html>

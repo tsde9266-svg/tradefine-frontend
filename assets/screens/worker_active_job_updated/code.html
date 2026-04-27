@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Worker Active Job Screen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#9d4300",
+                        "primary-container": "#f97316",
+                        "on-background": "#151c27",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface-variant": "#584237",
+                        "surface-variant": "#dce2f3",
+                        "outline-variant": "#e0c0b1",
+                        "tertiary-container": "#00a2f4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "32px",
+                        "component-padding": "16px",
+                        "gutter": "12px",
+                        "container-margin": "20px"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter"],
+                        "body": ["Inter"],
+                        "h3": ["Inter"],
+                        "h4": ["Inter"],
+                        "h1": ["Inter"],
+                        "h2": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body": ["15px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "h3": ["18px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "h4": ["16px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "h1": ["28px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "h2": ["22px", { "lineHeight": "1.3", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+      background-color: #F8FAFC;
+      background-image: url("data:image/svg+xml,%3Csvg width='600' height='600' viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23cbd5e1' stroke-width='1' opacity='0.4'%3E%3Cpath d='M50,0 L50,600 M150,0 L150,600 M250,0 L250,600 M350,0 L350,600 M450,0 L450,600 M550,0 L550,600' /%3E%3Cpath d='M0,50 L600,50 M0,150 L600,150 M0,250 L600,250 M0,350 L600,350 M0,450 L600,450 M0,550 L600,550' /%3E%3Cpath d='M100,100 C200,200 300,50 400,150 S500,300 600,200' stroke-width='2' stroke='%2394a3b8' opacity='0.5' /%3E%3Cpath d='M0,300 C100,400 200,250 300,350 S400,500 500,400' stroke-width='2' stroke='%2394a3b8' opacity='0.5' /%3E%3C/g%3E%3C/svg%3E");
+      background-attachment: fixed;
+    }
+  </style>
+</head>
+<body class="font-body text-body text-on-background min-h-screen pb-24">
+<!-- Floating Navigation Bar -->
+<header class="fixed top-4 left-4 right-4 z-50 bg-white rounded-[12px] flex items-center justify-between px-4 h-[60px] shadow-[0_8px_32px_rgba(0,0,0,0.08)] max-w-2xl mx-auto">
+<button class="w-10 h-10 flex items-center justify-center rounded-[10px] bg-zinc-50 text-zinc-900 hover:bg-zinc-100 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<div class="flex flex-col items-center">
+<h1 class="font-['Inter'] font-bold tracking-tight text-zinc-900 text-h4 font-h4">Job In Progress</h1>
+<span class="text-[10px] font-semibold text-green-600 tracking-widest uppercase">ON SITE</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-[10px] bg-zinc-50 text-zinc-900 hover:bg-zinc-100 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">more_vert</span>
+</button>
+</header>
+<main class="pt-28 px-container-margin max-w-2xl mx-auto space-y-section-gap">
+<!-- Metric Cards -->
+<div class="grid grid-cols-3 gap-gutter">
+<div class="bg-surface-container-lowest rounded-[16px] p-component-padding flex flex-col items-center shadow-sm border border-zinc-100">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2">Elapsed</span>
+<span class="font-h2 text-h2 text-on-background">0:23</span>
+</div>
+<div class="bg-surface-container-lowest rounded-[16px] p-component-padding flex flex-col items-center shadow-sm border border-zinc-100">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2">Est. Earn</span>
+<span class="font-h2 text-h2 text-on-background">£75</span>
+</div>
+<div class="bg-surface-container-lowest rounded-[16px] p-component-padding flex flex-col items-center shadow-sm border border-zinc-100">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-2">Job No</span>
+<span class="font-h2 text-h2 text-on-background">#4821</span>
+</div>
+</div>
+<!-- Customer Card -->
+<section class="bg-surface-container-lowest rounded-[16px] p-component-padding shadow-sm border border-zinc-100">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container overflow-hidden">
+<img alt="Customer Profile Photo" class="w-full h-full object-cover" data-alt="close-up portrait of young woman with dark hair in a bright outdoor setting smiling slightly" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmZ9V3kuslhfJo4y344tFAc5jyP6sK90G9f9frTQKUCra5ZVJ5tsv7KewWb78WSkmTs5_1ZR8hnsozv0TSLrNWEUYb1jVGNQHB7c3O3dy0qTL6Eomqj7_KeuYd6g54mGKe4lf8J6sjE7rts91U0VDw5Nq4R8hVTuMiCZ3pW72mQXu-5XvlVmWWnI6F_4kogxhWP5lkmxoPv2lO8SwIHMqlKXx8WN6LuitG_RmUuh_24yGIBMgW9YnjoWgeoxm4156xCf7Og0J3-o8"/>
+</div>
+<div>
+<h2 class="font-h3 text-h3 text-on-background">Sarah Mitchell</h2>
+<p class="font-body text-body text-on-surface-variant text-sm">142 Oakwood Drive</p>
+</div>
+</div>
+<button class="flex items-center justify-center w-10 h-10 rounded-[10px] bg-tertiary-container/10 text-tertiary-container hover:bg-tertiary-container/20 transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">call</span>
+</button>
+</div>
+<div class="mt-4 pt-4 border-t border-surface-variant/50">
+<a class="text-tertiary-container font-h4 text-h4 text-sm hover:underline" href="#">Call customer</a>
+</div>
+</section>
+<!-- Job Details / Checklist -->
+<section class="bg-surface-container-lowest rounded-[16px] p-component-padding shadow-sm border border-zinc-100">
+<h3 class="font-h4 text-h4 text-on-background mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[#F97316]" style="font-variation-settings: 'FILL' 0;">engineering</span>
+                Job Tasks
+            </h3>
+<ul class="space-y-4">
+<li class="flex items-start gap-3">
+<button class="w-6 h-6 rounded-full border-2 border-[#F97316] flex items-center justify-center mt-0.5 text-[#F97316]">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">check</span>
+</button>
+<span class="font-body text-body text-on-surface-variant line-through">Diagnose fault</span>
+</li>
+<li class="flex items-start gap-3">
+<button class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center mt-0.5 hover:border-[#F97316] transition-colors"></button>
+<span class="font-body text-body text-on-background">Replace breaker</span>
+</li>
+<li class="flex items-start gap-3">
+<button class="w-6 h-6 rounded-full border-2 border-outline-variant flex items-center justify-center mt-0.5 hover:border-[#F97316] transition-colors"></button>
+<span class="font-body text-body text-on-background">Test all circuits</span>
+</li>
+</ul>
+</section>
+</main>
+<!-- Floating Action Button Area (Sticky Bottom) -->
+<div class="fixed bottom-0 left-0 right-0 p-container-margin bg-gradient-to-t from-[#F8FAFC] via-[#F8FAFC]/90 to-transparent pt-8 z-40 max-w-2xl mx-auto">
+<button class="w-full bg-[#F97316] text-white h-14 rounded-xl font-h4 text-h4 shadow-[0_8px_24px_rgba(249,115,22,0.25)] hover:bg-orange-600 transition-colors active:scale-[0.98] duration-200">
+            Mark Job Complete
+        </button>
+</div>
+</body></html>

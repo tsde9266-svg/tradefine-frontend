@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Saved Professionals - TradeFind</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#d3daea",
+                        "surface-variant": "#dce2f3",
+                        "outline": "#8c7164",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f9f9ff",
+                        "on-secondary-container": "#5c6274",
+                        "on-primary-fixed-variant": "#783200",
+                        "primary-fixed-dim": "#ffb690",
+                        "inverse-primary": "#ffb690",
+                        "primary": "#9d4300",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container": "#e7eefe",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e2e8f8",
+                        "secondary": "#575e70",
+                        "secondary-fixed": "#dce2f7",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#93ccff",
+                        "secondary-container": "#d9dff5",
+                        "background": "#f9f9ff",
+                        "on-secondary-fixed": "#141b2b",
+                        "primary-fixed": "#ffdbca",
+                        "on-surface-variant": "#584237",
+                        "inverse-on-surface": "#ebf1ff",
+                        "secondary-fixed-dim": "#c0c6db",
+                        "inverse-surface": "#2a313d",
+                        "on-primary-fixed": "#341100",
+                        "primary-container": "#f97316",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#151c27",
+                        "on-primary-container": "#582200",
+                        "on-tertiary-container": "#003554",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#001d32",
+                        "surface": "#f9f9ff",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#dce2f3",
+                        "tertiary-fixed": "#cde5ff",
+                        "on-secondary-fixed-variant": "#404758",
+                        "on-tertiary-fixed-variant": "#004b74",
+                        "on-background": "#151c27",
+                        "surface-tint": "#9d4300",
+                        "outline-variant": "#e0c0b1",
+                        "tertiary": "#006398",
+                        "tertiary-container": "#00a2f4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "12px",
+                        "component-padding": "16px",
+                        "section-gap": "32px",
+                        "grid-column-3": "1fr 1fr 1fr",
+                        "container-margin": "20px"
+                    },
+                    "fontFamily": {
+                        "h2": ["Inter"],
+                        "h1": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "h4": ["Inter"],
+                        "h3": ["Inter"],
+                        "display": ["Inter"],
+                        "body": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h2": ["22px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "h1": ["28px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "h4": ["16px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "h3": ["18px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display": ["42px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body": ["15px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-body text-on-background min-h-screen flex flex-col pt-[88px] pb-[100px] antialiased">
+<!-- TopAppBar (Floating) -->
+<header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 bg-white/95 rounded-xl mt-3 mx-4 h-[56px] shadow-[0_8px_24px_rgba(0,0,0,0.1)] active:scale-95 duration-150">
+<button aria-label="Menu" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors text-gray-900">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="text-lg font-bold tracking-tight text-gray-900 font-sans antialiased text-orange-500">TradeFind</h1>
+<button aria-label="User profile avatar" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-dim overflow-hidden hover:bg-gray-100 transition-colors">
+<span class="material-symbols-outlined text-gray-600" data-icon="person">person</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 px-container-margin">
+<!-- Page Header -->
+<div class="mb-section-gap pt-4 flex justify-between items-end">
+<div>
+<h2 class="font-h1 text-h1 text-on-background">Saved</h2>
+<p class="font-body text-body text-secondary mt-1">Your bookmarked professionals</p>
+</div>
+<button class="font-label-caps text-label-caps text-primary hover:text-primary-container transition-colors uppercase tracking-wider">
+                Edit
+            </button>
+</div>
+<!-- Saved Workers List -->
+<div class="flex flex-col gap-4">
+<!-- Worker Card 1 -->
+<article class="bg-surface-container-lowest rounded-xl p-component-padding shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-4 relative">
+<div class="flex items-start gap-4">
+<img alt="Michael Chen" class="w-16 h-16 rounded-lg object-cover bg-surface-dim" data-alt="portrait of a professional male plumber in clean work uniform standing in a modern residential bathroom, warm soft lighting, confident expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxHuuC6B-pO6LzxHWkt6-kAePWIjb0uQPUYOBR2REhhSOgs_7I_jmMm6TqR3Fd80rGN9iWs4DbAXCfH1Cu3eCht3nn8grhpHqS_VBxECginLc9Ftf626oLsYpQrP6zeeYUXt-hgUAE0TPF6ykyFftGk1AVusu_7YhXtE-_KbIhDRlmT4vW_VhFsd9-MXJdGuU3wETi9jptrfUSN2We7WL558lhzPKOjbWg-anVSY2TiVaNIXCAwYY7Lwm3c5DIjrnDrYq0A949zKA"/>
+<div class="flex-1">
+<h3 class="font-h3 text-h3 text-on-surface">Michael Chen</h3>
+<p class="font-body text-body text-secondary">Master Plumber</p>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant mt-0.5">4.9 (124)</span>
+</div>
+</div>
+<button aria-label="Remove bookmark" class="text-primary hover:text-primary-container transition-colors p-1">
+<span class="material-symbols-outlined text-[28px]" data-icon="bookmark" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+</button>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-surface-variant/40">
+<button class="bg-primary text-on-primary font-label-caps text-label-caps px-6 py-2.5 rounded-full flex items-center gap-2 hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="call">call</span>
+                        CALL
+                    </button>
+<button aria-label="Schedule" class="w-10 h-10 rounded-full border border-outline flex items-center justify-center text-on-surface hover:bg-surface-dim transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="calendar_month">calendar_month</span>
+</button>
+</div>
+</article>
+<!-- Worker Card 2 -->
+<article class="bg-surface-container-lowest rounded-xl p-component-padding shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-4 relative">
+<div class="flex items-start gap-4">
+<img alt="Sarah Jenkins" class="w-16 h-16 rounded-lg object-cover bg-surface-dim" data-alt="portrait of a female electrician wearing safety gear and tool belt in a well-lit newly constructed home, focused and professional, crisp bright lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAibqiIvpWbEgcEHP1deKiB44D4uyVSKD7wcgMHRBXOQb0rpeioPM4g8ejrCSeEIyCdBXJ0lMTvn4G-PBUbrsQZUhtZ30MWGoEMXb7EpMMkBEMNWurb3_-BthLCm0wtzh0mm2JelKLVdOg6aYhH_MoUFP2QYdSVKDAf1K9_xX5nA-N9QYNc2dRCDb-gG3EJET8mMqttTs4tZfB09c4gILmNrh3tIVYFAD2_KU1iTOxfnZXBPWNbvqG17KlaMJ8N63sNAFUd5p8CUco"/>
+<div class="flex-1">
+<h3 class="font-h3 text-h3 text-on-surface">Sarah Jenkins</h3>
+<p class="font-body text-body text-secondary">Licensed Electrician</p>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant mt-0.5">5.0 (89)</span>
+</div>
+</div>
+<button aria-label="Remove bookmark" class="text-primary hover:text-primary-container transition-colors p-1">
+<span class="material-symbols-outlined text-[28px]" data-icon="bookmark" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+</button>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-surface-variant/40">
+<button class="bg-primary text-on-primary font-label-caps text-label-caps px-6 py-2.5 rounded-full flex items-center gap-2 hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="call">call</span>
+                        CALL
+                    </button>
+<button aria-label="Schedule" class="w-10 h-10 rounded-full border border-outline flex items-center justify-center text-on-surface hover:bg-surface-dim transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="calendar_month">calendar_month</span>
+</button>
+</div>
+</article>
+<!-- Worker Card 3 -->
+<article class="bg-surface-container-lowest rounded-xl p-component-padding shadow-[0_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-4 relative">
+<div class="flex items-start gap-4">
+<img alt="David Rodriguez" class="w-16 h-16 rounded-lg object-cover bg-surface-dim" data-alt="close up portrait of an older male master carpenter in a woodworking shop, sawdust on apron, warm amber lighting, genuine smile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByTNCbfcCCjR-maNpqJwv0PA0fMbPElauhMq5fOmH6fp7x9N_E4Zvx_LD6mDcJMIvTJsgxz7DLnvpNDI3uZfJw1ykLZtEru3zYs8y_nTBbGV12NDdTBP-zA1by2F5GXBbx9gHkFss9tsoHxHhCjOJMJNcGa-DS6L8PyzYjHGzEJ6wwnmk1D9NRtObXgn2Z7CMFkmvl5pyRHEk-NrX_-bxg0Rf3CDa-JrlAvjSEAEWfNlhLKNQwPMiqOmM2kyTytydMrAUCj38NMas"/>
+<div class="flex-1">
+<h3 class="font-h3 text-h3 text-on-surface">David Rodriguez</h3>
+<p class="font-body text-body text-secondary">Master Carpenter</p>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant mt-0.5">4.8 (210)</span>
+</div>
+</div>
+<button aria-label="Remove bookmark" class="text-primary hover:text-primary-container transition-colors p-1">
+<span class="material-symbols-outlined text-[28px]" data-icon="bookmark" style="font-variation-settings: 'FILL' 1;">bookmark</span>
+</button>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-surface-variant/40">
+<button class="bg-primary text-on-primary font-label-caps text-label-caps px-6 py-2.5 rounded-full flex items-center gap-2 hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="call">call</span>
+                        CALL
+                    </button>
+<button aria-label="Schedule" class="w-10 h-10 rounded-full border border-outline flex items-center justify-center text-on-surface hover:bg-surface-dim transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="calendar_month">calendar_month</span>
+</button>
+</div>
+</article>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-6 pb-safe bg-white/80 backdrop-blur-md docked full-width h-[83px] border-t border-gray-100 shadow-[0_-1px_3px_rgba(0,0,0,0.05)] transition-all duration-200 ease-in-out">
+<!-- Home (Inactive) -->
+<button class="flex flex-col items-center justify-center text-gray-400 font-sans text-[11px] font-medium uppercase tracking-wider hover:text-orange-500">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+            Home
+        </button>
+<!-- Map (Inactive) -->
+<button class="flex flex-col items-center justify-center text-gray-400 font-sans text-[11px] font-medium uppercase tracking-wider hover:text-orange-500">
+<span class="material-symbols-outlined mb-1" data-icon="distance">distance</span>
+            Map
+        </button>
+<!-- Jobs (Inactive) -->
+<button class="flex flex-col items-center justify-center text-gray-400 font-sans text-[11px] font-medium uppercase tracking-wider hover:text-orange-500">
+<span class="material-symbols-outlined mb-1" data-icon="work">work</span>
+            Jobs
+        </button>
+<!-- Profile (Inactive) -->
+<button class="flex flex-col items-center justify-center text-gray-400 font-sans text-[11px] font-medium uppercase tracking-wider hover:text-orange-500">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+            Profile
+        </button>
+</nav>
+</body></html>

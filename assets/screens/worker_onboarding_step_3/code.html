@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Worker Onboarding - Service Area</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#ffb690",
+                        "on-primary-fixed-variant": "#783200",
+                        "surface-bright": "#f9f9ff",
+                        "on-secondary-container": "#5c6274",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container": "#e7eefe",
+                        "primary": "#9d4300",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#ffb690",
+                        "error": "#ba1a1a",
+                        "outline": "#8c7164",
+                        "surface-variant": "#dce2f3",
+                        "surface-dim": "#d3daea",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#141b2b",
+                        "background": "#f9f9ff",
+                        "tertiary-fixed-dim": "#93ccff",
+                        "secondary-container": "#d9dff5",
+                        "secondary-fixed": "#dce2f7",
+                        "on-secondary": "#ffffff",
+                        "surface-container-high": "#e2e8f8",
+                        "secondary": "#575e70",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#151c27",
+                        "on-primary-container": "#582200",
+                        "on-primary-fixed": "#341100",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#f97316",
+                        "secondary-fixed-dim": "#c0c6db",
+                        "inverse-on-surface": "#ebf1ff",
+                        "on-surface-variant": "#584237",
+                        "inverse-surface": "#2a313d",
+                        "primary-fixed": "#ffdbca",
+                        "surface-tint": "#9d4300",
+                        "tertiary-container": "#00a2f4",
+                        "tertiary": "#006398",
+                        "outline-variant": "#e0c0b1",
+                        "on-secondary-fixed-variant": "#404758",
+                        "on-tertiary-fixed-variant": "#004b74",
+                        "on-background": "#151c27",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#cde5ff",
+                        "surface-container-highest": "#dce2f3",
+                        "on-tertiary-fixed": "#001d32",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-container": "#003554",
+                        "surface": "#f9f9ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "component-padding": "16px",
+                        "section-gap": "32px",
+                        "grid-column-3": "1fr 1fr 1fr",
+                        "container-margin": "20px",
+                        "gutter": "12px"
+                    },
+                    "fontFamily": {
+                        "h4": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "h2": ["Inter"],
+                        "h1": ["Inter"],
+                        "h3": ["Inter"],
+                        "display": ["Inter"],
+                        "body": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h4": ["16px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "h2": ["22px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "h1": ["28px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "h3": ["18px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display": ["42px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body": ["15px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 28px;
+            width: 28px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            margin-top: -12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            border: 2px solid #f97316;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #dce2f3;
+            border-radius: 2px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body text-body antialiased min-h-screen flex flex-col pt-safe">
+<!-- Top Navigation Area (Transactional/Onboarding) -->
+<header class="px-container-margin py-4 flex items-center justify-between sticky top-0 z-50 bg-background/90 backdrop-blur-md">
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest/50 text-on-surface hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="arrow_back" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<span class="font-h4 text-h4 text-on-surface">Step 3 of 4</span>
+<div class="w-10"></div> <!-- Spacer for centering -->
+</header>
+<!-- Progress Bar -->
+<div class="px-container-margin mb-6">
+<div class="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full w-[75%] transition-all duration-500 ease-out"></div>
+</div>
+</div>
+<main class="flex-1 px-container-margin pb-24 flex flex-col gap-section-gap">
+<!-- Header Content -->
+<section class="flex flex-col gap-2">
+<h1 class="font-h1 text-h1 text-on-surface">Where do you work?</h1>
+<p class="font-body text-body text-on-surface-variant">Set your service area to ensure you only get job requests you can easily reach.</p>
+</section>
+<!-- Map & Radius Card -->
+<section class="bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col">
+<!-- Map Area -->
+<div class="relative w-full h-64 bg-surface-variant">
+<img alt="Aerial map view" class="w-full h-full object-cover opacity-80 mix-blend-multiply" data-alt="Clean, minimal aerial map view of a city grid with soft pastel colors, emphasizing roads and neighborhoods, light daytime lighting" data-location="Birmingham" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvIU8hbhaTGOrulwWiE71Y64VumMo8tr7mj30HCf7zyuVtIqTqwcJHo1lN8fhYgGjqovYWQCtfk8IiRXlq-hWlF_fsGYkKVqT0-7j02Z6ne2-8ZwnaA7Nyg67Hkp4FhtC8O5iNSS9bdWehTM0wYNQc9SUAxXb8gpdwZpASBR4zM2KoOa8Xi230quaPVrSXYBzQREjGPxeu_jeTMQGhTFLl9C1ivwmlggOQt3Ne57yT8NdC35GS6RJRPiAUin5-VCXVC0Xwpxhjdzs"/>
+<!-- Center Point & Pulse -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<!-- Radius Circle (Visual representation of 3.5 miles) -->
+<div class="absolute w-48 h-48 rounded-full bg-primary-container/20 border-2 border-primary-container/40"></div>
+<!-- Center Pin -->
+<div class="w-12 h-12 relative flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-container text-4xl drop-shadow-md z-10" data-icon="location_on" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+<!-- Radius Badge Over Map -->
+<div class="absolute top-4 left-4 bg-surface-container-lowest/90 backdrop-blur px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary-container text-sm" data-icon="my_location" style="font-variation-settings: 'FILL' 1;">my_location</span>
+<span class="font-label-caps text-label-caps text-on-surface">Birmingham, UK</span>
+</div>
+</div>
+<!-- Radius Controls -->
+<div class="p-component-padding flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<span class="font-h3 text-h3 text-on-surface">Service Radius</span>
+<span class="font-h2 text-h2 text-primary-container">3.5 <span class="font-body text-body text-on-surface-variant">miles</span></span>
+</div>
+<div class="relative pt-2 pb-4">
+<input class="w-full appearance-none bg-transparent" max="25" min="1" step="0.5" type="range" value="3.5"/>
+<div class="flex justify-between mt-2 font-label-caps text-label-caps text-on-surface-variant">
+<span>1 mi</span>
+<span>25 mi</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Coverage Info Bento Grid -->
+<section class="grid grid-cols-2 gap-gutter">
+<div class="bg-surface-container-low rounded-xl p-4 flex flex-col gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+<div class="w-8 h-8 rounded-full bg-primary-container/10 flex items-center justify-center mb-1">
+<span class="material-symbols-outlined text-primary-container" data-icon="home_work" style="font-variation-settings: 'FILL' 1;">home_work</span>
+</div>
+<span class="font-h2 text-h2 text-on-surface">142k+</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Est. Homes in Area</span>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4 flex flex-col gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+<div class="w-8 h-8 rounded-full bg-primary-container/10 flex items-center justify-center mb-1">
+<span class="material-symbols-outlined text-primary-container" data-icon="commute" style="font-variation-settings: 'FILL' 1;">commute</span>
+</div>
+<span class="font-h2 text-h2 text-on-surface">12 <span class="font-h4 text-h4 text-on-surface-variant">min</span></span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">Avg. Drive Time</span>
+</div>
+</section>
+</main>
+<!-- Fixed Bottom Action Area -->
+<div class="fixed bottom-0 left-0 right-0 p-container-margin pb-safe bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/95 to-transparent pt-8">
+<button class="w-full h-14 bg-primary-container text-on-primary font-h4 text-h4 rounded-xl shadow-[0_8px_24px_rgba(249,115,22,0.2)] active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+            Continue
+            <span class="material-symbols-outlined" data-icon="arrow_forward" style="font-variation-settings: 'FILL' 0;">arrow_forward</span>
+</button>
+</div>
+</body></html>

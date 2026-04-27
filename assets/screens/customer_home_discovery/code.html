@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>TradeFind - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#d3daea",
+                        "surface-variant": "#dce2f3",
+                        "outline": "#8c7164",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f9f9ff",
+                        "on-secondary-container": "#5c6274",
+                        "on-primary-fixed-variant": "#783200",
+                        "primary-fixed-dim": "#ffb690",
+                        "inverse-primary": "#ffb690",
+                        "primary": "#9d4300",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container": "#e7eefe",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-high": "#e2e8f8",
+                        "secondary": "#575e70",
+                        "secondary-fixed": "#dce2f7",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#93ccff",
+                        "secondary-container": "#d9dff5",
+                        "background": "#f9f9ff",
+                        "on-secondary-fixed": "#141b2b",
+                        "primary-fixed": "#ffdbca",
+                        "on-surface-variant": "#584237",
+                        "inverse-on-surface": "#ebf1ff",
+                        "secondary-fixed-dim": "#c0c6db",
+                        "inverse-surface": "#2a313d",
+                        "on-primary-fixed": "#341100",
+                        "primary-container": "#f97316",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#151c27",
+                        "on-primary-container": "#582200",
+                        "on-tertiary-container": "#003554",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#001d32",
+                        "surface": "#f9f9ff",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#dce2f3",
+                        "tertiary-fixed": "#cde5ff",
+                        "on-secondary-fixed-variant": "#404758",
+                        "on-tertiary-fixed-variant": "#004b74",
+                        "on-background": "#151c27",
+                        "surface-tint": "#9d4300",
+                        "outline-variant": "#e0c0b1",
+                        "tertiary": "#006398",
+                        "tertiary-container": "#00a2f4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "12px",
+                        "component-padding": "16px",
+                        "section-gap": "32px",
+                        "grid-column-3": "1fr 1fr 1fr",
+                        "container-margin": "20px"
+                    },
+                    "fontFamily": {
+                        "h2": ["Inter"],
+                        "h1": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "h4": ["Inter"],
+                        "h3": ["Inter"],
+                        "display": ["Inter"],
+                        "body": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h2": ["22px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "h1": ["28px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "h4": ["16px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "h3": ["18px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "display": ["42px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "body": ["15px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-body text-on-background antialiased pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 mt-3 mx-4 h-[56px] bg-white/95 dark:bg-gray-900/95 shadow-[0_8px_24px_rgba(0,0,0,0.1)] rounded-xl backdrop-blur-md">
+<div class="flex items-center space-x-3">
+<span class="material-symbols-outlined text-orange-500" data-icon="location_on" data-weight="fill" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<div class="flex flex-col">
+<span class="font-h4 text-h4 text-gray-900 leading-tight">Birmingham, B11</span>
+<span class="font-label-caps text-label-caps text-gray-500 uppercase">Change location</span>
+</div>
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative">
+<span class="material-symbols-outlined text-gray-700" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-primary-container rounded-full border border-white"></span>
+</div>
+<img alt="User profile avatar" class="w-8 h-8 rounded-full border border-gray-200 object-cover" data-alt="close up of a professional headshot of a user" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBRqMHbiSvHX9mkCxC7fVToQQ_uEYyTBepuRjbhuGawOnkK0mCJ766tC8lWtZsALVOdp3uNvUnC6jor8EBG4pBUz1C31Xq2MHsKGxsF9lIV-R1M1GmK2H0sYZRNNpIupPbLL_An078iQAiqiE2MU3k-5JVRfvQ2iok-eIj1B2R2xZbmksZgA3WBbHLQcrJA0DQ3xQPjAMABVWHuhxWyhIrCzuhu34z35WtiMjyaielV4rZdXj9Vf9frsNuHwKSpwiRwMfK3HBW5y8"/>
+</div>
+</header>
+<!-- Main Content -->
+<main class="pt-[90px] px-container-margin space-y-section-gap">
+<!-- Search Bar -->
+<div class="relative w-full h-[52px]">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-gray-400" data-icon="search">search</span>
+</div>
+<input class="block w-full h-full pl-12 pr-12 bg-surface-container-high border-none rounded-xl font-body text-body text-on-background placeholder-secondary focus:ring-2 focus:ring-primary-container" placeholder="Search plumbers, electricians..." type="text"/>
+<button class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-500 hover:text-primary-container">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+</button>
+</div>
+<!-- Trade Filter Chips -->
+<div class="flex space-x-3 overflow-x-auto hide-scrollbar py-1 -mx-container-margin px-container-margin">
+<button class="flex-shrink-0 px-5 py-2 bg-primary-container text-on-primary rounded-full font-h4 text-h4 whitespace-nowrap shadow-sm">All</button>
+<button class="flex-shrink-0 px-5 py-2 bg-surface-container-high text-secondary rounded-full font-h4 text-h4 whitespace-nowrap hover:bg-surface-variant transition-colors">Plumbers</button>
+<button class="flex-shrink-0 px-5 py-2 bg-surface-container-high text-secondary rounded-full font-h4 text-h4 whitespace-nowrap hover:bg-surface-variant transition-colors">Electricians</button>
+<button class="flex-shrink-0 px-5 py-2 bg-surface-container-high text-secondary rounded-full font-h4 text-h4 whitespace-nowrap hover:bg-surface-variant transition-colors">Builders</button>
+<button class="flex-shrink-0 px-5 py-2 bg-surface-container-high text-secondary rounded-full font-h4 text-h4 whitespace-nowrap hover:bg-surface-variant transition-colors">Carpenters</button>
+</div>
+<!-- Available Right Now Section -->
+<section>
+<div class="flex justify-between items-end mb-4">
+<h2 class="font-h2 text-h2 text-on-background">Available right now</h2>
+<a class="font-h4 text-h4 text-primary-container hover:underline mb-1" href="#">See all</a>
+</div>
+<div class="flex space-x-4 overflow-x-auto hide-scrollbar -mx-container-margin px-container-margin pb-4">
+<!-- WorkerCard Large 1 -->
+<div class="flex-shrink-0 w-[190px] h-[240px] bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-4 flex flex-col items-center text-center relative overflow-hidden group hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-shadow">
+<div class="absolute top-3 left-3 bg-green-100 text-green-700 font-label-caps text-label-caps px-2 py-1 rounded-full flex items-center space-x-1">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+<span>Available</span>
+</div>
+<img alt="Plumber" class="w-20 h-20 rounded-full object-cover mb-3 mt-4 border-2 border-surface-container-high" data-alt="professional male plumber in work shirt, friendly confident headshot, light background, natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQvs6gvM6cQSjOBgoKBrO5xo6cAiruZC6VlgxGPMWWlJjqgDD55tlfvehfXpHnX76hYe9qgcJKABmseDXqdYUvpyFcSV-IsJNhZRgeHjmGR4g-KmZ3EbvTP7XmUpEMfSO32URN3kHFX6jY2Nq_yrgVeZVq3WUZYbso9d1E62sIp28WpEKicfyLIK06-82QKAiuxZxXn18q_vnoNjYTQC1fWNFn7qA0e7bs7GP21FY3P-SFtROq0SY9_43nX9UCAx4IW3JKEHToOrg"/>
+<h3 class="font-h3 text-h3 text-on-background truncate w-full">Mike Johnson</h3>
+<div class="flex items-center space-x-1 text-sm text-secondary mb-1">
+<span class="material-symbols-outlined text-yellow-400 text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-h4 text-h4">4.9</span>
+<span>(124)</span>
+</div>
+<p class="font-body text-[13px] text-secondary mb-auto">Plumber • 1.2m</p>
+<button class="w-full mt-3 py-2 bg-primary-container text-on-primary rounded-lg font-h4 text-h4 hover:bg-orange-600 transition-colors">Call Now</button>
+</div>
+<!-- WorkerCard Large 2 -->
+<div class="flex-shrink-0 w-[190px] h-[240px] bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] p-4 flex flex-col items-center text-center relative overflow-hidden group hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-shadow">
+<div class="absolute top-3 left-3 bg-green-100 text-green-700 font-label-caps text-label-caps px-2 py-1 rounded-full flex items-center space-x-1">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+<span>Available</span>
+</div>
+<img alt="Electrician" class="w-20 h-20 rounded-full object-cover mb-3 mt-4 border-2 border-surface-container-high" data-alt="professional male electrician holding tools, smiling, bright indoor lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFABNOswkkw82LqsDQJPgjtKt6Q6HxGdzrhq3EEEO8U1mg2mdVdq-lL6Cbwkz041nbA4nNEgNtejpAcSZfzwUj4J24E1W-s8jclZaSUI08ICMr5mvu6Ipe6W2K02kegei21bKwZtCpaELaylZpnXonvCkp3Z6TKhIG9OGQAllsJbqDHSxj_aO6-JthcRLodKj5PSWCmk4zO8MGoXA3UuTA7eId5c27fGmK6GR4lkukGcQzGpK4al-_4JSrgWw4m0Qukt2mOlHo9i8"/>
+<h3 class="font-h3 text-h3 text-on-background truncate w-full">David Smith</h3>
+<div class="flex items-center space-x-1 text-sm text-secondary mb-1">
+<span class="material-symbols-outlined text-yellow-400 text-sm" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-h4 text-h4">4.8</span>
+<span>(89)</span>
+</div>
+<p class="font-body text-[13px] text-secondary mb-auto">Electrician • 2.5m</p>
+<button class="w-full mt-3 py-2 bg-primary-container text-on-primary rounded-lg font-h4 text-h4 hover:bg-orange-600 transition-colors">Call Now</button>
+</div>
+</div>
+</section>
+<!-- Highly Rated Near You Section -->
+<section>
+<h2 class="font-h2 text-h2 text-on-background mb-4">Highly rated near you</h2>
+<div class="space-y-3">
+<!-- WorkerCard Compact 1 -->
+<div class="flex items-center p-3 bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:bg-surface-container-low transition-colors">
+<img alt="Electrician" class="w-[56px] h-[56px] rounded-full object-cover border border-surface-variant flex-shrink-0" data-alt="professional female electrician in work uniform, smiling headshot, neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbPqtDqXMLoEs8aGHliAplA1coDUic7SwgpHxyLeswcz3cLyBzxcwe4R8aOmTvkcIo8dLOvHsY2gy7Qmu4cv63EU7GGWApAEdTxLnG6xFLIauUIfT3tuMd9LTBmrZsQAmx6U1hFKc3uV9GUaSFkUO1m6CW9dIMj-CSerKeEn2yfjgREOzjR6s9xPBMcmXZu_8BXp0Lukahiz3vXcwESetJqyBVQ59Vv4LlQZQgTfUfOlLvPxGO6QrtL25DazersNQxX9vd_irjHBs"/>
+<div class="ml-4 flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-h3 text-h3 text-on-background">Sarah Jenkins</h3>
+<span class="font-h4 text-h4 text-on-background">From £45/hr</span>
+</div>
+<div class="flex items-center mt-1 space-x-2">
+<div class="flex items-center text-sm text-secondary">
+<span class="material-symbols-outlined text-yellow-400 text-sm mr-0.5" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-h4 text-h4">5.0</span>
+<span class="ml-1">(210)</span>
+</div>
+<span class="text-surface-variant">•</span>
+<span class="bg-surface-container-high text-secondary font-label-caps text-[10px] px-2 py-0.5 rounded">Verified</span>
+</div>
+<p class="font-body text-sm text-secondary mt-1">Master Electrician • 3.2m</p>
+</div>
+</div>
+<!-- WorkerCard Compact 2 -->
+<div class="flex items-center p-3 bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:bg-surface-container-low transition-colors">
+<img alt="Builder" class="w-[56px] h-[56px] rounded-full object-cover border border-surface-variant flex-shrink-0" data-alt="professional male builder with stubble, looking at camera, outdoor lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApLgwGvN4KFLPB0xPnIpDwwysO6vgkMc4A8e2eBRLSGgY0BynVw0F-mhIo-LcFvPqYHjM_0u3LgxsKu2JZ-7ZXR-fTHUYtL5RbPO5YdMuK7evlIJ1RWuLKPeIsRKFlAnpJMbJSkkZK_-CHHD-gNrQf730ue0UCjwm9LXIO4W7tyaCl5XhU2yEzJ-WGzMMHH1h0cbMEeB94UjsNfChUuZAI1ybPPeOsvs9tWrscuyfpBYAEw5duLNUiVlCUuKWskAJNhN2tDpD5kEU"/>
+<div class="ml-4 flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-h3 text-h3 text-on-background">Tom Hardy</h3>
+<span class="font-h4 text-h4 text-on-background">From £50/hr</span>
+</div>
+<div class="flex items-center mt-1 space-x-2">
+<div class="flex items-center text-sm text-secondary">
+<span class="material-symbols-outlined text-yellow-400 text-sm mr-0.5" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-h4 text-h4">4.9</span>
+<span class="ml-1">(156)</span>
+</div>
+<span class="text-surface-variant">•</span>
+<span class="bg-surface-container-high text-secondary font-label-caps text-[10px] px-2 py-0.5 rounded">Verified</span>
+</div>
+<p class="font-body text-sm text-secondary mt-1">General Builder • 4.1m</p>
+</div>
+</div>
+<!-- WorkerCard Compact 3 -->
+<div class="flex items-center p-3 bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:bg-surface-container-low transition-colors">
+<img alt="Carpenter" class="w-[56px] h-[56px] rounded-full object-cover border border-surface-variant flex-shrink-0" data-alt="professional male carpenter in workshop, dusty clothes, warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7DklSKJnw4OwFnvHTBxmTUSRmPqx-0BAyq_CXXBX9_xZxs8lqGirJRDTCQ5I4ohz1Ivu0KjGeigXLkYynk6xWCaQiiFNiWfVuKr_HFzJwguSjZ4j3c2TwA3oecJSYQIzILZBlEhqfI5NQYaveR__nnGn7vpZAlrIFtlljePScadW9AvnyOV-fBgNnH6VjoLOkCAy3Dwr1GFZKR-Ue8l_ctd1ehY2z4TfjUM6Z6WBx3h4iWD_fWxjVfUEzN0TkO6AB_6cimowEhEk"/>
+<div class="ml-4 flex-1">
+<div class="flex justify-between items-start">
+<h3 class="font-h3 text-h3 text-on-background">Ben Davies</h3>
+<span class="font-h4 text-h4 text-on-background">From £40/hr</span>
+</div>
+<div class="flex items-center mt-1 space-x-2">
+<div class="flex items-center text-sm text-secondary">
+<span class="material-symbols-outlined text-yellow-400 text-sm mr-0.5" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-h4 text-h4">4.7</span>
+<span class="ml-1">(92)</span>
+</div>
+<span class="text-surface-variant">•</span>
+<span class="bg-surface-container-high text-secondary font-label-caps text-[10px] px-2 py-0.5 rounded">Verified</span>
+</div>
+<p class="font-body text-sm text-secondary mt-1">Carpenter &amp; Joiner • 5.0m</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center px-6 pb-safe bg-white/80 dark:bg-gray-900/80 backdrop-blur-md docked full-width h-[83px] border-t border-gray-100 dark:border-gray-800 shadow-[0_-1px_3px_rgba(0,0,0,0.05)] transition-all duration-200 ease-in-out font-sans text-[11px] font-medium uppercase tracking-wider text-orange-600 dark:text-orange-500">
+<a class="flex flex-col items-center justify-center bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-full px-4 py-1" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home" data-weight="fill" style="font-variation-settings: 'FILL' 1;">home</span>
+<span>Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:text-orange-500 dark:hover:text-orange-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="distance">distance</span>
+<span>Map</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:text-orange-500 dark:hover:text-orange-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="work">work</span>
+<span>Jobs</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 hover:text-orange-500 dark:hover:text-orange-300" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span>Profile</span>
+</a>
+</nav>
+</body></html>
