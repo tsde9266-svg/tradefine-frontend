@@ -8,22 +8,19 @@ import {
   Text,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import Avatar from '../../../components/ui/Avatar';
-import Badge from '../../../components/ui/Badge';
-import Button from '../../../components/ui/Button';
 import StarRating from '../../../components/ui/StarRating';
 import SkeletonLoader from '../../../components/ui/SkeletonLoader';
 import ReviewCard from '../../../components/worker/ReviewCard';
+import FloatingNav from '../../../components/shared/FloatingNav';
 import { useToast } from '../../../components/ui/Toast';
-import { colors } from '../../../constants/colors';
-import { radius } from '../../../constants/radius';
-import { spacing } from '../../../constants/spacing';
+import { T } from '../../../constants/tokens';
 import { shadows } from '../../../constants/shadows';
-import { typography } from '../../../constants/typography';
 import { getWorkerById } from '../../../services/workers';
 import { getWorkerReviews, replyToReview } from '../../../services/reviews';
 import { saveWorker, unsaveWorker } from '../../../services/workers';
@@ -34,38 +31,50 @@ import { Review } from '../../../types/review';
 import { JobRequest } from '../../../types/job';
 import { formatRating } from '../../../utils/formatters';
 
-type ProfileTab = 'about' | 'reviews' | 'photos';
+// Icons per trade — shown in the services grid
+const TRADE_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
+  default:        'construct-outline',
+  plumber:        'water-outline',
+  electrician:    'flash-outline',
+  carpenter:      'hammer-outline',
+  painter:        'color-palette-outline',
+  roofer:         'home-outline',
+  builder:        'business-outline',
+  gas:            'flame-outline',
+  cleaner:        'sparkles-outline',
+};
+
+function tradeIcon(trade: string): keyof typeof Ionicons.glyphMap {
+  const key = trade.toLowerCase();
+  return Object.keys(TRADE_ICONS).find((k) => key.includes(k))
+    ? TRADE_ICONS[Object.keys(TRADE_ICONS).find((k) => key.includes(k))!]
+    : TRADE_ICONS.default;
+}
 
 export default function WorkerProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { show } = useToast();
   const { isSaved, toggleSave } = useWorkerStore();
+  const insets = useSafeAreaInsets();
 
   const [worker, setWorker] = useState<Worker | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [activeJob, setActiveJob] = useState<JobRequest | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<ProfileTab>('about');
   const [savingToggle, setSavingToggle] = useState(false);
 
   useEffect(() => {
     if (!id) return;
     (async () => {
       try {
-        const [w, r] = await Promise.all([
-          getWorkerById(id),
-          getWorkerReviews(id),
-        ]);
+        const [w, r] = await Promise.all([getWorkerById(id), getWorkerReviews(id)]);
         setWorker(w);
         setReviews(r);
-        // Jobs API — graceful: if not yet deployed on server, ignore
         try {
           const jobs = await getActiveJobs();
           setActiveJob(jobs.find((j) => j.workerId === w.id) ?? null);
-        } catch {
-          // jobs endpoint not yet available — silently ignore
-        }
+        } catch { /* jobs endpoint optional */ }
       } catch {
         show('Could not load profile', 'error');
       } finally {
@@ -74,8 +83,6 @@ export default function WorkerProfileScreen() {
     })();
   }, [id]);
 
-  // Refresh activeJob every time screen gains focus — ensures CTA
-  // reflects real state (e.g. after job accepted/declined/completed)
   useFocusEffect(
     useCallback(() => {
       if (!worker) return;
@@ -108,460 +115,368 @@ export default function WorkerProfileScreen() {
     if (worker?.phone) Linking.openURL(`tel:${worker.phone}`);
   }, [worker]);
 
-  const handleReply = useCallback(
-    async (reviewId: string, reply: string) => {
-      await replyToReview(reviewId, reply);
-      setReviews((prev) =>
-        prev.map((r) => (r.id === reviewId ? { ...r, reply } : r)),
-      );
-      show('Reply posted', 'success');
-    },
-    [],
-  );
+  const handleReply = useCallback(async (reviewId: string, reply: string) => {
+    await replyToReview(reviewId, reply);
+    setReviews((prev) => prev.map((r) => (r.id === reviewId ? { ...r, reply } : r)));
+    show('Reply posted', 'success');
+  }, []);
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.screen}>
+      <View style={styles.screen}>
         <SkeletonLoader width="100%" height={200} borderRadius={0} />
-        <View style={styles.loadingBody}>
+        <View style={{ padding: 20, gap: 12 }}>
           <SkeletonLoader width={80} height={80} borderRadius={40} />
-          <SkeletonLoader width="60%" height={24} borderRadius={8} style={styles.skeletonGap} />
-          <SkeletonLoader width="40%" height={16} borderRadius={8} style={styles.skeletonGap} />
+          <SkeletonLoader width="60%" height={24} borderRadius={8} />
+          <SkeletonLoader width="40%" height={16} borderRadius={8} />
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   if (!worker) {
     return (
-      <SafeAreaView style={styles.screen}>
-        <Text style={styles.errorText}>Worker not found</Text>
-      </SafeAreaView>
+      <View style={[styles.screen, { alignItems: 'center', justifyContent: 'center' }]}>
+        <Text style={styles.emptyText}>Worker not found</Text>
+      </View>
     );
   }
 
   const saved = isSaved(worker.id);
   const heroImage = worker.portfolioPhotos[0] ?? null;
+  const firstName = worker.name.split(' ')[0];
 
   return (
     <View style={styles.screen}>
-      <ScrollView showsVerticalScrollIndicator={false} stickyHeaderIndices={[2]}>
-        {/* Back button */}
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={20} color={colors.textInverse} />
-        </Pressable>
+      {/* Floating nav — back | share + bookmark */}
+      <FloatingNav
+        leftAction="back"
+        onLeft={() => router.back()}
+        rightContent={
+          <View style={styles.navRight}>
+            <Pressable style={styles.navIconBtn} hitSlop={8}>
+              <Ionicons name="share-outline" size={20} color={T.text1} />
+            </Pressable>
+            <Pressable
+              style={styles.navIconBtn}
+              onPress={handleSaveToggle}
+              disabled={savingToggle}
+              hitSlop={8}
+            >
+              <Ionicons
+                name={saved ? 'bookmark' : 'bookmark-outline'}
+                size={20}
+                color={saved ? T.orange : T.text1}
+              />
+            </Pressable>
+          </View>
+        }
+      />
 
-        {/* Hero photo */}
-        <View style={styles.heroContainer}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* ── Hero image ──────────────────────────────────────────────────────── */}
+        <View style={styles.heroWrap}>
           {heroImage ? (
             <Image source={{ uri: heroImage }} style={styles.hero} resizeMode="cover" />
           ) : (
-            <View style={[styles.hero, styles.heroFallback]} />
+            <View style={[styles.hero, { backgroundColor: T.raised }]} />
           )}
-          <View style={styles.avatarWrapper}>
-            <Avatar uri={worker.avatarUrl} name={worker.name} size={80} style={styles.avatar} />
-          </View>
+          <LinearGradient
+            colors={['transparent', 'rgba(0,0,0,0.35)']}
+            style={StyleSheet.absoluteFillObject}
+          />
         </View>
 
-        {/* Info card */}
-        <View style={styles.infoCard}>
-          <Text style={styles.name}>{worker.name}</Text>
-          <View style={styles.tradesRow}>
-            {worker.trades.map((t) => (
-              <View key={t} style={styles.tradePill}>
-                <Text style={styles.tradePillText}>{t}</Text>
-              </View>
-            ))}
+        {/* ── Profile header ──────────────────────────────────────────────────── */}
+        <View style={styles.profileSection}>
+          {/* Avatar overlapping hero */}
+          <View style={styles.avatarWrap}>
+            <Avatar uri={worker.avatarUrl} name={worker.name} size={84} />
           </View>
-          <View style={styles.ratingRow}>
-            <StarRating value={worker.rating} size="md" />
+
+          <View style={styles.nameRow}>
+            <Text style={styles.name}>{worker.name}</Text>
+            <Ionicons name="checkmark-circle" size={22} color={T.orange} />
+          </View>
+
+          <Text style={styles.trade}>{worker.trades.join(' & ')}</Text>
+
+          <View style={styles.metaRow}>
+            <StarRating value={worker.rating} size="sm" />
             <Text style={styles.ratingText}>
-              {formatRating(worker.rating)} ({worker.reviewCount} reviews)
+              {formatRating(worker.rating)}
+              <Text style={styles.reviewCount}> ({worker.reviewCount} reviews)</Text>
+            </Text>
+            {worker.distance != null && (
+              <>
+                <View style={styles.dot} />
+                <Ionicons name="location-outline" size={14} color={T.text2} />
+                <Text style={styles.metaText}>{worker.distance.toFixed(1)} mi</Text>
+              </>
+            )}
+          </View>
+
+          {/* Availability pill */}
+          <View style={[styles.availPill, !worker.isAvailable && styles.unavailPill]}>
+            <View style={[styles.availDot, !worker.isAvailable && styles.unavailDot]} />
+            <Text style={[styles.availText, !worker.isAvailable && styles.unavailText]}>
+              {worker.isAvailable ? 'Available Now' : 'Unavailable'}
             </Text>
           </View>
-          <Badge type={worker.isAvailable ? 'available' : 'unavailable'} />
         </View>
 
-        {/* Tab bar — sticky */}
-        <View style={styles.tabRow}>
-          {(['about', 'reviews', 'photos'] as ProfileTab[]).map((tab) => (
-            <Pressable
-              key={tab}
-              style={[styles.tab, activeTab === tab && styles.tabActive]}
-              onPress={() => setActiveTab(tab)}
-            >
-              <Text style={[styles.tabLabel, activeTab === tab && styles.tabLabelActive]}>
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-
-        {/* Tab content */}
-        <View style={styles.tabContent}>
-          {activeTab === 'about' && (
-            <AboutTab worker={worker} />
-          )}
-
-          {activeTab === 'reviews' && (
-            <View>
-              {reviews.length === 0 ? (
-                <Text style={styles.emptyText}>No reviews yet</Text>
-              ) : (
-                reviews.map((r) => (
-                  <ReviewCard key={r.id} review={r} onReply={handleReply} />
-                ))
-              )}
+        <View style={styles.body}>
+          {/* ── Certifications ────────────────────────────────────────────────── */}
+          {worker.certifications.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Certifications & Badges</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View style={styles.chipsRow}>
+                  {worker.certifications.map((cert) => (
+                    <View key={cert} style={styles.chip}>
+                      <Ionicons name="shield-checkmark-outline" size={16} color={T.orange} />
+                      <Text style={styles.chipText}>{cert}</Text>
+                    </View>
+                  ))}
+                </View>
+              </ScrollView>
             </View>
           )}
 
-          {activeTab === 'photos' && (
-            <PhotosGrid photos={worker.portfolioPhotos} />
-          )}
+          {/* ── About ─────────────────────────────────────────────────────────── */}
+          {worker.bio ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>About {firstName}</Text>
+              <View style={styles.card}>
+                <Text style={styles.bioText}>{worker.bio}</Text>
+              </View>
+            </View>
+          ) : null}
+
+          {/* ── Popular Services ──────────────────────────────────────────────── */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Popular Services</Text>
+            <View style={styles.servicesGrid}>
+              {worker.trades.slice(0, 4).map((trade) => (
+                <View key={trade} style={styles.serviceCard}>
+                  <Ionicons name={tradeIcon(trade)} size={28} color={T.orange} />
+                  <Text style={styles.serviceLabel}>{trade}</Text>
+                  <Text style={styles.servicePrice}>From £80</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          {/* ── Recent Reviews ────────────────────────────────────────────────── */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Recent Reviews</Text>
+              {reviews.length > 2 && (
+                <Pressable style={styles.seeAllBtn}>
+                  <Text style={styles.seeAllText}>See all</Text>
+                  <Ionicons name="chevron-forward" size={14} color={T.orange} />
+                </Pressable>
+              )}
+            </View>
+            {reviews.length === 0 ? (
+              <Text style={styles.emptyText}>No reviews yet</Text>
+            ) : (
+              reviews.slice(0, 2).map((r) => (
+                <ReviewCard key={r.id} review={r} onReply={handleReply} />
+              ))
+            )}
+          </View>
         </View>
 
-        <View style={{ height: spacing.huge }} />
+        <View style={{ height: 100 + insets.bottom }} />
       </ScrollView>
 
-      {/* Sticky bottom bar */}
-      <SafeAreaView edges={['bottom']} style={styles.bottomBar}>
-        {/* Primary CTA — changes based on job state */}
-        {activeJob?.status === 'started' ? (
-          <Pressable
-            style={styles.primaryCta}
-            onPress={() => router.push(`/(customer)/worker/tracking?workerId=${worker.id}`)}
-          >
-            <Ionicons name="navigate" size={18} color="#fff" />
-            <Text style={styles.primaryCtaText}>Track {worker.name.split(' ')[0]} Live</Text>
-          </Pressable>
-        ) : activeJob ? (
-          <Pressable
-            style={[styles.primaryCta, { backgroundColor: colors.warning }]}
-            onPress={() => router.push(`/(customer)/worker/waiting?jobId=${activeJob.id}`)}
-          >
-            <Ionicons name="time" size={18} color="#fff" />
-            <Text style={styles.primaryCtaText}>View Request Status</Text>
-          </Pressable>
-        ) : (
-          <Pressable
-            style={styles.primaryCta}
-            onPress={() =>
-              router.push(
-                `/(customer)/worker/request?workerId=${worker.id}&workerName=${encodeURIComponent(worker.name)}&workerPhone=${encodeURIComponent(worker.phone ?? '')}`,
-              )
-            }
-          >
-            <Ionicons name="send" size={18} color="#fff" />
-            <Text style={styles.primaryCtaText}>Request {worker.name.split(' ')[0]}</Text>
-          </Pressable>
-        )}
-
-        {/* Call icon button */}
-        <Pressable onPress={handleCall} style={styles.iconBtn}>
-          <Ionicons name="call" size={20} color={colors.primary} />
-        </Pressable>
-
-        {/* Save icon button */}
+      {/* ── Sticky bottom bar ───────────────────────────────────────────────── */}
+      <View style={[styles.bottomBar, { paddingBottom: insets.bottom + 12 }]}>
+        {/* Bookmark */}
         <Pressable
+          style={[styles.bookmarkBtn, saved && styles.bookmarkBtnActive]}
           onPress={handleSaveToggle}
-          style={[styles.iconBtn, saved && styles.iconBtnActive]}
           disabled={savingToggle}
         >
           <Ionicons
             name={saved ? 'bookmark' : 'bookmark-outline'}
-            size={20}
-            color={saved ? colors.primary : colors.textSecondary}
+            size={22}
+            color={saved ? T.orange : T.text1}
           />
         </Pressable>
-      </SafeAreaView>
-    </View>
-  );
-}
 
-function AboutTab({ worker }: { worker: Worker }) {
-  const CORE_SERVICES = [
-    { label: 'Emergency Call-out', price: 'From £80' },
-    { label: 'Standard Hourly Rate', price: '£45/hr' },
-    { label: 'Free Quote', price: 'Free' },
-  ];
-
-  return (
-    <View style={styles.aboutSection}>
-      {worker.bio ? (
-        <>
-          <Text style={styles.sectionLabel}>ABOUT</Text>
-          <Text style={styles.bodyText}>{worker.bio}</Text>
-        </>
-      ) : null}
-
-      {/* Core Services */}
-      <Text style={styles.sectionLabel}>CORE SERVICES</Text>
-      <View style={styles.servicesCard}>
-        {CORE_SERVICES.map((s, i) => (
-          <View key={s.label} style={[styles.serviceRow, i > 0 && styles.serviceDivider]}>
-            <Text style={styles.serviceLabel}>{s.label}</Text>
-            <Text style={styles.servicePrice}>{s.price}</Text>
-          </View>
-        ))}
+        {/* Primary CTA — adapts to job state */}
+        {activeJob?.status === 'started' ? (
+          <Pressable
+            style={styles.ctaBtn}
+            onPress={() => router.push(`/(customer)/worker/tracking?workerId=${worker.id}`)}
+          >
+            <Ionicons name="navigate" size={18} color="#fff" />
+            <Text style={styles.ctaText}>Track {firstName} Live</Text>
+          </Pressable>
+        ) : activeJob ? (
+          <Pressable
+            style={[styles.ctaBtn, { backgroundColor: T.amber }]}
+            onPress={() => router.push(`/(customer)/worker/waiting?jobId=${activeJob.id}`)}
+          >
+            <Ionicons name="time" size={18} color="#fff" />
+            <Text style={styles.ctaText}>View Request Status</Text>
+          </Pressable>
+        ) : (
+          <Pressable
+            style={styles.ctaBtn}
+            onPress={handleCall}
+          >
+            <Ionicons name="call" size={18} color="#fff" />
+            <Text style={styles.ctaText}>Call {firstName}</Text>
+          </Pressable>
+        )}
       </View>
-
-      {worker.certifications.length > 0 && (
-        <>
-          <Text style={styles.sectionLabel}>CERTIFICATIONS</Text>
-          <View style={styles.pillsRow}>
-            {worker.certifications.map((c) => (
-              <View key={c} style={styles.certPill}>
-                <Ionicons name="shield-checkmark-outline" size={12} color={colors.primaryDark} />
-                <Text style={styles.certPillText}>{c}</Text>
-              </View>
-            ))}
-          </View>
-        </>
-      )}
-
-      <Text style={styles.sectionLabel}>SERVICE AREA</Text>
-      <Text style={styles.bodyText}>Up to {worker.serviceAreaMiles} miles from current location</Text>
-
-      {worker.pricingNotes ? (
-        <>
-          <Text style={styles.sectionLabel}>PRICING NOTES</Text>
-          <Text style={[styles.bodyText, styles.italic]}>{worker.pricingNotes}</Text>
-        </>
-      ) : null}
     </View>
   );
 }
-
-function PhotosGrid({ photos }: { photos: string[] }) {
-  if (photos.length === 0) {
-    return <Text style={styles.emptyText}>No portfolio photos yet</Text>;
-  }
-  return (
-    <View style={styles.photosGrid}>
-      {photos.map((uri, i) => (
-        <Image key={i} source={{ uri }} style={styles.gridPhoto} resizeMode="cover" />
-      ))}
-    </View>
-  );
-}
-
-const PHOTO_SIZE = 170;
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.background,
+  screen: { flex: 1, backgroundColor: T.bg },
+
+  // Nav right cluster
+  navRight: { flexDirection: 'row', gap: 4, marginRight: 4 },
+  navIconBtn: {
+    width: 40, height: 40, borderRadius: 20,
+    alignItems: 'center', justifyContent: 'center',
   },
-  backButton: {
-    position: 'absolute',
-    top: 50,
-    left: spacing.lg,
-    zIndex: 10,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    alignItems: 'center',
-    justifyContent: 'center',
+
+  // Hero
+  heroWrap: { height: 200, overflow: 'hidden' },
+  hero: { width: '100%', height: 200 },
+
+  // Profile header
+  profileSection: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    marginTop: -42,
   },
-  heroContainer: {
-    position: 'relative',
-    marginBottom: 40,
-  },
-  hero: {
-    width: '100%',
-    height: 200,
-  },
-  heroFallback: {
-    backgroundColor: colors.primaryLight,
-  },
-  avatarWrapper: {
-    position: 'absolute',
-    bottom: -40,
-    alignSelf: 'center',
-    borderWidth: 3,
-    borderColor: colors.surface,
-    borderRadius: 44,
-  },
-  avatar: {},
-  infoCard: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.lg,
-    gap: spacing.sm,
-    alignItems: 'center',
-  },
-  name: {
-    ...typography.h2,
-    color: colors.textPrimary,
-    textAlign: 'center',
-  },
-  tradesRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: spacing.xs,
-  },
-  tradePill: {
-    backgroundColor: colors.surfaceElevated,
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-  },
-  tradePillText: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  ratingText: {
-    ...typography.small,
-    color: colors.textSecondary,
-  },
-  tabRow: {
-    flexDirection: 'row',
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: spacing.md,
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: 'transparent',
-  },
-  tabActive: {
-    borderBottomColor: colors.primary,
-  },
-  tabLabel: {
-    ...typography.bodyMd,
-    color: colors.textSecondary,
-  },
-  tabLabelActive: {
-    color: colors.primary,
-    fontWeight: '600',
-  },
-  tabContent: {
-    padding: spacing.lg,
-  },
-  aboutSection: {
-    gap: spacing.lg,
-  },
-  sectionLabel: {
-    ...typography.label,
-    color: colors.textSecondary,
-    marginBottom: -spacing.xs,
-  },
-  bodyText: {
-    ...typography.body,
-    color: colors.textPrimary,
-  },
-  italic: {
-    fontStyle: 'italic',
-  },
-  pillsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  },
-  certPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: colors.primaryLight,
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-  },
-  certPillText: {
-    ...typography.caption,
-    color: colors.primaryDark,
-    fontWeight: '600',
-  },
-  servicesCard: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
+  avatarWrap: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    borderWidth: 4,
+    borderColor: T.card,
+    marginBottom: 12,
     overflow: 'hidden',
     ...shadows.sm,
   },
-  serviceRow: {
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
+  name: { fontSize: 26, fontFamily: 'Inter_700Bold', color: T.text1, letterSpacing: -0.4 },
+  trade: { fontSize: 15, fontFamily: 'Inter_400Regular', color: T.text2, marginBottom: 8 },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 },
+  ratingText: { fontSize: 15, fontFamily: 'Inter_600SemiBold', color: T.text1 },
+  reviewCount: { fontFamily: 'Inter_400Regular', color: T.text2 },
+  dot: { width: 3, height: 3, borderRadius: 2, backgroundColor: T.text3 },
+  metaText: { fontSize: 14, fontFamily: 'Inter_400Regular', color: T.text2 },
+
+  // Availability pill
+  availPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
+    gap: 6,
+    alignSelf: 'flex-start',
+    backgroundColor: T.greenBg,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: T.pill,
   },
-  serviceDivider: { borderTopWidth: 1, borderTopColor: colors.borderLight },
-  serviceLabel: { ...typography.body, color: colors.textPrimary },
-  servicePrice: { ...typography.bodyMd, color: colors.primary, fontWeight: '700' },
-  photosGrid: {
+  unavailPill: { backgroundColor: T.raised },
+  availDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: T.green },
+  unavailDot: { backgroundColor: T.text3 },
+  availText: { fontSize: 12, fontFamily: 'Inter_600SemiBold', color: T.green, letterSpacing: 0.3 },
+  unavailText: { color: T.text3 },
+
+  // Body
+  body: { paddingHorizontal: 20 },
+
+  // Sections
+  section: { marginBottom: 28 },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
+  sectionTitle: { fontSize: 18, fontFamily: 'Inter_600SemiBold', color: T.text1, letterSpacing: -0.2, marginBottom: 14 },
+  seeAllBtn: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  seeAllText: { fontSize: 14, fontFamily: 'Inter_600SemiBold', color: T.orange },
+
+  // Certification chips
+  chipsRow: { flexDirection: 'row', gap: 10 },
+  chip: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: T.card,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: T.chip,
+    ...shadows.sm,
   },
-  gridPhoto: {
-    width: PHOTO_SIZE,
-    height: PHOTO_SIZE,
-    borderRadius: radius.md,
+  chipText: { fontSize: 13, fontFamily: 'Inter_600SemiBold', color: T.text1 },
+
+  // About card
+  card: {
+    backgroundColor: T.card,
+    borderRadius: T.card,
+    padding: 16,
+    ...shadows.sm,
   },
-  trackButtonContainer: {
-    padding: spacing.lg,
-    paddingTop: 0,
+  bioText: { fontSize: 15, fontFamily: 'Inter_400Regular', color: T.text2, lineHeight: 22 },
+
+  // Services 2×2 grid
+  servicesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  serviceCard: {
+    width: '47%',
+    backgroundColor: T.card,
+    borderRadius: T.card,
+    padding: 16,
+    gap: 6,
+    ...shadows.sm,
   },
+  serviceLabel: { fontSize: 15, fontFamily: 'Inter_600SemiBold', color: T.text1 },
+  servicePrice: { fontSize: 14, fontFamily: 'Inter_400Regular', color: T.text2 },
+
+  emptyText: { fontSize: 14, fontFamily: 'Inter_400Regular', color: T.text2, textAlign: 'center', marginTop: 12 },
+
+  // Bottom bar
   bottomBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.sm,
-    backgroundColor: colors.surface,
+    gap: 12,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    backgroundColor: T.card,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
-    gap: spacing.sm,
+    borderTopColor: T.borderL,
     ...shadows.md,
   },
-  primaryCta: {
+  bookmarkBtn: {
+    width: 52, height: 52,
+    borderRadius: 12,
+    backgroundColor: T.raised,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: T.borderL,
+  },
+  bookmarkBtnActive: { backgroundColor: 'rgba(249,115,22,0.1)', borderColor: T.orange },
+  ctaBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.primary,
-    borderRadius: radius.lg,
-    paddingVertical: spacing.md,
+    gap: 8,
+    height: 52,
+    backgroundColor: T.orange,
+    borderRadius: T.pill,
+    shadowColor: T.orange,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.28,
+    shadowRadius: 12,
+    elevation: 4,
   },
-  primaryCtaText: { ...typography.bodyMd, color: '#fff', fontWeight: '700' },
-  iconBtn: {
-    width: 48, height: 48, borderRadius: 24,
-    backgroundColor: colors.surfaceElevated,
-    alignItems: 'center', justifyContent: 'center',
-    borderWidth: 1.5, borderColor: colors.borderLight,
-  },
-  iconBtnActive: {
-    backgroundColor: colors.primaryLight,
-    borderColor: colors.primary,
-  },
-  loadingBody: {
-    padding: spacing.lg,
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  skeletonGap: {
-    marginTop: spacing.sm,
-  },
-  errorText: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginTop: spacing.huge,
-  },
-  emptyText: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginTop: spacing.xxl,
-  },
+  ctaText: { fontSize: 16, fontFamily: 'Inter_700Bold', color: '#fff' },
 });

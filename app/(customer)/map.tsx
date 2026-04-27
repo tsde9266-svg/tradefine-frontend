@@ -2,25 +2,23 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   FlatList,
   Image,
-  Linking,
   Platform,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 
 import WorkerMapPin from '../../components/map/WorkerMapPin';
-import { TabHeader } from '../../components/layout/AppHeader';
-import { colors } from '../../constants/colors';
-import { radius } from '../../constants/radius';
-import { spacing } from '../../constants/spacing';
+import { T } from '../../constants/tokens';
 import { shadows } from '../../constants/shadows';
-import { typography } from '../../constants/typography';
 import { MAP_REFRESH_INTERVAL, NEARBY_RADIUS_KM } from '../../constants/config';
 import { LIGHT_MAP_STYLE } from '../../constants/mapStyle';
 import { useLocation } from '../../hooks/useLocation';
@@ -29,20 +27,91 @@ import { getNearbyWorkers } from '../../services/workers';
 import { formatRating } from '../../utils/formatters';
 import { Worker } from '../../types/worker';
 
+const TRADES = ['Plumbers', 'Electricians', 'Carpenters', 'Gas Engineers', 'Painters'];
+const BIRMINGHAM = { latitude: 52.4862, longitude: -1.8904 };
+
+function extractPrice(notes: string): string | null {
+  const m = notes?.match(/£[\d,]+(?:\/(?:hr|day|m²|visit))?/i);
+  return m ? m[0] : null;
+}
+
+function shortDist(metres: number): string {
+  const miles = metres / 1609.344;
+  if (miles < 0.1) return 'nearby';
+  return `${miles.toFixed(1)} mi`;
+}
+
+function MapWorkerCard({ worker, onPress }: { worker: Worker; onPress: () => void }) {
+  const price = extractPrice(worker.pricingNotes ?? '');
+  const isAvail = worker.isAvailable;
+
+  return (
+    <Pressable
+      style={({ pressed }) => [styles.card, pressed && { opacity: 0.93 }]}
+      onPress={onPress}
+    >
+      <View style={styles.cardRow}>
+        {/* Avatar */}
+        <View style={styles.avatarWrap}>
+          {worker.avatarUrl ? (
+            <Image source={{ uri: worker.avatarUrl }} style={styles.avatar} />
+          ) : (
+            <View style={[styles.avatar, styles.avatarFallback]}>
+              <Text style={styles.initials}>
+                {worker.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()}
+              </Text>
+            </View>
+          )}
+          <View style={[styles.onlineDot, isAvail ? styles.dotGreen : styles.dotRed]} />
+        </View>
+
+        {/* Info */}
+        <View style={styles.cardInfo}>
+          <View style={styles.cardInfoTop}>
+            <Text style={styles.workerName} numberOfLines={1}>{worker.name}</Text>
+            <View style={styles.ratingBadge}>
+              <Ionicons name="star" size={12} color={T.orange} />
+              <Text style={styles.ratingText}>{formatRating(worker.rating)}</Text>
+            </View>
+          </View>
+
+          <Text style={styles.workerTrade} numberOfLines={1}>{worker.trades[0]}</Text>
+
+          <View style={styles.metaRow}>
+            {price && (
+              <View style={styles.pricePill}>
+                <Text style={styles.priceText}>{price}</Text>
+              </View>
+            )}
+            {worker.distance != null && (
+              <View style={styles.distRow}>
+                <Ionicons name="location-outline" size={11} color={T.text3} />
+                <Text style={styles.distText}>{shortDist(worker.distance)}</Text>
+              </View>
+            )}
+          </View>
+        </View>
+      </View>
+    </Pressable>
+  );
+}
+
 export default function MapScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { currentLocation, permissionStatus, requestPermission } = useLocation();
   const { nearbyWorkers, setNearbyWorkers, setSelectedWorker } = useWorkerStore();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [activeTrade, setActiveTrade] = useState<string | null>(null);
   const refreshTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const mapRef = useRef<MapView>(null);
 
   const fetchWorkers = useCallback(async () => {
-    if (!currentLocation) return;
+    const loc = currentLocation ?? BIRMINGHAM;
     try {
       const workers = await getNearbyWorkers({
-        lat: currentLocation.latitude,
-        lng: currentLocation.longitude,
+        lat: loc.latitude,
+        lng: loc.longitude,
         radiusKm: NEARBY_RADIUS_KM,
       });
       setNearbyWorkers(workers);
@@ -52,13 +121,11 @@ export default function MapScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchWorkers();
-      if (currentLocation) {
-        refreshTimer.current = setInterval(fetchWorkers, MAP_REFRESH_INTERVAL);
-      }
+      refreshTimer.current = setInterval(fetchWorkers, MAP_REFRESH_INTERVAL);
       return () => {
         if (refreshTimer.current) clearInterval(refreshTimer.current);
       };
-    }, [fetchWorkers, currentLocation]),
+    }, [fetchWorkers]),
   );
 
   const handlePinPress = useCallback((worker: Worker) => {
@@ -77,103 +144,124 @@ export default function MapScreen() {
     });
   }, [nearbyWorkers]);
 
-  const initialRegion: Region = currentLocation
-    ? { ...currentLocation, latitudeDelta: 0.05, longitudeDelta: 0.05 }
-    : { latitude: 54.0, longitude: -2.5, latitudeDelta: 8.0, longitudeDelta: 8.0 };
+  const filteredWorkers = useMemo(() => {
+    if (!activeTrade) return visibleWorkers;
+    return visibleWorkers.filter((w) =>
+      w.trades.some((t) => t.toLowerCase().includes(activeTrade.toLowerCase())),
+    );
+  }, [visibleWorkers, activeTrade]);
 
+  const loc = currentLocation ?? BIRMINGHAM;
+  const initialRegion: Region = {
+    ...loc,
+    latitudeDelta: 0.05,
+    longitudeDelta: 0.05,
+  };
+
+  const SEARCH_TOP = insets.top + 8;
+  const BOTTOM_SAFE = insets.bottom;
   const locationDenied = permissionStatus === 'denied';
 
   return (
     <View style={styles.screen}>
-      {/* ── Header + Search ─────────────────────────────────── */}
-      <SafeAreaView edges={['top']} style={styles.topSafe}>
-        <TabHeader />
+      {/* Map */}
+      <MapView
+        ref={mapRef}
+        style={StyleSheet.absoluteFillObject}
+        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
+        initialRegion={initialRegion}
+        showsUserLocation
+        showsMyLocationButton={false}
+        showsCompass={false}
+        showsTraffic={false}
+        customMapStyle={LIGHT_MAP_STYLE}
+      >
+        {filteredWorkers.map((worker) => (
+          <WorkerMapPin
+            key={worker.id ?? worker.name}
+            worker={worker}
+            onPress={handlePinPress}
+            selected={worker.id === selectedId}
+          />
+        ))}
+      </MapView>
+
+      {/* Floating search bar */}
+      <View style={[styles.searchWrap, { top: SEARCH_TOP }]}>
+        <Ionicons name="search-outline" size={18} color={T.text3} style={{ marginRight: 4 }} />
         <Pressable
-          style={styles.searchBar}
+          style={styles.searchInput}
           onPress={() => router.push('/(customer)/search')}
         >
-          <Ionicons name="search-outline" size={18} color={colors.textDisabled} />
-          <Text style={styles.searchText}>Search for plumbers, electricians…</Text>
-          <View style={styles.searchDivider} />
-          <Ionicons name="options-outline" size={18} color={colors.textSecondary} />
+          <Text style={styles.searchPlaceholder}>Search Birmingham…</Text>
         </Pressable>
-      </SafeAreaView>
-
-      {/* ── Map ─────────────────────────────────────────────── */}
-      <View style={styles.mapContainer}>
-        <MapView
-          ref={mapRef}
-          style={StyleSheet.absoluteFillObject}
-          provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
-          initialRegion={initialRegion}
-          showsUserLocation={!!currentLocation}
-          showsMyLocationButton={false}
-          showsCompass={false}
-          showsTraffic={false}
-          customMapStyle={LIGHT_MAP_STYLE}
+        <Pressable
+          style={styles.filterBtn}
+          onPress={() => {}}
+          hitSlop={8}
         >
-          {visibleWorkers.map((worker) => (
-            <WorkerMapPin
-              key={worker.id ?? worker.name}
-              worker={worker}
-              onPress={handlePinPress}
-              selected={worker.id === selectedId}
-            />
-          ))}
-        </MapView>
-
-        {/* Recenter button */}
-        {currentLocation && (
-          <Pressable
-            style={styles.recenterFab}
-            onPress={() =>
-              mapRef.current?.animateToRegion(
-                { ...currentLocation, latitudeDelta: 0.03, longitudeDelta: 0.03 },
-                400,
-              )
-            }
-          >
-            <Ionicons name="navigate" size={20} color={colors.primary} />
-          </Pressable>
-        )}
-
-        {/* Location permission overlay */}
-        {locationDenied && (
-          <View style={styles.permOverlay}>
-            <View style={styles.permCard}>
-              <View style={styles.permIconWrap}>
-                <Ionicons name="location-outline" size={28} color={colors.primary} />
-              </View>
-              <Text style={styles.permTitle}>Location access needed</Text>
-              <Text style={styles.permBody}>
-                Enable location to see tradespeople near you on the map.
-              </Text>
-              <Pressable style={styles.permBtn} onPress={requestPermission}>
-                <Text style={styles.permBtnText}>Enable Location</Text>
-              </Pressable>
-            </View>
-          </View>
-        )}
+          <Ionicons name="options-outline" size={18} color={T.text1} />
+        </Pressable>
       </View>
 
-      {/* ── Bottom panel ────────────────────────────────────── */}
-      <SafeAreaView edges={['bottom']} style={styles.panelSafe}>
-        <View style={styles.panelHeader}>
-          <Text style={styles.panelTitle}>
-            {!currentLocation
-              ? 'Finding your location…'
-              : `${visibleWorkers.length} tradespeople near you`}
-          </Text>
-          {currentLocation && visibleWorkers.length > 0 && (
-            <Pressable onPress={() => router.push('/(customer)/search')}>
-              <Text style={styles.viewList}>View List</Text>
+      {/* Location denied overlay */}
+      {locationDenied && (
+        <View style={styles.permOverlay}>
+          <View style={styles.permCard}>
+            <View style={styles.permIcon}>
+              <Ionicons name="location-outline" size={28} color={T.orange} />
+            </View>
+            <Text style={styles.permTitle}>Location access needed</Text>
+            <Text style={styles.permBody}>
+              Enable location to see tradespeople near you on the map.
+            </Text>
+            <Pressable style={styles.permBtn} onPress={requestPermission}>
+              <Text style={styles.permBtnText}>Enable Location</Text>
             </Pressable>
-          )}
+          </View>
+        </View>
+      )}
+
+      {/* Bottom sheet */}
+      <View style={[styles.sheet, { paddingBottom: BOTTOM_SAFE + 56 }]}>
+        {/* Grabber */}
+        <View style={styles.grabberRow}>
+          <View style={styles.grabber} />
         </View>
 
-        {currentLocation && visibleWorkers.length > 0 && (
+        {/* Trade filter chips */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tradeChipsContent}
+          style={styles.tradeChipsScroll}
+        >
+          {TRADES.map((trade) => {
+            const isActive = activeTrade === trade;
+            return (
+              <Pressable
+                key={trade}
+                style={[styles.tradeChip, isActive && styles.tradeChipActive]}
+                onPress={() => {
+                  Haptics.selectionAsync();
+                  setActiveTrade(isActive ? null : trade);
+                }}
+              >
+                <Text style={[styles.tradeChipText, isActive && styles.tradeChipTextActive]}>
+                  {trade}
+                </Text>
+                {isActive && (
+                  <Ionicons name="close" size={12} color="#fff" style={{ marginLeft: 4 }} />
+                )}
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+
+        {/* Worker cards horizontal */}
+        {filteredWorkers.length > 0 ? (
           <FlatList
-            data={visibleWorkers}
+            data={filteredWorkers}
             keyExtractor={(w, i) => w.id ?? String(i)}
             renderItem={({ item }) => (
               <MapWorkerCard
@@ -183,119 +271,52 @@ export default function MapScreen() {
             )}
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.listContent}
+            contentContainerStyle={styles.cardsContent}
+            snapToInterval={296}
+            decelerationRate="fast"
             removeClippedSubviews
           />
-        )}
-
-        {currentLocation && visibleWorkers.length === 0 && (
+        ) : (
           <View style={styles.emptyRow}>
-            <Ionicons name="search-outline" size={18} color={colors.textDisabled} />
+            <Ionicons name="search-outline" size={18} color={T.text3} />
             <Text style={styles.emptyText}>No tradespeople found nearby</Text>
           </View>
         )}
-      </SafeAreaView>
+      </View>
     </View>
   );
 }
 
-function shortDist(metres: number): string {
-  const miles = metres / 1609.344;
-  if (miles < 0.1) return 'nearby';
-  return `${miles.toFixed(1)} mi`;
-}
-
-function extractPrice(notes: string): string | null {
-  const match = notes.match(/£[\d,]+(?:\/(?:hr|day|m²|visit))?/i);
-  return match ? match[0] : null;
-}
-
-function MapWorkerCard({ worker, onPress }: { worker: Worker; onPress: () => void }) {
-  const isAvail = worker.isAvailable;
-  const initials = worker.name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase();
-
-  return (
-    <Pressable
-      style={({ pressed }) => [styles.card, pressed && { opacity: 0.93 }]}
-      onPress={onPress}
-    >
-      {/* Avatar */}
-      {worker.avatarUrl ? (
-        <Image source={{ uri: worker.avatarUrl }} style={styles.avatar} />
-      ) : (
-        <View style={[styles.avatar, styles.avatarFallback]}>
-          <Text style={styles.initials}>{initials}</Text>
-        </View>
-      )}
-
-      {/* Content */}
-      <View style={styles.cardContent}>
-        <View style={styles.cardTopRow}>
-          <View style={[styles.availBadge, isAvail ? styles.availGreen : styles.availGray]}>
-            <Text style={[styles.availText, { color: isAvail ? colors.success : colors.textDisabled }]}>
-              {isAvail ? 'AVAILABLE' : 'BUSY'}
-            </Text>
-          </View>
-          {worker.distance != null && (
-            <Text style={styles.distShort}>{shortDist(worker.distance)}</Text>
-          )}
-        </View>
-
-        <Text style={styles.workerName} numberOfLines={1}>{worker.name}</Text>
-        <Text style={styles.workerTrade} numberOfLines={1}>{worker.trades[0]}</Text>
-
-        <View style={styles.metaRow}>
-          <Ionicons name="star" size={12} color="#FBBF24" />
-          <Text style={styles.ratingText}>{formatRating(worker.rating)}</Text>
-          {worker.reviewCount > 0 && (
-            <Text style={styles.reviewCount}>({worker.reviewCount})</Text>
-          )}
-          {!!worker.pricingNotes && extractPrice(worker.pricingNotes) && (
-            <Text style={styles.priceText}>{extractPrice(worker.pricingNotes)}</Text>
-          )}
-        </View>
-      </View>
-    </Pressable>
-  );
-}
-
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background },
+  screen: { flex: 1, backgroundColor: T.bg },
 
-  topSafe: { backgroundColor: colors.surface },
-
-  // Search
-  searchBar: {
+  // Floating search
+  searchWrap: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    zIndex: 50,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surfaceElevated,
-    borderRadius: radius.lg,
-    marginHorizontal: spacing.lg,
-    marginBottom: spacing.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 11,
-    gap: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
-  },
-  searchText: { ...typography.body, color: colors.textDisabled, flex: 1 },
-  searchDivider: { width: 1, height: 18, backgroundColor: colors.borderLight },
-
-  // Map
-  mapContainer: { flex: 1 },
-  recenterFab: {
-    position: 'absolute',
-    bottom: spacing.lg,
-    right: spacing.lg,
-    width: 44, height: 44, borderRadius: 22,
-    backgroundColor: colors.surface,
-    alignItems: 'center', justifyContent: 'center',
+    backgroundColor: T.card,
+    borderRadius: T.nav,
+    height: 56,
+    paddingHorizontal: 16,
     ...shadows.md,
+  },
+  searchInput: { flex: 1, marginHorizontal: 8 },
+  searchPlaceholder: {
+    fontSize: 15,
+    fontFamily: 'Inter_400Regular',
+    color: T.text3,
+  },
+  filterBtn: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    backgroundColor: T.raised,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   // Permission overlay
@@ -304,97 +325,133 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(0,0,0,0.35)',
+    zIndex: 30,
   },
   permCard: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.xl,
-    padding: spacing.xl,
-    margin: spacing.xxl,
+    backgroundColor: T.card,
+    borderRadius: 20,
+    padding: 24,
+    margin: 32,
     alignItems: 'center',
-    gap: spacing.md,
+    gap: 12,
     ...shadows.lg,
   },
-  permIconWrap: {
+  permIcon: {
     width: 56, height: 56, borderRadius: 28,
-    backgroundColor: colors.primaryLight,
+    backgroundColor: T.orangeLight,
     alignItems: 'center', justifyContent: 'center',
   },
-  permTitle: { ...typography.h4, color: colors.textPrimary, textAlign: 'center' },
-  permBody: { ...typography.small, color: colors.textSecondary, textAlign: 'center' },
+  permTitle: { fontSize: 16, fontFamily: 'Inter_600SemiBold', color: T.text1, textAlign: 'center' },
+  permBody: { fontSize: 13, fontFamily: 'Inter_400Regular', color: T.text2, textAlign: 'center' },
   permBtn: {
-    backgroundColor: colors.primary,
-    borderRadius: radius.lg,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.sm,
+    backgroundColor: T.orange, borderRadius: 10,
+    paddingHorizontal: 24, paddingVertical: 12,
   },
-  permBtnText: { ...typography.bodyMd, color: '#fff', fontWeight: '700' },
+  permBtnText: { fontSize: 15, fontFamily: 'Inter_600SemiBold', color: '#fff' },
 
-  // Bottom panel
-  panelSafe: { backgroundColor: colors.surface, ...shadows.lg },
-  panelHeader: {
+  // Bottom sheet
+  sheet: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: T.card,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    ...shadows.lg,
+  },
+  grabberRow: { alignItems: 'center', paddingTop: 12, paddingBottom: 8 },
+  grabber: { width: 36, height: 4, backgroundColor: '#D1D5DB', borderRadius: 2 },
+
+  // Trade chips
+  tradeChipsScroll: { marginBottom: 4 },
+  tradeChipsContent: { paddingHorizontal: 16, gap: 8 },
+  tradeChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.sm,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: T.border,
+    borderRadius: T.pill,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
   },
-  panelTitle: { ...typography.h4, color: colors.textPrimary },
-  viewList: { ...typography.small, color: colors.primary, fontWeight: '600' },
-  listContent: {
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.md,
-    gap: spacing.md,
+  tradeChipActive: {
+    backgroundColor: T.orange,
+    borderColor: T.orange,
+    shadowColor: T.orange,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
   },
+  tradeChipText: {
+    fontSize: 12,
+    fontFamily: 'Inter_700Bold',
+    color: T.text1,
+    textTransform: 'uppercase',
+    letterSpacing: 0.3,
+  },
+  tradeChipTextActive: { color: '#fff' },
+
+  // Worker cards
+  cardsContent: { paddingHorizontal: 16, paddingVertical: 12, gap: 12 },
   emptyRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.sm,
-    paddingVertical: spacing.lg,
+    gap: 8,
+    paddingVertical: 20,
   },
-  emptyText: { ...typography.small, color: colors.textDisabled },
+  emptyText: { fontSize: 13, fontFamily: 'Inter_400Regular', color: T.text3 },
 
-  // Worker card (horizontal layout)
   card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    padding: spacing.md,
-    width: 264,
+    backgroundColor: T.card,
+    borderRadius: 16,
+    padding: 16,
+    width: 280,
     borderWidth: 1,
-    borderColor: colors.borderLight,
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.md,
+    borderColor: T.borderL,
     ...shadows.sm,
   },
-  avatar: { width: 56, height: 56, borderRadius: 28 },
+  cardRow: { flexDirection: 'row', gap: 14, alignItems: 'flex-start' },
+
+  avatarWrap: { position: 'relative', flexShrink: 0 },
+  avatar: { width: 60, height: 60, borderRadius: 30 },
   avatarFallback: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: T.orangeLight,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  initials: { ...typography.bodyMd, color: colors.primaryDark, fontWeight: '700' },
-  cardContent: { flex: 1 },
-  cardTopRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 4,
+  initials: { fontSize: 16, fontFamily: 'Inter_700Bold', color: T.orangeDark },
+  onlineDot: {
+    position: 'absolute',
+    bottom: 1,
+    right: 1,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    borderWidth: 2,
+    borderColor: T.card,
   },
-  availBadge: {
-    borderRadius: radius.full,
-    paddingHorizontal: 7,
+  dotGreen: { backgroundColor: '#22C55E' },
+  dotRed:   { backgroundColor: '#EF4444' },
+
+  cardInfo: { flex: 1 },
+  cardInfoTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 },
+  workerName: { fontSize: 16, fontFamily: 'Inter_600SemiBold', color: T.text1, flexShrink: 1 },
+  ratingBadge: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  ratingText: { fontSize: 13, fontFamily: 'Inter_700Bold', color: T.text1 },
+  workerTrade: { fontSize: 13, fontFamily: 'Inter_400Regular', color: T.text2, marginBottom: 8 },
+
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  pricePill: {
+    backgroundColor: `${T.orange}1A`,
+    borderRadius: 6,
+    paddingHorizontal: 8,
     paddingVertical: 3,
   },
-  availGreen: { backgroundColor: colors.successBg },
-  availGray: { backgroundColor: colors.surfaceElevated },
-  availText: { fontSize: 9, fontWeight: '700', letterSpacing: 0.4 },
-  distShort: { ...typography.caption, color: colors.textSecondary, fontWeight: '600' },
-  workerName: { ...typography.bodyMd, color: colors.textPrimary, fontWeight: '700' },
-  workerTrade: { ...typography.caption, color: colors.textSecondary },
-  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4, flexWrap: 'wrap' },
-  ratingText: { ...typography.caption, color: colors.textPrimary, fontWeight: '700' },
-  reviewCount: { ...typography.caption, color: colors.textSecondary },
-  priceText: { ...typography.caption, color: colors.primary, fontWeight: '700' },
+  priceText: { fontSize: 12, fontFamily: 'Inter_700Bold', color: T.orange },
+  distRow: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  distText: { fontSize: 12, fontFamily: 'Inter_400Regular', color: T.text2 },
 });

@@ -1,8 +1,7 @@
 import React, { memo, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { Marker } from 'react-native-maps';
-import { colors } from '../../constants/colors';
-import { typography } from '../../constants/typography';
+import { T } from '../../constants/tokens';
 import { Worker } from '../../types/worker';
 
 interface WorkerMapPinProps {
@@ -15,10 +14,19 @@ function getInitials(name: string) {
   return name.split(' ').slice(0, 2).map((w) => w[0]).join('').toUpperCase();
 }
 
+function extractPrice(notes: string): string | null {
+  const m = notes?.match(/£[\d,]+(?:\/(?:hr|day|m²|visit))?/i);
+  return m ? m[0] : null;
+}
+
 function WorkerMapPin({ worker, onPress, selected = false }: WorkerMapPinProps) {
   const [imageReady, setImageReady] = useState(!worker.avatarUrl);
 
   if (worker.latitude == null || worker.longitude == null) return null;
+
+  const price = extractPrice(worker.pricingNotes ?? '');
+  const isAvail = worker.isAvailable;
+  const PIN = selected ? 52 : 44;
 
   return (
     <Marker
@@ -28,27 +36,41 @@ function WorkerMapPin({ worker, onPress, selected = false }: WorkerMapPinProps) 
       tracksViewChanges={!imageReady}
     >
       <View style={styles.wrapper}>
-        {/*
-          Single view handles both the border AND the circular clip.
-          overflow:hidden works here because there is NO elevation on
-          any view in this component — elevation disables clipping on Android.
-        */}
-        <View style={[styles.pin, selected && styles.pinSelected]}>
+        {/* Price tooltip above pin */}
+        {price && (
+          <View style={styles.tooltip}>
+            <Text style={styles.tooltipPrice}>{price}</Text>
+            <Text style={styles.tooltipUnit}> /hr</Text>
+          </View>
+        )}
+
+        {/* Avatar circle */}
+        <View style={[
+          styles.pin,
+          { width: PIN, height: PIN, borderRadius: PIN / 2 },
+          selected ? styles.pinSelected : styles.pinDefault,
+          !isAvail && styles.pinUnavail,
+        ]}>
           {worker.avatarUrl ? (
             <Image
               source={{ uri: worker.avatarUrl }}
-              style={styles.img}
+              style={{ width: PIN, height: PIN }}
               resizeMode="cover"
               onLoad={() => setImageReady(true)}
               onError={() => setImageReady(true)}
             />
           ) : (
-            <View style={styles.fallback}>
+            <View style={[styles.fallback, { width: PIN, height: PIN }]}>
               <Text style={styles.initials}>{getInitials(worker.name)}</Text>
             </View>
           )}
+
+          {/* Availability dot */}
+          <View style={[styles.dot, isAvail ? styles.dotGreen : styles.dotRed]} />
         </View>
-        <View style={[styles.tail, selected && styles.tailSelected]} />
+
+        {/* Triangle stem */}
+        <View style={[styles.tail, selected ? styles.tailSelected : styles.tailDefault]} />
       </View>
     </Marker>
   );
@@ -56,40 +78,67 @@ function WorkerMapPin({ worker, onPress, selected = false }: WorkerMapPinProps) 
 
 export default memo(WorkerMapPin);
 
-const PIN = 46;
-
 const styles = StyleSheet.create({
   wrapper: { alignItems: 'center' },
 
+  tooltip: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginBottom: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  tooltipPrice: {
+    fontSize: 13,
+    fontFamily: 'Inter_700Bold',
+    color: T.orange,
+  },
+  tooltipUnit: {
+    fontSize: 11,
+    fontFamily: 'Inter_500Medium',
+    color: T.text2,
+  },
+
   pin: {
-    width: PIN,
-    height: PIN,
-    borderRadius: PIN / 2,
-    borderWidth: 3,
-    borderColor: colors.primary,
-    backgroundColor: colors.primaryLight,
-    overflow: 'hidden', // clips image to circle — works without elevation
+    borderWidth: 2.5,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    // NO elevation, NO shadow — elevation breaks overflow:hidden on Android
   },
-  pinSelected: { borderColor: colors.primaryDark, borderWidth: 4 },
-
-  img: { width: PIN, height: PIN },
+  pinDefault: { borderColor: T.orange, backgroundColor: T.orangeLight },
+  pinSelected: { borderColor: T.orange, backgroundColor: T.orange, borderWidth: 3 },
+  pinUnavail: { borderColor: T.text3, opacity: 0.65 },
 
   fallback: {
-    width: PIN,
-    height: PIN,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.primaryLight,
+    backgroundColor: T.orangeLight,
   },
   initials: {
-    ...typography.caption,
-    color: colors.primaryDark,
-    fontWeight: '800',
     fontSize: 13,
+    fontFamily: 'Inter_700Bold',
+    color: T.orangeDark,
   },
+
+  dot: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  dotGreen: { backgroundColor: '#22C55E' },
+  dotRed:   { backgroundColor: '#EF4444' },
 
   tail: {
     width: 0,
@@ -99,7 +148,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 8,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderTopColor: colors.primary,
   },
-  tailSelected: { borderTopColor: colors.primaryDark },
+  tailDefault:  { borderTopColor: T.orange },
+  tailSelected: { borderTopColor: T.orange },
 });

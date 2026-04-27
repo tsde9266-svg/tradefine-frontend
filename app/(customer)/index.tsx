@@ -61,21 +61,22 @@ export default function CustomerHomeScreen() {
   }, [currentLocation]);
 
   const fetchWorkers = useCallback(async () => {
-    if (!currentLocation) return;
     setLoading(true);
+    // Fall back to Birmingham city centre so the app shows data before location is granted
+    const loc = currentLocation ?? { latitude: 52.4862, longitude: -1.8904 };
     try {
       const trade = activeTrade === 'All' ? undefined : activeTrade;
       const [available, rated] = await Promise.all([
         getNearbyWorkers({
-          lat: currentLocation.latitude,
-          lng: currentLocation.longitude,
-          radiusKm: 5,
+          lat: loc.latitude,
+          lng: loc.longitude,
+          radiusKm: 25,
           availableOnly: true,
           trade,
         }),
         getNearbyWorkers({
-          lat: currentLocation.latitude,
-          lng: currentLocation.longitude,
+          lat: loc.latitude,
+          lng: loc.longitude,
           radiusKm: NEARBY_RADIUS_KM,
           sortBy: 'rating',
           trade,
@@ -93,7 +94,7 @@ export default function CustomerHomeScreen() {
   }, [currentLocation, activeTrade]);
 
   useEffect(() => {
-    if (currentLocation) fetchWorkers();
+    fetchWorkers();
   }, [fetchWorkers]);
 
   const onRefresh = useCallback(() => {
@@ -186,13 +187,7 @@ export default function CustomerHomeScreen() {
           </Pressable>
         </View>
 
-        {!currentLocation && permissionStatus !== 'denied' ? (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
-            {[1, 2].map(i => (
-              <SkeletonLoader key={i} width={190} height={240} borderRadius={12} style={{ marginRight: spacing.md }} />
-            ))}
-          </ScrollView>
-        ) : loading ? (
+        {loading ? (
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalList}>
             {[1, 2].map(i => (
               <SkeletonLoader key={i} width={190} height={240} borderRadius={12} style={{ marginRight: spacing.md }} />
@@ -224,13 +219,7 @@ export default function CustomerHomeScreen() {
         {/* Highly Rated */}
         <Text style={styles.sectionTitleStandalone}>Highly rated near you</Text>
 
-        {!currentLocation && permissionStatus !== 'denied' ? (
-          <View style={styles.skeletonCol}>
-            {[1, 2, 3].map(i => (
-              <SkeletonLoader key={i} width="100%" height={82} borderRadius={12} style={{ marginBottom: spacing.sm }} />
-            ))}
-          </View>
-        ) : loading ? (
+        {loading ? (
           <View style={styles.skeletonCol}>
             {[1, 2, 3].map(i => (
               <SkeletonLoader key={i} width="100%" height={82} borderRadius={12} style={{ marginBottom: spacing.sm }} />

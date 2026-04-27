@@ -12,42 +12,6 @@ Only update visual presentation.
 3. Run `grep -r "primary\|orange\|#F97" src/ --include="*.tsx" -l` to find files needing colour fix
 4. Never touch: API calls, navigation logic, auth flow, state management, hooks
 
-## THE ONE DESIGN TOKEN FILE — CREATE THIS FIRST
-
-Create `src/theme/tokens.ts` if it doesn't exist:
-
-```ts
-export const T = {
-  // Colours
-  orange:     '#F97316',
-  orangeHov:  '#C2410C',
-  orangeShadow: 'rgba(249,115,22,0.28)',
-  bg:         '#F9FAFB',
-  card:       '#FFFFFF',
-  text1:      '#111827',
-  text2:      '#6B7280',
-  text3:      '#9CA3AF',
-  border:     '#F3F4F6',
-  green:      '#16A34A',
-  greenBg:    '#DCFCE7',
-  amber:      '#D97706',
-  amberBg:    '#FEF3C7',
-  red:        '#EF4444',
-
-  // Shadows
-  cardShadow: '0 2px 8px rgba(0,0,0,0.06)',
-  navShadow:  '0 2px 12px rgba(0,0,0,0.08)',
-
-  // Radii
-  card:  16,
-  nav:   12,
-  pill:  9999,
-  input: 12,
-  chip:  8,
-} as const;
-```
-
-Every colour reference in every component must point here. No hardcoded hex elsewhere.
 
 ## THE 3 SHARED COMPONENTS — BUILD ONCE, USE EVERYWHERE
 
